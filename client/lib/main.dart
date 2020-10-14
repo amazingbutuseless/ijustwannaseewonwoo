@@ -19,13 +19,19 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('ijustwannaseewonwoo'),
         ),
-        body: WebViewExample(),
+        body: WebViewExample(
+          videoId: '3-lz0ejzadM',
+        ),
       ),
     );
   }
 }
 
 class WebViewExample extends StatefulWidget {
+  final String videoId;
+
+  WebViewExample({this.videoId});
+
   @override
   _WebViewExampleState createState() => _WebViewExampleState();
 }
@@ -33,13 +39,18 @@ class WebViewExample extends StatefulWidget {
 class _WebViewExampleState extends State<WebViewExample> {
   final Completer<WebViewController> _controller = Completer<WebViewController>();
 
+  var _videoUrl;
+
   @override
   void initState() {
     super.initState();
 
+    _videoUrl = 'https://www.youtube.com./embed/' + widget.videoId;
+
     if (kIsWeb) {
       final IFrameElement _iframeElement = IFrameElement();
-      _iframeElement.src = 'https://www.youtube.com./embed/3-lz0ejzadM';
+      _iframeElement.allowFullscreen = true;
+      _iframeElement.src = _videoUrl;
 
       ui.platformViewRegistry.registerViewFactory('iframeElement', (int viewId) => _iframeElement);
 
@@ -67,7 +78,7 @@ class _WebViewExampleState extends State<WebViewExample> {
     }
 
     return WebView(
-      initialUrl: 'https:/flutter.dev',
+      initialUrl: _videoUrl,
     );
   }
 }

@@ -1,0 +1,31 @@
+{
+  "name": "ijustwannaseewonwoo",
+  "version": "1.0.0",
+  "description": "원우를 빨리, 많이, 오래 보고 싶어서",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amazingbutuseless/ijustwannaseewonwoo.git"
+  },
+  "author": "amazingbutuseless (cindian@amazingbutuseless.net)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amazingbutuseless/ijustwannaseewonwoo/issues"
+  },
+  "homepage": "https://github.com/amazingbutuseless/ijustwannaseewonwoo#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.14.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.2.1"
+  }
+}

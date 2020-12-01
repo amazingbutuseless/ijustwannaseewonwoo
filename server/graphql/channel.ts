@@ -1,9 +1,25 @@
 import { gql } from 'apollo-server-lambda';
 
-export const ChannelTypesDef = gql`
+import Channel from '../resolvers/channel';
+
+
+export const ChannelTypesDef = gql` 
+    enum ImageResourceSize {
+        default,
+        medium,
+        large,
+    }
+    
+    type ImageResource {
+        default: String
+        medium: String
+        large: String
+    }
+    
     type Channel {
         id: ID!
         name: String
+        thumbnail: ImageResource
         videos(page: Int = 1, limit: Int = 10): [Video]
     }
     
@@ -25,7 +41,8 @@ export const ChannelTypesDef = gql`
 
 export const ChannelResolvers = {
     Query: {
-        channel(root, {id}, ctx) {
+        async channel(root, {id}, ctx) {
+            return await Channel.getByUser(id);
         },
 
         channels(root, {page, limit}, ctx) {
@@ -38,6 +55,20 @@ export const ChannelResolvers = {
     },
 
     Channel: {
+        name(channel, {}, ctx) {
+            return channel.snippet.title;
+        },
+
+        thumbnails(channel, {}, ctx) {
+            let thumbnails = {};
+
+            Object.entries(channel.snippet.thumbnails).forEach(([size, details]) =>  {
+                return thumbnails[size] = details.url;
+            });
+
+            return thumbnails;
+        },
+
         videos(channel, {page, limit}, ctx) {
         }
     }

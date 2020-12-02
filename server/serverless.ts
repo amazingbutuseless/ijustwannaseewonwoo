@@ -4,18 +4,18 @@ const serverlessConfiguration: Serverless = {
   service: {
     name: 'ijustwannaseewonwoo',
   },
+
   frameworkVersion: '>=1.72.0',
+
   custom: {
     webpack: {
       webpackConfig: './webpack.config.js',
-      includeModules: true
-    }
+      includeModules: true,
+    },
   },
-  plugins: [
-      'serverless-webpack',
-      'serverless-offline',
-      'serverless-dotenv-plugin'
-  ],
+
+  plugins: ['serverless-webpack', 'serverless-offline', 'serverless-dotenv-plugin'],
+
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
@@ -27,6 +27,7 @@ const serverlessConfiguration: Serverless = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
   },
+
   functions: {
     graphql: {
       handler: 'handler.graphql',
@@ -35,11 +36,43 @@ const serverlessConfiguration: Serverless = {
           http: {
             method: 'post',
             path: 'graphql',
-          }
-        }
-      ]
-    }
-  }
+          },
+        },
+      ],
+    },
+  },
+
+  resources: {
+    Resources: {
+      DynamoDBTable: {
+        Type: 'AWS::DynamoDB::Table',
+        Properties: {
+          TableName: 'ijustwannaseewonwoo-${self:provider.stage}-db',
+          BillingMode: 'PAY_PER_REQUEST',
+          AttributeDefinitions: [
+            {
+              AttributeName: 'id',
+              AttributeType: 'S'
+            },
+            {
+              AttributeName: 'rel_id',
+              AttributeType: 'S'
+            }
+          ],
+          KeySchema: [
+            {
+              AttributeName: 'id',
+              KeyType: 'HASH',
+            },
+            {
+              AttributeName: 'rel_id',
+              KeyType: 'RANGE',
+            },
+          ],
+        },
+      },
+    },
+  },
 };
 
 module.exports = serverlessConfiguration;

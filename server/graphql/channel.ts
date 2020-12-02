@@ -4,23 +4,17 @@ import Channel from '../resolvers/channel';
 
 
 export const ChannelTypesDef = gql` 
-    enum ImageResourceSize {
-        default,
-        medium,
-        large,
-    }
-    
     type ImageResource {
         default: String
         medium: String
-        large: String
+        high: String
     }
     
     type Channel {
         id: ID!
         name: String
-        thumbnail: ImageResource
-        videos(page: Int = 1, limit: Int = 10): [Video]
+        thumbnails: ImageResource
+        videos(page: Int = 1, limit: Int = 20): [Video]
     }
     
     extend type Query {
@@ -29,20 +23,14 @@ export const ChannelTypesDef = gql`
     }
     
     extend type Mutation {
-        registerChannel(data: registerChannelData): Channel
-    }
-    
-    input registerChannelData {
-        id: String!
-        name: String!
-        image: String
+        registerChannel(channelUrl: String): Channel
     }
 `;
 
 export const ChannelResolvers = {
     Query: {
         async channel(root, {id}, ctx) {
-            return await Channel.getByUser(id);
+            return await Channel.get(id);
         },
 
         channels(root, {page, limit}, ctx) {
@@ -50,23 +38,14 @@ export const ChannelResolvers = {
     },
 
     Mutation: {
-        registerChannel(root, {data}, ctx) {
+        async registerChannel(root, {channelUrl}, ctx) {
+            return await Channel.register(channelUrl);
         },
     },
 
     Channel: {
-        name(channel, {}, ctx) {
-            return channel.snippet.title;
-        },
-
-        thumbnails(channel, {}, ctx) {
-            let thumbnails = {};
-
-            Object.entries(channel.snippet.thumbnails).forEach(([size, details]) =>  {
-                return thumbnails[size] = details.url;
-            });
-
-            return thumbnails;
+        id(channel, {}, ctx) {
+            return channel.rel_id;
         },
 
         videos(channel, {page, limit}, ctx) {

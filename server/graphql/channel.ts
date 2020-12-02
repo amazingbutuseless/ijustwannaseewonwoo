@@ -12,7 +12,7 @@ export const ChannelTypesDef = gql`
     
     type Channel {
         id: ID!
-        name: String
+        title: String
         thumbnails: ImageResource
         videos(page: Int = 1, limit: Int = 20): [Video]
     }

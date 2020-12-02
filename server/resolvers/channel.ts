@@ -35,7 +35,7 @@ export default {
       rel_id: {
         S: channelData.id,
       },
-      name: {
+      title: {
         S: channelData.snippet.title,
       },
       thumbnails: {

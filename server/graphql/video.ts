@@ -1,11 +1,12 @@
 import { gql } from 'apollo-server-lambda';
 
+import Channel from '../resolvers/channel';
+
 export const VideoTypesDef = gql`
     type Video {
         id: ID!
         title: String
-        thumbnail: String
-        duration: Int
+        thumbnails: String
         channel: Channel
         scenes: [Scene]
     }
@@ -42,10 +43,13 @@ export const VideoResolvers = {
     },
 
     Video: {
-        channel(video, _, ctx) {
+        id(video, _, ctx) {
+            return video.rel_id;
         },
 
-        scenes(video, _, ctx) {
+        async channel(video, _, ctx) {
+            const channelId = video.rel_id.substr(0, video.rel_id.indexOf(':'));
+            return Channel.get(channelId);
         },
     }
 };

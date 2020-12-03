@@ -26,5 +26,38 @@ export default {
 
         return channels[0];
       });
+  },
+
+  async getPlaylistItems(playlistId, pageToken = '') {
+    const options = {
+      auth: auth,
+      part: 'snippet,contentDetails',
+      maxResults: 50,
+      playlistId,
+      pageToken,
+    };
+
+    let videos = [];
+
+    const data = await this.service.playlistItems
+      .list(options)
+      .then(({ data }) => {
+        const videos = data.items;
+
+        if (videos.length < 1) return;
+
+        return {
+          pageToken: data?.nextPageToken,
+          videos,
+        };
+      });
+
+    videos = [...data.videos];
+
+    if (data.pageToken) {
+      videos = await this.getPlaylistItems(playlistId, data.pageToken);
+    }
+
+    return videos;
   }
 };

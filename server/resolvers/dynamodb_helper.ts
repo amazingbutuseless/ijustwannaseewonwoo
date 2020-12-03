@@ -28,13 +28,24 @@ export default {
       const content = Object.values(value)[0];
       if (this.isMapTypeItem(value)) {
         data[key] = this.parse(content);
-
       } else {
         data[key] = content;
       }
     });
 
     return data;
+  },
+
+  query(params) {
+    return promisify((callback) => {
+      dynamodb.query(
+        {
+          ...params,
+          TableName: process.env.DB_NAME,
+        },
+        callback
+      );
+    });
   },
 
   getItem(Key) {

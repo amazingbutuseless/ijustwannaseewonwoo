@@ -13,5 +13,14 @@ describe('YoutubeHelper', () => {
         expect(channel).toHaveProperty('snippet');
       });
     });
+  })
+
+  describe('YoutubeHelper.getPlaylistItems', () => {
+    it('Can fetch entire videos in a playlist', () => {
+      YoutubeHelper.getPlaylistItems('UUfkXDY7vwkcJ8ddFGz8KusA').then(videos => {
+        expect(videos).toHaveLength(742);
+        console.log(videos);
+      });
+    });
   });
 });

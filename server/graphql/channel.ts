@@ -14,7 +14,7 @@ export const ChannelTypesDef = gql`
     id: ID!
     title: String
     thumbnails: ImageResource
-    videos(page: Int = 1, limit: Int = 20): [Video]
+    videos(lastId: String = "", limit: Int = 20): [Video]
   }
 
   extend type Query {
@@ -29,7 +29,7 @@ export const ChannelTypesDef = gql`
 
 export const ChannelResolvers = {
   Query: {
-    channel(root, { id }, ctx) {
+    channel(root, { id }) {
       return Channel.get(id);
     },
 

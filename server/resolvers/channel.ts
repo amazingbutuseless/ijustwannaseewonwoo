@@ -13,10 +13,25 @@ export default {
       },
     };
 
-    return DB.getItem(Key).then(response => {
+    return DB.getItem(Key).then((response) => {
       if (!response.hasOwnProperty('Item')) return null;
 
       return DB.parse(response.Item);
+    });
+  },
+
+  getList() {
+    const params = {
+      ExpressionAttributeValues: {
+        ':channel': {
+          S: 'channel',
+        },
+      },
+      KeyConditionExpression: 'id = :channel',
+    };
+
+    return DB.query(params).then((response) => {
+      return response.Items.map((item) => DB.parse(item));
     });
   },
 
@@ -51,21 +66,24 @@ export default {
           high: {
             S: thumbnails.high,
           },
-        }
+        },
       },
     };
 
-    return DB.putItem(Item).then(async () => {
-      const videos = await YoutubeHelper.getPlaylistItems(channelData.contentDetails.relatedPlaylists.uploads);
+    return DB.putItem(Item)
+      .then(async () => {
+        const videos = await YoutubeHelper.getPlaylistItems(
+          channelData.contentDetails.relatedPlaylists.uploads
+        );
 
-      const channel = DB.parse(Item);
-      channel['videos'] = await Video.registerBulk(videos);
+        const channel = DB.parse(Item);
+        channel.videos = await Video.registerBulk(videos);
 
-      return channel;
-
-    }).catch(err => {
-      console.log(err);
-      return {};
-    });
+        return channel;
+      })
+      .catch((err) => {
+        console.log(err);
+        return {};
+      });
   },
 };

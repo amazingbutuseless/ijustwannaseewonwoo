@@ -10,27 +10,25 @@ export default {
 
   async getChannelData(channelUrl) {
     const options = {
-      auth: auth,
+      auth,
       part: 'snippet,contentDetails',
     };
 
     const regMatch = /youtube\.com\/(user|channel)\/([\w]+)/.exec(channelUrl);
     options[regMatch[1] === 'user' ? 'forUsername' : 'id'] = regMatch[2];
 
-    return await this.service.channels
-      .list(options)
-      .then((response) => {
-        const channels = response.data.items;
+    return await this.service.channels.list(options).then((response) => {
+      const channels = response.data.items;
 
-        if (channels.length < 1) throw new Error('Channel Not Found');
+      if (channels.length < 1) throw new Error('Channel Not Found');
 
-        return channels[0];
-      });
+      return channels[0];
+    });
   },
 
   async getPlaylistItems(playlistId, pageToken = '') {
     const options = {
-      auth: auth,
+      auth,
       part: 'snippet,contentDetails',
       maxResults: 50,
       playlistId,
@@ -39,18 +37,16 @@ export default {
 
     let videos = [];
 
-    const data = await this.service.playlistItems
-      .list(options)
-      .then(({ data }) => {
-        const videos = data.items;
+    const data = await this.service.playlistItems.list(options).then(({ data }) => {
+      const videos = data.items;
 
-        if (videos.length < 1) return;
+      if (videos.length < 1) return;
 
-        return {
-          pageToken: data?.nextPageToken,
-          videos,
-        };
-      });
+      return {
+        pageToken: data?.nextPageToken,
+        videos,
+      };
+    });
 
     videos = [...data.videos];
 
@@ -58,6 +54,17 @@ export default {
       videos = await this.getPlaylistItems(playlistId, data.pageToken);
     }
 
+    videos.sort((prev, next) => {
+      if (prev.contentDetails.videoPublishedAt > next.contentDetails.videoPublishedAt) {
+        return 1;
+      }
+      if (prev.contentDetails.videoPublishedAt < next.contentDetails.videoPublishedAt) {
+        return -1;
+      }
+
+      return 0;
+    });
+
     return videos;
-  }
+  },
 };

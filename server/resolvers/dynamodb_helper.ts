@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 const options = {
   region: process.env.AWS_REGION,
 };
-if (process.env.hasOwnProperty('IS_OFFLINE')) options['endpoint'] = 'http://localhost:8000';
+if (process.env.hasOwnProperty('IS_OFFLINE')) options.endpoint = 'http://localhost:8000';
 const dynamodb = new AWS.DynamoDB(options);
 
 const promisify = (func) => {
@@ -70,5 +70,23 @@ export default {
         callback
       )
     );
+  },
+
+  putItems(Items) {
+    const params = {
+      RequestItems: {},
+    };
+
+    params.RequestItems[process.env.DB_NAME] = Items.map((Item) => {
+      return {
+        PutRequest: {
+          Item,
+        },
+      };
+    });
+
+    return promisify((callback) => {
+      dynamodb.batchWriteItem(params, callback);
+    });
   },
 };

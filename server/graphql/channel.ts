@@ -33,7 +33,9 @@ export const ChannelResolvers = {
       return Channel.get(id);
     },
 
-    channels(root, { page, limit }, ctx) {},
+    channels(root, _, ctx) {
+      return Channel.getList();
+    },
   },
 
   Mutation: {

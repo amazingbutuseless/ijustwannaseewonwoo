@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChannelItem must be rendered 1`] = `
+<Styled(button)
+  aria-label="Test Channel"
+  data-id="testid"
+  onClick={[Function]}
+  thumbnails={
+    Object {
+      "default": "thumbnail-default.png",
+      "high": "thumbnail-high.png",
+    }
+  }
+  type="button"
+>
+  <span>
+    Test Channel
+  </span>
+</Styled(button)>
+`;

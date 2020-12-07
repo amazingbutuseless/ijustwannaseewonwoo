@@ -44,12 +44,12 @@ export const ChannelResolvers = {
 
   Channel: {
     id(channel) {
-      return channel.rel_id;
+      return channel.relId;
     },
 
     videos(channel, { lastId = '', limit = 20 }, ctx) {
       return Videos.getForChannel({
-        channelId: channel.rel_id,
+        channelId: channel.relId,
         limit,
         lastId,
       });

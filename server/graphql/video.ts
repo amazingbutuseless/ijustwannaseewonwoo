@@ -57,16 +57,12 @@ export const VideoResolvers = {
 
   Video: {
     channel(video) {
-      const channelId = video.rel_id.substr(0, video.rel_id.indexOf(':'));
+      const channelId = video.relId.substr(0, video.relId.indexOf(':'));
       return Channel.get(channelId);
     },
 
     id(video) {
-      return video.rel_id;
-    },
-
-    videoId(video) {
-      return video.video_id;
+      return video.relId;
     },
 
     thumbnail(video, { size }) {

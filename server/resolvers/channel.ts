@@ -8,7 +8,7 @@ export default {
       id: {
         S: 'channel',
       },
-      rel_id: {
+      relId: {
         S: id,
       },
     };
@@ -49,7 +49,7 @@ export default {
       id: {
         S: 'channel',
       },
-      rel_id: {
+      relId: {
         S: channelData.id,
       },
       title: {

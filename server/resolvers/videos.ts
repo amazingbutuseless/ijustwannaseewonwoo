@@ -10,10 +10,10 @@ export default {
     let KeyConditionExpression = 'id = :video';
 
     if (channelId.length > 0) {
-      ExpressionAttributeValues[':video_id'] = {
+      ExpressionAttributeValues[':videoId'] = {
         S: channelId,
       };
-      KeyConditionExpression += ' AND  begins_with(rel_id, :video_id)';
+      KeyConditionExpression += ' AND  begins_with(relId, :videoId)';
     }
 
     const params = {
@@ -24,11 +24,11 @@ export default {
     };
 
     if (lastId.length > 0) {
-      params['ExclusiveStartKey'] = {
+      params.ExclusiveStartKey = {
         id: {
           S: 'video',
         },
-        rel_id: {
+        relId: {
           S: lastId,
         },
       };

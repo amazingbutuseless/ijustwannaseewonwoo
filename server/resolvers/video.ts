@@ -24,13 +24,13 @@ export default {
       id: {
         S: 'video',
       },
-      rel_id: {
+      relId: {
         S: `${videoItem.snippet.channelId}::${videoItem.contentDetails.videoPublishedAt}::${videoItem.contentDetails.videoId}`,
       },
-      channel_id: {
+      channelId: {
         S: videoItem.snippet.channelId,
       },
-      video_id: {
+      videoId: {
         S: videoItem.contentDetails.videoId,
       },
       title: {
@@ -42,13 +42,13 @@ export default {
       scenes: {
         L: [],
       },
-      published_at: {
+      publishedAt: {
         S: videoItem.contentDetails.videoPublishedAt,
       },
-      updated_at: {
+      updatedAt: {
         S: new Date().toISOString(),
       },
-      no_appears: {
+      noAppears: {
         N: '0',
       },
     };

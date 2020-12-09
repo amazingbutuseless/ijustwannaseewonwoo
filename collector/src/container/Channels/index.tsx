@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { ReactNode, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 
 import ChannelItem, { ChannelItemProps } from '../../components/ChannelItem';
+import { fetchChannels, selectAllChannels } from '../../actions/channels';
 
 interface ChannelsProps {
-  channels: Array<ChannelItemProps>;
   onClick: Function;
 }
 
@@ -14,17 +15,47 @@ const ChannelsList = styled.ul`
   padding: 0;
 `;
 
-export default function Channels({
-  channels,
-  onClick = (channelId: string): void => {},
-}: ChannelsProps) {
+export default function Channels({ onClick = (channelId: string): void => {} }: ChannelsProps) {
+  const dispatch = useDispatch();
+
+  const channelItems = useSelector(selectAllChannels);
+  const channelStatus = useSelector((state) => {
+    return state.channels.status;
+  });
+  const error = useSelector((state) => state.channels.error);
+
+  useEffect(() => {
+    if (channelStatus === 'idle') {
+      const channels = fetchChannels();
+      dispatch(channels);
+    }
+  }, [channelStatus, dispatch]);
+
+  const ChannelItems = () => {
+    if (channelStatus === 'pending') {
+      return <li>loading...</li>;
+    }
+
+    if (channelStatus === 'succeeded') {
+      return (
+        <>
+          {channelItems.map((channel: ChannelItemProps, idx: number) => {
+            return (
+              <li key={`channel-${idx + 1}`}>
+                <ChannelItem {...channel} onClick={onClick} />
+              </li>
+            );
+          })}
+        </>
+      );
+    } else {
+      return <li>other?</li>;
+    }
+  };
+
   return (
     <ChannelsList>
-      {channels.map((channel, idx) => (
-        <li key={`channel-${idx + 1}`}>
-          <ChannelItem {...channel} onClick={onClick} />
-        </li>
-      ))}
+      <ChannelItems />
     </ChannelsList>
   );
 }

@@ -1,7 +1,11 @@
-import { createSlice, configureStore } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
+
+import ChannelsSlice from './actions/channels';
 
 const store = configureStore({
-  reducer: {},
+  reducer: {
+    channels: ChannelsSlice,
+  },
 });
 
 export default store;

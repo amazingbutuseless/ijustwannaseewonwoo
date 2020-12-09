@@ -20,21 +20,10 @@ export default function Navigation() {
     console.log({ channelId });
   };
 
-  const channels = [
-    {
-      id: 'testid',
-      title: 'Test Channel',
-      thumbnails: {
-        default: 'default.png',
-        high: 'high.png',
-      },
-    },
-  ];
-
   return (
     <NavigationWrapper>
       <Logo />
-      <Channels channels={channels} onClick={onClick} />
+      <Channels onClick={onClick} />
     </NavigationWrapper>
   );
 }

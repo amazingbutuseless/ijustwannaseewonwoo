@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import Logo from '../../components/Logo';
-import Channels from '../Channels';
+import Logo from '../components/Logo';
+import Channels from './Channels';
 
 const NavigationWrapper = styled.nav`
   position: fixed;
@@ -16,13 +17,17 @@ const NavigationWrapper = styled.nav`
 `;
 
 export default function Navigation() {
+  const history = useHistory();
+
   const onClick = (channelId: string) => {
-    console.log({ channelId });
+    history.push(`/channel/${channelId}`);
   };
 
   return (
     <NavigationWrapper>
-      <Logo />
+      <Link to="/">
+        <Logo />
+      </Link>
       <Channels onClick={onClick} />
     </NavigationWrapper>
   );

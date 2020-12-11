@@ -1,9 +1,9 @@
-import React, { ReactNode, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 
-import ChannelItem, { ChannelItemProps } from '../../components/ChannelItem';
-import { fetchChannels, selectAllChannels } from '../../actions/channels';
+import ChannelItem, { ChannelItemProps } from '../components/ChannelItem';
+import { fetchChannels, selectAllChannels } from '../actions/channels';
 
 interface ChannelsProps {
   onClick: Function;
@@ -32,7 +32,7 @@ export default function Channels({ onClick = (channelId: string): void => {} }: 
   }, [channelStatus, dispatch]);
 
   const ChannelItems = () => {
-    if (channelStatus === 'pending') {
+    if (['idle', 'pending'].includes(channelStatus)) {
       return <li>loading...</li>;
     }
 
@@ -48,8 +48,6 @@ export default function Channels({ onClick = (channelId: string): void => {} }: 
           })}
         </>
       );
-    } else {
-      return <li>other?</li>;
     }
   };
 

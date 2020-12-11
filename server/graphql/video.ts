@@ -1,6 +1,7 @@
 import { gql } from 'apollo-server-lambda';
 
 import Channel from '../resolvers/channel';
+import Video from '../resolvers/video';
 
 export const VideoTypesDef = gql`
   type Thumbnails {
@@ -46,7 +47,9 @@ export const VideoTypesDef = gql`
 
 export const VideoResolvers = {
   Query: {
-    video(root, { id }, ctx) {},
+    video(root, { id }, ctx) {
+      return Video.get(id);
+    },
 
     videos(root, { channelId, page, limit }, ctx) {},
   },
@@ -56,13 +59,13 @@ export const VideoResolvers = {
   },
 
   Video: {
+    id(video) {
+      return video.relId;
+    },
+
     channel(video) {
       const channelId = video.relId.substr(0, video.relId.indexOf(':'));
       return Channel.get(channelId);
-    },
-
-    id(video) {
-      return video.relId;
     },
 
     thumbnail(video, { size }) {

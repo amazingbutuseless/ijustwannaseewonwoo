@@ -1,4 +1,3 @@
-import YoutubeHelper from '../youtube_helper';
 import Video from '../video';
 
 describe('Video', () => {
@@ -326,6 +325,15 @@ describe('Video', () => {
         .catch((err) => {
           console.log(err);
         });
+    });
+  });
+
+  describe('Video.get', () => {
+    it('Can fetch a video by id', () => {
+      Video.get('UCfkXDY7vwkcJ8ddFGz8KusA::2013-01-08T09:51:01Z::EIEOT435fj0').then((video) => {
+        expect(video).toHaveProperty('videoId');
+        expect(video.videoId).toEqual('EIEOT435fj0');
+      });
     });
   });
 });

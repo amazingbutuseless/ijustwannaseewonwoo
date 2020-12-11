@@ -54,6 +54,28 @@ export default {
     };
   },
 
+  get(videoId) {
+    const Key = {
+      id: {
+        S: 'video',
+      },
+      relId: {
+        S: videoId,
+      },
+    };
+
+    return DB.getItem(Key)
+      .then((response) => {
+        if (!response.hasOwnProperty('Item')) return {};
+
+        return DB.parse(response.Item);
+      })
+      .catch((err) => {
+        console.log(err);
+        return {};
+      });
+  },
+
   async register(videoItem) {
     const Item = this.prepareDataForCreating(videoItem);
 

@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { HashRouter } from 'react-router-dom';
+
 import { hot } from 'react-hot-loader';
 
 import { Provider } from 'react-redux';
@@ -9,7 +11,9 @@ import App from './App';
 
 ReactDOM.render(
   <Provider store={Store}>
-    <App />
+    <HashRouter>
+      <App />
+    </HashRouter>
   </Provider>,
   document.querySelector('#root')
 );

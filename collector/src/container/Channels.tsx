@@ -49,6 +49,8 @@ export default function Channels({ onClick = (channelId: string): void => {} }: 
         </>
       );
     }
+
+    return <></>;
   };
 
   return (

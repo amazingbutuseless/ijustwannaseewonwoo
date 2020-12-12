@@ -14,6 +14,7 @@ const NavigationWrapper = styled.nav`
   height: 100vh;
   border-right: 1px solid #efefef;
   box-sizing: border-box;
+  z-index: 2;
 `;
 
 export default function Navigation() {

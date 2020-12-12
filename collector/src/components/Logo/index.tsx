@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import styled from '@emotion/styled';
 
+interface LogoWrapperStyleProps {
+  randomCat: string;
+}
+
 const LogoWrapper = styled.h1`
   position: relative;
 
@@ -26,7 +30,7 @@ const LogoWrapper = styled.h1`
   }
 
   &:hover:after {
-    content: '${({ randomCat }) => randomCat}';
+    content: '${({ randomCat }: LogoWrapperStyleProps) => randomCat}';
   }
 `;
 

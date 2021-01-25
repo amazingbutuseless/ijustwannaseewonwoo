@@ -1,21 +1,24 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import styled from '@emotion/styled';
+
+import { ContentsWrapper } from './Contents.style';
 
 import Videos from './Videos';
-
-const ContentsWrapper = styled.div`
-  margin-left: 8.4rem;
-  padding: 1rem;
-  z-index: 1;
-`;
+import Video from './Video';
 
 export default function Contents() {
   return (
     <ContentsWrapper>
       <Switch>
-        <Route exact path="/" component={Videos} />
-        <Route path="/channel/:channelId" component={Videos} />
+        <Route exact path="/">
+          <Videos />
+        </Route>
+        <Route path="/channel/:channelId">
+          <Videos />
+        </Route>
+        <Route path="/video/:videoId">
+          <Video />
+        </Route>
       </Switch>
     </ContentsWrapper>
   );

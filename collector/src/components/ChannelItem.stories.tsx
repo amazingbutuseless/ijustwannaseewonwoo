@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Meta } from '@storybook/react/types-6-0';
-import ChannelItem, { ChannelItemProps } from './index';
+import ChannelItem, { ChannelItemProps } from './ChannelItem';
 
 export default {
   title: 'Components/ChannelItem',

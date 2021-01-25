@@ -1,16 +1,10 @@
 import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import styled from '@emotion/styled';
 
 import { fetchVideos, selectAllVideos, selectVideosByChannel } from '../actions/videos';
 import VideoItem from '../components/VideoItem';
-
-const VideoItemsWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-`;
+import { VideoItemsWrapper } from './Videos.style';
 
 export default function Videos() {
   const dispatch = useDispatch();
@@ -34,13 +28,11 @@ export default function Videos() {
     history.push(`/video/${selectedVideoId}`);
   };
 
-  const VideoItems = () => {
-    if (['idle', 'pending'].includes(videoStatus)) {
-      return <div>loading...</div>;
-    }
+  return (
+    <>
+      {['idle', 'pending'].includes(videoStatus) && <div>loading...</div>}
 
-    if (videoStatus === 'succeeded') {
-      return (
+      {videoStatus === 'succeeded' && (
         <VideoItemsWrapper>
           {videoItems.map(({ videoId, title, thumbnail, publishedAt, channel }) => {
             return (
@@ -56,16 +48,7 @@ export default function Videos() {
             );
           })}
         </VideoItemsWrapper>
-      );
-    }
-
-    return <></>;
-  };
-
-  return (
-    <>
-      <h2>{channelId} Videos</h2>
-      <VideoItems />
+      )}
     </>
   );
 }

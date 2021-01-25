@@ -1,10 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Logo have to be rendered 1`] = `
-<Styled(h1)>
+<Styled(h1)
+  randomCat=""
+>
   <span>
-    ijustwannasee
+    ijustwannaseewonwoo
   </span>
-  😺
 </Styled(h1)>
 `;

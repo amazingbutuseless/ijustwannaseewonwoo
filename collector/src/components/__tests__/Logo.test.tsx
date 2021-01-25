@@ -3,7 +3,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 
-import Logo from './index';
+import Logo from '../Logo';
 
 describe('Logo', () => {
   it('have to be rendered', () => {

@@ -1,24 +1,16 @@
-import React from 'react';
 import styled from '@emotion/styled';
 
-interface ChannelItemThumbnails {
+export interface ChannelItemThumbnails {
   default?: string;
   medium?: string;
   high?: string;
-}
-
-export interface ChannelItemProps {
-  id: string;
-  title: string;
-  thumbnails: ChannelItemThumbnails;
-  onClick?: Function;
 }
 
 interface ChannelItemButtonStyleProps {
   thumbnails: ChannelItemThumbnails;
 }
 
-const ChannelButton = styled.button`
+export const ChannelButton = styled.button`
   display: block;
 
   position: relative;
@@ -40,7 +32,7 @@ const ChannelButton = styled.button`
 
   &:focus,
   &:hover {
-    border-color: var(--liberty);
+    border-color: var(--heat-wave);
     outline: none;
 
     &:after {
@@ -49,28 +41,10 @@ const ChannelButton = styled.button`
       top: 50%;
       padding: 0.8rem;
       border-radius: 4px;
-      background-color: var(--black-coffee);
+      background-color: var(--eerie-black);
       transform: translateY(-50%);
-      color: #fff;
+      color: var(--heat-wave);
       content: attr(aria-label);
     }
   }
 `;
-
-export default function ChannelItem({ id, title, thumbnails, onClick }: ChannelItemProps) {
-  const handleClick = () => {
-    onClick(id);
-  };
-
-  return (
-    <ChannelButton
-      type="button"
-      thumbnails={thumbnails}
-      data-id={id}
-      aria-label={title}
-      onClick={handleClick}
-    >
-      <span>{title}</span>
-    </ChannelButton>
-  );
-}

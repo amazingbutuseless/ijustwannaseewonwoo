@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Meta } from '@storybook/react/types-6-0';
-import Logo from './index';
+import Logo from './Logo';
 
 export default {
   title: 'Components/Logo',

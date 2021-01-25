@@ -3,7 +3,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 
-import ChannelItem from './index';
+import ChannelItem from '../ChannelItem';
 
 const onClick = jest.fn();
 

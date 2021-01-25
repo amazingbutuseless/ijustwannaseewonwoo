@@ -1,27 +1,23 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import styled from '@emotion/styled';
+
+import { ChannelsList } from './Channels.style';
 
 import ChannelItem, { ChannelItemProps } from '../components/ChannelItem';
 import { fetchChannels, selectAllChannels } from '../actions/channels';
 
 interface ChannelsProps {
-  onClick: Function;
+  onClick: (channelId: string) => void;
 }
 
-const ChannelsList = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-`;
-
-export default function Channels({ onClick = (channelId: string): void => {} }: ChannelsProps) {
+export default function Channels({ onClick }: ChannelsProps) {
   const dispatch = useDispatch();
 
   const channelItems = useSelector(selectAllChannels);
   const channelStatus = useSelector((state) => {
     return state.channels.status;
   });
+
   const error = useSelector((state) => state.channels.error);
 
   useEffect(() => {
@@ -32,30 +28,20 @@ export default function Channels({ onClick = (channelId: string): void => {} }: 
   }, [channelStatus, dispatch]);
 
   const ChannelItems = () => {
-    if (['idle', 'pending'].includes(channelStatus)) {
-      return <li>loading...</li>;
-    }
+    const channels = channelItems.map((channel: ChannelItemProps, idx: number) => (
+      <li key={`channel-${idx + 1}`}>
+        <ChannelItem {...channel} onClick={onClick} />
+      </li>
+    ));
 
-    if (channelStatus === 'succeeded') {
-      return (
-        <>
-          {channelItems.map((channel: ChannelItemProps, idx: number) => {
-            return (
-              <li key={`channel-${idx + 1}`}>
-                <ChannelItem {...channel} onClick={onClick} />
-              </li>
-            );
-          })}
-        </>
-      );
-    }
-
-    return <></>;
+    return <>{channels}</>;
   };
 
   return (
     <ChannelsList>
-      <ChannelItems />
+      {['idle', 'pending'].includes(channelStatus) && <li>loading...</li>}
+
+      {channelStatus === 'succeeded' && <ChannelItems />}
     </ChannelsList>
   );
 }

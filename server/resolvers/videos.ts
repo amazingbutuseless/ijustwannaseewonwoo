@@ -6,21 +6,56 @@ export default {
       ':video': {
         S: 'video',
       },
-    };
-    let KeyConditionExpression = 'id = :video';
-
-    if (channelId.length > 0) {
-      ExpressionAttributeValues[':videoId'] = {
+      ':channelId': {
         S: channelId,
-      };
-      KeyConditionExpression += ' AND  begins_with(relId, :videoId)';
-    }
+      },
+    };
+    const KeyConditionExpression = 'id = :video AND channelId = :channelId';
 
     const params = {
+      IndexName: 'channelIdIndex',
       ExpressionAttributeValues,
       KeyConditionExpression,
       Limit: limit,
       ScanIndexForward: false,
+    };
+
+    if (lastId.length > 0) {
+      params.ExclusiveStartKey = {
+        id: {
+          S: 'video',
+        },
+        relId: {
+          S: lastId,
+        },
+        channelId: {
+          S: channelId,
+        },
+      };
+    }
+
+    return DB.query(params)
+      .then((response) => {
+        return response.Items.map((item) => DB.parse(item));
+      })
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+  },
+
+  get({ limit = 20, lastId = '' }) {
+    const KeyConditionExpression = 'id = :video';
+
+    const params = {
+      ExpressionAttributeValues: {
+        ':video': {
+          S: 'video',
+        },
+      },
+      KeyConditionExpression,
+      ScanIndexForward: false,
+      Limit: limit,
     };
 
     if (lastId.length > 0) {

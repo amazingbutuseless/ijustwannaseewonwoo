@@ -51,20 +51,9 @@ export default {
     videos = [...data.videos];
 
     if (data.pageToken) {
-      videos = await this.getPlaylistItems(playlistId, data.pageToken);
+      videos = [...videos, ...(await this.getPlaylistItems(playlistId, data.pageToken))];
     }
 
-    videos.sort((prev, next) => {
-      if (prev.contentDetails.videoPublishedAt > next.contentDetails.videoPublishedAt) {
-        return 1;
-      }
-      if (prev.contentDetails.videoPublishedAt < next.contentDetails.videoPublishedAt) {
-        return -1;
-      }
-
-      return 0;
-    });
-
-    return videos;
+    return [...new Set(videos)];
   },
 };

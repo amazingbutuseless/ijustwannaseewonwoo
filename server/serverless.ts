@@ -52,12 +52,20 @@ const serverlessConfiguration: Serverless = {
           AttributeDefinitions: [
             {
               AttributeName: 'id',
-              AttributeType: 'S'
+              AttributeType: 'S',
             },
             {
-              AttributeName: 'rel_id',
-              AttributeType: 'S'
-            }
+              AttributeName: 'relId',
+              AttributeType: 'S',
+            },
+            {
+              AttributeName: 'channelId',
+              AttributeType: 'S',
+            },
+            {
+              AttributeName: 'videoId',
+              AttributeType: 'S',
+            },
           ],
           KeySchema: [
             {
@@ -65,8 +73,42 @@ const serverlessConfiguration: Serverless = {
               KeyType: 'HASH',
             },
             {
-              AttributeName: 'rel_id',
+              AttributeName: 'relId',
               KeyType: 'RANGE',
+            },
+          ],
+          LocalSecondaryIndexes: [
+            {
+              IndexName: 'channelIdIndex',
+              KeySchema: [
+                {
+                  AttributeName: 'id',
+                  KeyType: 'HASH',
+                },
+                {
+                  AttributeName: 'channelId',
+                  KeyType: 'RANGE',
+                },
+              ],
+              Projection: {
+                ProjectionType: 'ALL',
+              },
+            },
+            {
+              IndexName: 'videoIdIndex',
+              KeySchema: [
+                {
+                  AttributeName: 'id',
+                  KeyType: 'HASH',
+                },
+                {
+                  AttributeName: 'videoId',
+                  KeyType: 'RANGE',
+                },
+              ],
+              Projection: {
+                ProjectionType: 'ALL',
+              },
             },
           ],
         },

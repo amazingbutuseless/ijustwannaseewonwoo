@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-lambda';
 
 import Channel from '../resolvers/channel';
 import Video from '../resolvers/video';
+import Videos from '../resolvers/videos';
 
 export const VideoTypesDef = gql`
   type Thumbnails {
@@ -18,8 +19,9 @@ export const VideoTypesDef = gql`
   }
 
   type Video {
-    id: ID!
-    videoId: String
+    id: String
+    channelId: String
+    videoId: ID!
     title: String
     thumbnail(size: ThumbnailSize = standard): Thumbnails
     channel: Channel
@@ -30,7 +32,7 @@ export const VideoTypesDef = gql`
 
   extend type Query {
     video(id: ID!): Video
-    videos(channelId: String, page: Int, limit: Int): [Video]
+    videos(lastId: String = "", limit: Int = 20): [Video]
   }
 
   extend type Mutation {
@@ -47,11 +49,13 @@ export const VideoTypesDef = gql`
 
 export const VideoResolvers = {
   Query: {
-    video(root, { id }, ctx) {
-      return Video.get(id);
+    video(root, { videoId }, ctx) {
+      return Video.get(videoId);
     },
 
-    videos(root, { channelId, page, limit }, ctx) {},
+    videos(root, { limit, lastId }, ctx) {
+      return Videos.get({ limit, lastId });
+    },
   },
 
   Mutation: {
@@ -64,12 +68,15 @@ export const VideoResolvers = {
     },
 
     channel(video) {
-      const channelId = video.relId.substr(0, video.relId.indexOf(':'));
-      return Channel.get(channelId);
+      return Channel.get(video.channelId);
     },
 
     thumbnail(video, { size }) {
       return video.thumbnails[size];
+    },
+
+    publishedAt(video) {
+      return video.id;
     },
   },
 };

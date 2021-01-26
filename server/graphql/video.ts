@@ -49,8 +49,8 @@ export const VideoTypesDef = gql`
 
 export const VideoResolvers = {
   Query: {
-    video(root, { videoId }, ctx) {
-      return Video.get(videoId);
+    video(root, { id }, ctx) {
+      return Video.get(id);
     },
 
     videos(root, { limit, lastId }, ctx) {

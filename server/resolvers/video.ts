@@ -55,20 +55,28 @@ export default {
   },
 
   get(videoId) {
-    const Key = {
-      id: {
+    const ExpressionAttributeValues = {
+      ':video': {
         S: 'video',
       },
-      relId: {
+      ':videoId': {
         S: videoId,
       },
     };
+    const KeyConditionExpression = 'id = :video AND videoId = :videoId';
 
-    return DB.getItem(Key)
+    const params = {
+      IndexName: 'videoIdIndex',
+      ExpressionAttributeValues,
+      KeyConditionExpression,
+      Limit: 1,
+    };
+
+    return DB.query(params)
       .then((response) => {
-        if (!response.hasOwnProperty('Item')) return {};
+        if (response.Items.length < 1) return {};
 
-        return DB.parse(response.Item);
+        return DB.parse(response.Items[0]);
       })
       .catch((err) => {
         console.log(err);

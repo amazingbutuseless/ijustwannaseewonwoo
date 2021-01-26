@@ -3,6 +3,8 @@ import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { fetchVideos, selectAllVideos, selectVideosByChannel } from '../actions/videos';
+
+import Header from './Header';
 import VideoItem from '../components/VideoItem';
 import { VideoItemsWrapper } from './Videos.style';
 
@@ -30,6 +32,7 @@ export default function Videos() {
 
   return (
     <>
+      <Header />
       {['idle', 'pending'].includes(videoStatus) && <div>loading...</div>}
 
       {videoStatus === 'succeeded' && (

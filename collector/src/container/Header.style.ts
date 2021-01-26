@@ -1,5 +1,14 @@
 import styled from '@emotion/styled';
 
+export const BackButton = styled.a`
+  position: absolute;
+  text-decoration: none;
+
+  path {
+    fill: var(--pumpkin);
+  }
+`;
+
 export const HeaderWrapper = styled.header`
   position: fixed;
   top: 0;
@@ -7,26 +16,22 @@ export const HeaderWrapper = styled.header`
 
   padding: 1.6rem;
   width: 100vw;
-  background: rgb(18, 18, 18);
+  background: rgb(35, 35, 35);
   background: linear-gradient(
     180deg,
-    rgba(18, 18, 18, 1) 0%,
-    rgba(18, 18, 18, 0.75) 65%,
-    rgba(18, 18, 18, 0) 100%
+    rgba(35, 35, 35, 1) 0%,
+    rgba(35, 35, 35, 0.8) 65%,
+    rgba(35, 35, 35, 0) 100%
   );
   box-sizing: border-box;
 
   z-index: 3;
 
-  h1 {
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  a {
-    font-size: 2.4rem;
-    font-weight: bold;
+  h2 {
+    display: inline-block;
+    margin: 0;
+    margin-left: 3.2rem;
+    padding: 0;
     color: var(--pumpkin);
-    text-decoration: none;
   }
 `;

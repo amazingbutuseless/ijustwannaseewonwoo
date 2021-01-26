@@ -7,10 +7,11 @@ interface LogoWrapperStyleProps {
 export const LogoWrapper = styled.h1`
   position: relative;
 
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   width: 3.2rem;
   height: 3.2rem;
+  text-align: center;
 
   font-size: 3.2rem;
 

@@ -1,6 +1,8 @@
 // A tiny wrapper around fetch(), borrowed from
 // https://kentcdodds.com/blog/replace-axios-with-a-simple-custom-fetch-wrapper
 
+import Configure from '../configure';
+
 export async function client(endpoint: string, { body, ...customConfig } = {}) {
   const headers = { 'Content-Type': 'application/json' };
 
@@ -36,4 +38,13 @@ client.get = function (endpoint, customConfig = {}) {
 
 client.post = function (endpoint, body, customConfig = {}) {
   return client(endpoint, { ...customConfig, body });
+};
+
+client.graphql = function (body) {
+  return client(`${Configure.GRAPHQL_SERVER}/graphql`, {
+    headers: {
+      Accept: 'application/json',
+    },
+    body,
+  });
 };

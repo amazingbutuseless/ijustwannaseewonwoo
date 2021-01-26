@@ -38,7 +38,7 @@ query channel($channelId: ID!) {
 
 const queryForAllVideos = `
 query videos($lastId: String) { 
-  videos(limit: 20, lastId: $lastId) {
+  videos(limit: 21, lastId: $lastId) {
     id
     videoId
     channelId
@@ -56,26 +56,23 @@ query videos($lastId: String) {
   }
 }`;
 
+interface VideoFetcherProps {
+  channelId?: string;
+  lastId?: string;
+}
+
 export const fetchVideos = createAsyncThunk(
   'videos/fetchVideos',
-  async ({ channelId = '', lastId = '' }) => {
+  async ({ channelId = '', lastId = '' }: VideoFetcherProps) => {
     const fetchForChannel = channelId.length > 0;
 
-    const response = await client.post(
-      'http://localhost:3000/dev/graphql',
-      {
-        query: fetchForChannel ? queryForFetchChannelVideos : queryForAllVideos,
-        variables: {
-          channelId,
-          lastId,
-        },
+    const response = await client.graphql({
+      query: fetchForChannel ? queryForFetchChannelVideos : queryForAllVideos,
+      variables: {
+        channelId,
+        lastId,
       },
-      {
-        headers: {
-          Accept: 'application/json',
-        },
-      }
-    );
+    });
 
     return fetchForChannel ? response.data.channel.videos : response.data.videos;
   }
@@ -107,4 +104,12 @@ export const { selectAll: selectAllVideos } = videosAdapter.getSelectors((state)
 export const selectVideosByChannel = createSelector(
   [selectAllVideos, (state, channelId) => channelId],
   (videos, channelId) => videos.filter((video) => video.channelId === channelId)
+);
+
+export const selectVideoById = createSelector(
+  [selectAllVideos, (state, videoId) => videoId],
+  (videos, videoId) => {
+    const filteredVideos = videos.filter((video) => video.videoId === videoId);
+    return filteredVideos.length > 0 ? filteredVideos[0] : null;
+  }
 );

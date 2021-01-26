@@ -10,10 +10,8 @@ const initialState = channelsAdapter.getInitialState({
 });
 
 export const fetchChannels = createAsyncThunk('channels/fetchChannels', async () => {
-  const response = await client.post(
-    'http://localhost:3000/dev/graphql',
-    {
-      query: `
+  const response = await client.graphql({
+    query: `
 query channels { 
   channels {
     id
@@ -24,14 +22,8 @@ query channels {
     }
   }
 }`,
-      variables: {},
-    },
-    {
-      headers: {
-        Accept: 'application/json',
-      },
-    }
-  );
+    variables: {},
+  });
 
   return response.data.channels;
 });

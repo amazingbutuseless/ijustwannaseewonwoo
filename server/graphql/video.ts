@@ -74,9 +74,5 @@ export const VideoResolvers = {
     thumbnail(video, { size }) {
       return video.thumbnails[size];
     },
-
-    publishedAt(video) {
-      return video.id;
-    },
   },
 };

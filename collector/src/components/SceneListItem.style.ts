@@ -1,3 +1,37 @@
 import styled from '@emotion/styled';
 
-export const SceneListItemWrapper = styled.li``;
+interface SceneListItemWrapperStyleProps {
+  active: boolean;
+}
+
+export const SceneListItemWrapper = styled.li`
+  display: inline-block;
+
+  margin-right: 1.6rem;
+  padding: 1.6rem;
+  width: 24rem;
+
+  box-sizing: border-box;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.4);
+
+  border: 2px solid
+    ${({ active }: SceneListItemWrapperStyleProps) => (active ? 'var(--pumpkin)' : 'transparent')};
+  border-radius: 4px;
+
+  background-color: #fff;
+
+  font-size: 1.4rem;
+
+  cursor: pointer;
+
+  span {
+    display: block;
+
+    font-size: 1.2rem;
+    color: var(--silver-chalice);
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+`;

@@ -1,39 +1,59 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player/youtube';
 
 import { VideoPlayerWrapper } from './VideoPlayer.style';
 
 interface VideoPlayerProps {
   videoId: string;
-  start?: string;
-  end?: string;
+  timecode: {
+    start: number;
+    end: number;
+  };
+  onPaused: () => void;
 }
 
-export default function VideoPlayer({ videoId, start = '', end = '' }: VideoPlayerProps) {
+interface ReactPlayerOnProgressInterface {
+  playedSeconds: number;
+}
+
+export default function VideoPlayer({ videoId, timecode, onPaused }: VideoPlayerProps) {
   const player = useRef(null);
+  const [playing, setPlaying] = useState(true);
+
+  const onProgress = ({ playedSeconds }: ReactPlayerOnProgressInterface) => {
+    if (!Number.isNaN(timecode.end)) {
+      if (Math.floor(playedSeconds) >= timecode.end) {
+        onPaused();
+        setPlaying(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (player.current) {
-      player.current.seekTo(start);
+      const start = parseInt(timecode.start);
+
+      if (!Number.isNaN(start)) {
+        player.current.seekTo(start);
+        setPlaying(true);
+      }
     }
-  }, [player.current]);
+  }, [timecode.start]);
 
   return (
-    <ReactPlayer
-      ref={player}
-      url={`https://www.youtube.com/watch?v=${videoId}`}
-      config={{
-        youtube: {
-          playerVars: { autoplay: 1 },
-        },
-      }}
-    />
-  );
-  return (
     <VideoPlayerWrapper>
-      <iframe
-        src={`https://www.youtube.com./embed/${videoId}?t=${start}&autoplay=1`}
-        frameBorder="0"
+      <ReactPlayer
+        ref={player}
+        url={`https://www.youtube.com/watch?v=${videoId}`}
+        playing={playing}
+        config={{
+          playerVars: {
+            controls: 1,
+          },
+        }}
+        onProgress={onProgress}
+        width="100%"
+        height="100%"
       />
     </VideoPlayerWrapper>
   );

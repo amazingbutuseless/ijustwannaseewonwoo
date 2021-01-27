@@ -4,45 +4,57 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchVideo, selectVideoById } from '../actions/video';
 
-import { VideoWrapper, SceneWrapper, SceneList } from './Video.style';
+import { VideoWrapper } from './Video.style';
 
 import Header from './Header';
 import VideoPlayer from '../components/VideoPlayer';
 import Scenes from './Scenes';
+import { SceneTimecodeInterface } from '../components/SceneListItem';
 
 export default function Video() {
-  const [time, updateTime] = useState({ start: '', end: '' });
-
-  const dispatch = useDispatch();
   const { videoId } = useParams();
 
-  const videoStatus = useSelector((state) => {
-    return state.video.status;
-  });
-  const error = useSelector((state) => state.video.error);
+  const [time, updateTime] = useState({ start: 0, end: null });
+  const [onPaused, setOnPausedCallback] = useState(() => {});
+
+  const dispatch = useDispatch();
 
   const video = useSelector((state) => selectVideoById(state, videoId));
 
   useEffect(() => {
-    if (videoStatus === 'idle') {
+    if (!video) {
       dispatch(fetchVideo({ videoId }));
     }
-  }, [videoStatus, dispatch]);
+  }, [video, dispatch]);
 
-  const onSceneClick = (timecode) => {
-    console.log({ timecode });
+  const playScenes = () => {};
+
+  const playDurationAndStop = () => {};
+
+  const onTimecodeSet = (timecode: SceneTimecodeInterface) => {
+    setOnPausedCallback(playDurationAndStop);
+    updateTime(timecode);
+  };
+
+  const onSceneClick = (timecode: SceneTimecodeInterface) => {
+    setOnPausedCallback(playScenes);
     updateTime(timecode);
   };
 
   return (
     <>
-      <Header title={videoStatus === 'succeeded' ? video.title : ''} />
+      <Header title={video ? video.title : ''} />
       <VideoWrapper>
-        {videoStatus === 'succeeded' && (
+        {video && (
           <>
-            <VideoPlayer videoId={video.videoId} {...time} />
+            <VideoPlayer videoId={videoId} timecode={time} onPaused={onPaused} />
 
-            <Scenes videoId={videoId} scenes={video.scenes} onTimecodeSet={onSceneClick} />
+            <Scenes
+              videoId={videoId}
+              scenes={video.scenes}
+              onTimecodeSet={onTimecodeSet}
+              onSceneClick={onSceneClick}
+            />
           </>
         )}
       </VideoWrapper>

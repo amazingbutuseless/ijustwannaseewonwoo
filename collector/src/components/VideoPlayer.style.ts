@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 export const VideoPlayerWrapper = styled.div`
   position: relative;
   padding-top: 56.25%;
-  width: 72rem;
 
   iframe {
     position: absolute;

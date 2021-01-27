@@ -6,8 +6,18 @@ import {
 } from '@reduxjs/toolkit';
 
 import { client } from './apiClient';
+import { VideoItem } from './video';
 
-const videosAdapter = createEntityAdapter();
+interface VideoItemInList extends VideoItem {
+  channel: {
+    title: string;
+    thumbnails: {
+      default: string;
+    };
+  };
+}
+
+const videosAdapter = createEntityAdapter<VideoItemInList>();
 
 const initialState = videosAdapter.getInitialState({
   status: 'idle',
@@ -25,6 +35,11 @@ query channel($channelId: ID!) {
       publishedAt
       thumbnail(size: high) {
         url
+      }
+      scenes {
+        thumbnails
+        start
+        end
       }
       channel {
         title
@@ -46,6 +61,11 @@ query videos($lastId: String) {
     publishedAt
     thumbnail(size: high) {
       url
+    }
+    scenes {
+      thumbnails
+      start
+      end
     }
     channel {
       title
@@ -86,10 +106,12 @@ const VideosSlice = createSlice({
     [fetchVideos.pending]: (state, action) => {
       state.status = 'loading';
     },
+
     [fetchVideos.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       videosAdapter.upsertMany(state, action.payload);
     },
+
     [fetchVideos.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;

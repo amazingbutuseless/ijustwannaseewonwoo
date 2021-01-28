@@ -16,7 +16,7 @@ export const SceneList = styled.ul`
 export const AddSceneContainer = styled.form`
   margin-right: 1.6rem;
   padding: 1.6rem;
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
   background-color: var(--davys-grey);
   color: var(--silver-chalice);
 

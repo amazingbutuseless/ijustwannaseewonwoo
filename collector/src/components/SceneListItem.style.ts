@@ -12,11 +12,9 @@ export const SceneListItemWrapper = styled.li`
   width: 24rem;
 
   box-sizing: border-box;
-  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.4);
-
   border: 2px solid
     ${({ active }: SceneListItemWrapperStyleProps) => (active ? 'var(--pumpkin)' : 'transparent')};
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
 
   background-color: #fff;
 
@@ -33,5 +31,9 @@ export const SceneListItemWrapper = styled.li`
 
   &:last-child {
     margin-right: 0;
+  }
+
+  &:hover {
+    box-shadow: var(--boxShadow);
   }
 `;

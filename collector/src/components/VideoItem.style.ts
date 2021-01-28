@@ -38,16 +38,13 @@ export const VideoItemInfo = styled.div`
 
 export const VideoItemWrapper = styled.div`
   position: relative;
-  margin-bottom: 4rem;
-  border-radius: 4px;
+  margin: 0 1.6rem 4rem;
+  width: calc(100% / 3 - 3.2rem);
+  border-radius: var(--borderRadius);
   overflow: hidden;
   cursor: pointer;
 
   &:hover {
-    box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.5);
-  }
-
-  @media screen and (min-width: 1024px) {
-    max-width: calc(100% / 3 - 3.6rem);
+    box-shadow: var(--boxShadow);
   }
 `;

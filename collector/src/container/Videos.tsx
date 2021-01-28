@@ -8,10 +8,14 @@ import Header from './Header';
 import VideoItem from '../components/VideoItem';
 import { VideoItemsWrapper } from './Videos.style';
 
+interface VideoRouterParams {
+  channelId: string;
+}
+
 export default function Videos() {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { channelId } = useParams();
+  const { channelId }: VideoRouterParams = useParams();
 
   const videoItems = useSelector(selectAllVideos);
 

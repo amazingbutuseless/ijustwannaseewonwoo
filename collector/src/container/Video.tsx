@@ -11,8 +11,12 @@ import VideoPlayer from '../components/VideoPlayer';
 import Scenes from './Scenes';
 import { SceneTimecodeInterface } from '../components/SceneListItem';
 
+interface VideoRouterParams {
+  videoId: string;
+}
+
 export default function Video() {
-  const { videoId } = useParams();
+  const { videoId }: VideoRouterParams = useParams();
 
   const [time, updateTime] = useState({ start: 0, end: null });
   const [onPaused, setOnPausedCallback] = useState(() => {});

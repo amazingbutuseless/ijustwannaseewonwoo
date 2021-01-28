@@ -5,7 +5,7 @@ import {
   createSelector,
 } from '@reduxjs/toolkit';
 
-import { client } from './apiClient';
+import { APIClient } from './APIClient';
 import { VideoItem } from './video';
 
 interface VideoItemInList extends VideoItem {
@@ -86,7 +86,7 @@ export const fetchVideos = createAsyncThunk(
   async ({ channelId = '', lastId = '' }: VideoFetcherProps) => {
     const fetchForChannel = channelId.length > 0;
 
-    const response = await client.graphql({
+    const response = await APIClient.graphql({
       query: fetchForChannel ? queryForFetchChannelVideos : queryForAllVideos,
       variables: {
         channelId,

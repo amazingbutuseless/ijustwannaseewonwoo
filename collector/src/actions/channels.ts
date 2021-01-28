@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
 
-import { client } from './apiClient';
+import { APIClient } from './APIClient';
 
 const channelsAdapter = createEntityAdapter();
 
@@ -10,7 +10,7 @@ const initialState = channelsAdapter.getInitialState({
 });
 
 export const fetchChannels = createAsyncThunk('channels/fetchChannels', async () => {
-  const response = await client.graphql({
+  const requestPayload = {
     query: `
 query channels { 
   channels {
@@ -23,7 +23,9 @@ query channels {
   }
 }`,
     variables: {},
-  });
+  };
+
+  const response = await APIClient.graphql(requestPayload);
 
   return response.data.channels;
 });

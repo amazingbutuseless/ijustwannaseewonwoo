@@ -2,16 +2,20 @@
 // https://kentcdodds.com/blog/replace-axios-with-a-simple-custom-fetch-wrapper
 
 import Configure from '../configure';
+import { APIClientRequestParameters, APIClientRequestConfig } from '../types';
 
-export async function client(endpoint: string, { body, ...customConfig } = {}) {
+export async function APIClient(
+  endpoint: string,
+  { body, ...customConfig }: APIClientRequestParameters = {}
+) {
   const headers = { 'Content-Type': 'application/json' };
 
-  const config = {
+  const config: APIClientRequestConfig = {
     method: body ? 'POST' : 'GET',
     ...customConfig,
     headers: {
       ...headers,
-      ...customConfig.headers,
+      ...customConfig?.headers,
     },
   };
 
@@ -32,16 +36,16 @@ export async function client(endpoint: string, { body, ...customConfig } = {}) {
   }
 }
 
-client.get = function (endpoint, customConfig = {}) {
-  return client(endpoint, { ...customConfig, method: 'GET' });
+APIClient.get = function (endpoint: string, customConfig = {}) {
+  return APIClient(endpoint, { ...customConfig, method: 'GET' });
 };
 
-client.post = function (endpoint, body, customConfig = {}) {
-  return client(endpoint, { ...customConfig, body });
+APIClient.post = function (endpoint: string, body = {}, customConfig = {}) {
+  return APIClient(endpoint, { ...customConfig, body });
 };
 
-client.graphql = function (body) {
-  return client(`${Configure.GRAPHQL_SERVER}/graphql`, {
+APIClient.graphql = function (body = {}) {
+  return APIClient(`${Configure.GRAPHQL_SERVER}/graphql`, {
     headers: {
       Accept: 'application/json',
     },

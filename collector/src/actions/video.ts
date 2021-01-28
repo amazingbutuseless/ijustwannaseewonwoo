@@ -5,7 +5,6 @@ import {
   createSelector,
 } from '@reduxjs/toolkit';
 
-import { client } from './apiClient';
 import { selectAllVideos } from './videos';
 
 interface SceneItem {
@@ -13,6 +12,7 @@ interface SceneItem {
   start: string;
   end: string;
 }
+import { APIClient } from './APIClient';
 
 export interface VideoItem {
   id: string;
@@ -62,8 +62,8 @@ interface VideoFetcherProps {
 export const fetchVideo = createAsyncThunk(
   'video/fetchVideo',
   async ({ videoId }: VideoFetcherProps) => {
-    const response = await client.graphql({
-      query,
+    const response = await APIClient.graphql({
+      query: fetchVideoQuery,
       variables: {
         videoId,
       },

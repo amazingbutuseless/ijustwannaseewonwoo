@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { ChannelButton, ChannelItemThumbnails } from './ChannelItem.style';
+import { ChannelItemThumbnails } from '../types';
+
+import { ChannelButton } from './ChannelItem.style';
 
 export interface ChannelItemProps {
   id: string;

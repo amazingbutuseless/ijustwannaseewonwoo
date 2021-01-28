@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 
-export interface ChannelItemThumbnails {
-  default?: string;
-  medium?: string;
-  high?: string;
-}
+import { ChannelItemThumbnails } from '../types';
 
 interface ChannelItemButtonStyleProps {
   thumbnails: ChannelItemThumbnails;

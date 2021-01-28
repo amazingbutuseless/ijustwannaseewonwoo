@@ -1,14 +1,13 @@
-import React, { useRef } from 'react';
+import React, { FormEvent, useRef } from 'react';
 import styled from '@emotion/styled';
+import { useDispatch } from 'react-redux';
 
+import { SceneAddFormProps, SceneTimecodeInterface, SceneItemInterface } from '../types';
+
+import { addScene } from '../actions/video';
+
+import SceneListItem from '../components/SceneListItem';
 import { SceneList, SceneWrapper, AddSceneContainer } from './Scenes.style';
-
-import SceneListItem, { SceneInterface, SceneTimecodeInterface } from '../components/SceneListItem';
-
-interface SceneAddFormProps {
-  videoId: string;
-  onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
-}
 
 const Button = styled.button`
   margin-left: 1.6rem;

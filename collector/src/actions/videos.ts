@@ -5,19 +5,11 @@ import {
   createSelector,
 } from '@reduxjs/toolkit';
 
+import { VideoItemInListInterface } from '../types';
+
 import { APIClient } from './APIClient';
-import { VideoItem } from './video';
 
-interface VideoItemInList extends VideoItem {
-  channel: {
-    title: string;
-    thumbnails: {
-      default: string;
-    };
-  };
-}
-
-const videosAdapter = createEntityAdapter<VideoItemInList>();
+const videosAdapter = createEntityAdapter<VideoItemInListInterface>();
 
 const initialState = videosAdapter.getInitialState({
   status: 'idle',

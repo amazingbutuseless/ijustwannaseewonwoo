@@ -6,27 +6,11 @@ import {
 } from '@reduxjs/toolkit';
 
 import { selectAllVideos } from './videos';
+import { VideoItemInterface } from '../types';
 
-interface SceneItem {
-  thumbnails: string;
-  start: string;
-  end: string;
-}
 import { APIClient } from './APIClient';
 
-export interface VideoItem {
-  id: string;
-  channelId: string;
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: {
-    url: string;
-  };
-  scenes: SceneItem[];
-}
-
-const videoAdapter = createEntityAdapter<VideoItem>({
+const videoAdapter = createEntityAdapter<VideoItemInterface>({
   selectId: (video) => video.videoId,
 });
 

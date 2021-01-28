@@ -1,19 +1,10 @@
 import React from 'react';
 
+import { SceneTimecodeInterface, SceneItemInterface } from '../types';
+
 import { SceneListItemWrapper } from './SceneListItem.style';
 
-export interface SceneTimecodeInterface {
-  start: number;
-  end: number;
-}
-
-export interface SceneInterface {
-  thumbnails: string;
-  start: number;
-  end: number;
-}
-
-interface SceneListItemProps extends SceneInterface {
+interface SceneListItemProps extends SceneItemInterface {
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
   active?: boolean;
 }

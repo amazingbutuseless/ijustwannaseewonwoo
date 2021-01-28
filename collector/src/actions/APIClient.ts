@@ -1,8 +1,6 @@
-// A tiny wrapper around fetch(), borrowed from
-// https://kentcdodds.com/blog/replace-axios-with-a-simple-custom-fetch-wrapper
+import { APIClientRequestParameters, APIClientRequestConfig } from '../types';
 
 import Configure from '../configure';
-import { APIClientRequestParameters, APIClientRequestConfig } from '../types';
 
 export async function APIClient(
   endpoint: string,

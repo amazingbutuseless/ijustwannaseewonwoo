@@ -3,6 +3,7 @@ import { gql } from 'apollo-server-lambda';
 import Channel from '../resolvers/channel';
 import Video from '../resolvers/video';
 import Videos from '../resolvers/videos';
+import Scene from '../resolvers/scene';
 
 export const VideoTypesDef = gql`
   type Thumbnails {
@@ -73,6 +74,10 @@ export const VideoResolvers = {
 
     thumbnail(video, { size }) {
       return video.thumbnails[size];
+    },
+
+    scenes(video) {
+      return Scene.getForVideo(video.videoId);
     },
   },
 };

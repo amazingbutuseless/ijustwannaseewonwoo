@@ -119,4 +119,10 @@ export default {
       dynamodb.updateItem({ ...params, TableName: process.env.DB_NAME }, callback);
     });
   },
+
+  deleteItem(Key) {
+    return promisify((callback) => {
+      dynamodb.deleteItem({ Key, TableName: process.env.DB_NAME }, callback);
+    });
+  },
 };

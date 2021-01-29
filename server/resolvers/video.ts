@@ -39,9 +39,6 @@ export default {
       thumbnails: {
         M: { ...thumbnails },
       },
-      scenes: {
-        L: [],
-      },
       publishedAt: {
         S: videoItem.contentDetails.videoPublishedAt,
       },

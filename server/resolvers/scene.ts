@@ -1,63 +1,94 @@
 import DB from './dynamodb_helper';
 
-import Video from './video';
-
 interface SceneRegisterDataInterface {
   videoId: string;
-  publishedAt: string;
   start: number;
   end: number;
-  thumbnails: string[];
+  thumbnails: string;
+}
+
+interface SceneDeleteDataInterface {
+  videoId: string;
+  start: number;
 }
 
 export default {
-  register({ videoId, publishedAt, start, end, thumbnail }: SceneRegisterDataInterface) {
-    const scene = {
-      M: {
-        start: {
-          N: start.toString(),
-        },
-        end: {
-          N: end.toString(),
-        },
+  register({ videoId, start, end, thumbnail }: SceneRegisterDataInterface) {
+    const Item = {
+      id: {
+        S: 'scene',
+      },
+      relId: {
+        S: `${videoId}/${start}`,
+      },
+      videoId: {
+        S: videoId,
+      },
+      start: {
+        N: start.toString(),
+      },
+      end: {
+        N: end.toString(),
       },
     };
 
     if (thumbnail) {
-      scene.M.thumbnail = {
+      Item.thumbnail = {
         S: thumbnail,
       };
     }
 
-    const Key = {
-      id: {
-        S: 'video',
-      },
-      relId: {
-        S: publishedAt,
-      },
-    };
+    return DB.putItem(Item)
+      .then((response) => {
+        return DB.parse(Item);
+      })
+      .catch((err) => {
+        console.log(err);
+        return {};
+      });
+  },
 
+  getForVideo(videoId: string) {
     const ExpressionAttributeValues = {
+      ':scene': {
+        S: 'scene',
+      },
       ':videoId': {
         S: videoId,
       },
-      ':scene': {
-        L: [scene],
+    };
+    const KeyConditionExpression = 'id = :scene AND videoId = :videoId';
+
+    const params = {
+      IndexName: 'videoIdIndex',
+      ExpressionAttributeValues,
+      KeyConditionExpression,
+    };
+
+    return DB.query(params)
+      .then((response) => {
+        if (response.Items.length < 1) return [];
+
+        return response.Items.map((item) => DB.parse(item));
+      })
+      .catch((err) => {
+        console.log(err);
+        return {};
+      });
+  },
+
+  delete({ videoId, start }: SceneDeleteDataInterface) {
+    const Key = {
+      id: {
+        S: 'scene',
+      },
+      relId: {
+        S: `${videoId}/${start}`,
       },
     };
 
-    const params = {
-      Key,
-      UpdateExpression: 'SET scenes = list_append(scenes, :scene)',
-      ConditionExpression: 'videoId = :videoId',
-      ExpressionAttributeValues,
-    };
-
-    return DB.updateItem(params)
-      .then((response) => {
-        return Video.get(videoId);
-      })
+    return DB.deleteItem(Key)
+      .then((response) => {})
       .catch((err) => {
         console.log(err);
         return {};

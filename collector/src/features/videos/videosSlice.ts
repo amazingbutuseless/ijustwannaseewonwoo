@@ -5,9 +5,9 @@ import {
   createSelector,
 } from '@reduxjs/toolkit';
 
-import { VideoItemInListInterface } from '../types';
+import { VideoItemInListInterface } from '../../types';
 
-import { APIClient } from './APIClient';
+import { APIClient } from '../../actions/APIClient';
 
 const videosAdapter = createEntityAdapter<VideoItemInListInterface>();
 
@@ -16,29 +16,32 @@ const initialState = videosAdapter.getInitialState({
   error: null,
 });
 
+const videoEntities = `
+  id
+  videoId
+  channelId
+  title
+  publishedAt
+  thumbnail(size: high) {
+    url
+  }
+  scenes {
+    start
+    end
+  }
+  channel {
+    title
+    thumbnails {
+      default
+    }
+  }
+`;
+
 const queryForFetchChannelVideos = `
 query channel($channelId: ID!) { 
   channel(id: $channelId) {
     videos {
-      id
-      videoId
-      channelId
-      title
-      publishedAt
-      thumbnail(size: high) {
-        url
-      }
-      scenes {
-        thumbnails
-        start
-        end
-      }
-      channel {
-        title
-        thumbnails {
-          default
-        }
-      }
+      ${videoEntities}
     }
   }
 }`;
@@ -46,25 +49,7 @@ query channel($channelId: ID!) {
 const queryForAllVideos = `
 query videos($lastId: String) { 
   videos(limit: 21, lastId: $lastId) {
-    id
-    videoId
-    channelId
-    title
-    publishedAt
-    thumbnail(size: high) {
-      url
-    }
-    scenes {
-      thumbnails
-      start
-      end
-    }
-    channel {
-      title
-      thumbnails {
-        default
-      }
-    }
+    ${videoEntities}
   }
 }`;
 
@@ -116,12 +101,12 @@ export default VideosSlice.reducer;
 export const { selectAll: selectAllVideos } = videosAdapter.getSelectors((state) => state.videos);
 
 export const selectVideosByChannel = createSelector(
-  [selectAllVideos, (state, channelId) => channelId],
+  [selectAllVideos, (state, channelId: string) => channelId],
   (videos, channelId) => videos.filter((video) => video.channelId === channelId)
 );
 
 export const selectVideoById = createSelector(
-  [selectAllVideos, (state, videoId) => videoId],
+  [selectAllVideos, (state, videoId: string) => videoId],
   (videos, videoId) => {
     const filteredVideos = videos.filter((video) => video.videoId === videoId);
     return filteredVideos.length > 0 ? filteredVideos[0] : null;

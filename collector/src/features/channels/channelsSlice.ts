@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
 
-import { APIClient } from './APIClient';
+import { ChannelDataInterface } from '../../types';
 
-const channelsAdapter = createEntityAdapter();
+import { APIClient } from '../../actions/APIClient';
+
+const channelsAdapter = createEntityAdapter<ChannelDataInterface>();
 
 const initialState = channelsAdapter.getInitialState({
   status: 'idle',

@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { Switch, Route, useHistory } from 'react-router-dom';
 
-import Navigation from './container/Navigation';
-import Contents from './container/Contents';
+import { ContentsWrapper, NavigationWrapper } from './App.style';
 
-export default function App() {
+import Videos from './features/videos/Videos';
+import Video from './features/video/Video';
+import Channels from './features/channels/Channels';
+
+export default function App(): ReactElement {
+  const history = useHistory();
+
+  const onClick = (channelId: string) => {
+    history.push(`/channel/${channelId}`);
+  };
+
   return (
     <>
-      <Navigation />
-      <Contents />
+      <NavigationWrapper>
+        <Channels onClick={onClick} />
+      </NavigationWrapper>
+      <ContentsWrapper>
+        <Switch>
+          <Route exact path="/">
+            <Videos />
+          </Route>
+          <Route path="/channel/:channelId">
+            <Videos />
+          </Route>
+          <Route path="/video/:videoId">
+            <Video />
+          </Route>
+        </Switch>
+      </ContentsWrapper>
     </>
   );
 }

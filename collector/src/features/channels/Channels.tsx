@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { ChannelsList } from './Channels.style';
 
-import ChannelItem, { ChannelItemProps } from '../components/ChannelItem';
-import { fetchChannels, selectAllChannels } from '../actions/channels';
+import ChannelItem, { ChannelItemProps } from '../../components/ChannelItem';
+import { fetchChannels, selectAllChannels } from './channelsSlice';
 
 interface ChannelsProps {
   onClick: (channelId: string) => void;
 }
 
-export default function Channels({ onClick }: ChannelsProps) {
+export default function Channels({ onClick }: ChannelsProps): ReactElement {
   const dispatch = useDispatch();
 
   const channelItems = useSelector(selectAllChannels);

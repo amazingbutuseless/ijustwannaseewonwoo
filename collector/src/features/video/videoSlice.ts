@@ -5,10 +5,10 @@ import {
   createSelector,
 } from '@reduxjs/toolkit';
 
-import { selectAllVideos } from './videos';
-import { VideoItemInterface } from '../types';
+import { VideoItemInterface } from '../../types';
 
-import { APIClient } from './APIClient';
+import { APIClient } from '../../actions/APIClient';
+import { addScene } from '../../actions/scene';
 
 const videoAdapter = createEntityAdapter<VideoItemInterface>({
   selectId: (video) => video.videoId,
@@ -19,7 +19,7 @@ const initialState = videoAdapter.getInitialState({
   error: null,
 });
 
-const query = `
+const fetchVideoQuery = `
 query video($videoId: ID!) {
   video(id: $videoId) {
     id
@@ -31,7 +31,7 @@ query video($videoId: ID!) {
       url
     }
     scenes {
-      thumbnails
+      thumbnail
       start
       end
     }
@@ -42,6 +42,8 @@ query video($videoId: ID!) {
 interface VideoFetcherProps {
   videoId: string;
 }
+
+export { addScene };
 
 export const fetchVideo = createAsyncThunk(
   'video/fetchVideo',
@@ -60,7 +62,11 @@ export const fetchVideo = createAsyncThunk(
 const VideoSlice = createSlice({
   name: 'video',
   initialState,
-  reducers: {},
+  reducers: {
+    sceneAdded(state) {
+      return state.video;
+    },
+  },
   extraReducers: {
     [fetchVideo.pending]: (state, action) => {
       state.status = 'loading';
@@ -72,6 +78,12 @@ const VideoSlice = createSlice({
     [fetchVideo.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
+    },
+    [addScene.fulfilled]: (state, action) => {
+      console.log('addScene.fulfilled');
+      videoAdapter.updateOne(state, action.payload);
+      const video = selectVideoById(state, action.payload.videoId);
+      console.log({ video });
     },
   },
 });

@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchVideos, selectAllVideos, selectVideosByChannel } from '../actions/videos';
+import { fetchVideos, selectAllVideos, selectVideosByChannel } from './videosSlice';
 
-import Header from './Header';
-import VideoItem from '../components/VideoItem';
+import Header from '../../container/Header';
+import VideoItem from '../../components/VideoItem';
 import { VideoItemsWrapper } from './Videos.style';
 
 interface VideoRouterParams {
@@ -41,7 +41,9 @@ export default function Videos() {
 
       {videoStatus === 'succeeded' && (
         <VideoItemsWrapper>
-          {videoItems.map(({ videoId, title, thumbnail, publishedAt, channel }) => {
+          {videoItems.map((video) => {
+            const { videoId, title, thumbnail, publishedAt, channel } = video;
+
             return (
               <VideoItem
                 key={videoId}

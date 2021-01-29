@@ -9,7 +9,7 @@ describe('Videos', () => {
     });
 
     it('Can get videos of a channel with paging', () => {
-      const lastId = 'UCfkXDY7vwkcJ8ddFGz8KusA::2013-02-18T09:55:54Z::W51xHn9wJfE';
+      const lastId = '2013-02-18T09:55:54Z/W51xHn9wJfE';
 
       Videos.getForChannel({ channelId: 'UCfkXDY7vwkcJ8ddFGz8KusA', lastId }).then((videos) => {
         const found = videos.find((video) => video.id === lastId);

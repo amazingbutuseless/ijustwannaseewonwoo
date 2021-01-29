@@ -25,7 +25,7 @@ export default {
         S: 'video',
       },
       relId: {
-        S: videoItem.contentDetails.videoPublishedAt,
+        S: `${videoItem.contentDetails.videoPublishedAt}/${videoItem.contentDetails.videoId}`,
       },
       channelId: {
         S: videoItem.snippet.channelId,

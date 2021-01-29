@@ -64,7 +64,7 @@ export const VideoResolvers = {
 
   Video: {
     id(video) {
-      return video.relId;
+      return video.videoId;
     },
 
     channel(video) {

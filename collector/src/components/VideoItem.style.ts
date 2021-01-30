@@ -15,6 +15,8 @@ export const VideoItemInfo = styled.div`
   width: 100%;
   box-sizing: border-box;
   background-color: rgba(0, 0, 0, 0.75);
+  transform: translateY(100%);
+  transition: transform 300ms;
 
   strong {
     font-size: 1.4rem;
@@ -46,5 +48,9 @@ export const VideoItemWrapper = styled.div`
 
   &:hover {
     box-shadow: var(--boxShadow);
+
+    ${VideoItemInfo} {
+      transform: translateY(0);
+    }
   }
 `;

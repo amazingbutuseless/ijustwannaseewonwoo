@@ -18,24 +18,28 @@ interface ReactPlayerOnProgressInterface {
 export default function VideoPlayer({ videoId, timecode, onPaused }: VideoPlayerProps) {
   const player = useRef(null);
   const [playing, setPlaying] = useState(true);
+  const [currentTime, setCurrentTime] = useState(0);
 
   const onProgress = ({ playedSeconds }: ReactPlayerOnProgressInterface) => {
-    if (!Number.isNaN(timecode.end)) {
-      if (Math.floor(playedSeconds) >= timecode.end) {
+    if (timecode.end) {
+      const current = Math.floor(playedSeconds);
+      setCurrentTime(current);
+
+      if (current >= timecode.end) {
         onPaused();
         setPlaying(false);
       }
     }
   };
 
+  const onSeek = (e) => {
+    console.log(e);
+  };
+
   useEffect(() => {
     if (player.current) {
-      const start = parseInt(timecode.start);
-
-      if (!Number.isNaN(start)) {
-        player.current.seekTo(start);
-        setPlaying(true);
-      }
+      player.current.seekTo(timecode.start);
+      setPlaying(true);
     }
   }, [timecode.start]);
 

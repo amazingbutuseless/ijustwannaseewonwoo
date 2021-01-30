@@ -4,20 +4,19 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { SceneTimecodeInterface } from '../../types';
 
-import { selectVideoById } from '../videos/videosSlice';
-import { fetchVideo } from './videoSlice';
+import { fetchVideo, selectVideoById } from './videosSlice';
 
-import { VideoWrapper } from './Video.style';
+import { VideoWrapper } from './VideoDetails.style';
 
 import Header from '../../container/Header';
 import VideoPlayer from '../../components/VideoPlayer';
-import Scenes from '../../container/Scenes';
+import Scenes from '../scenes/Scenes';
 
 interface VideoRouterParams {
   videoId: string;
 }
 
-function Video() {
+function VideoDetails() {
   const { videoId }: VideoRouterParams = useParams();
 
   const [time, updateTime] = useState({ start: 0, end: null });
@@ -29,15 +28,7 @@ function Video() {
 
   useEffect(() => {
     if (!video) {
-      dispatch(fetchVideo({ videoId }));
-    } else {
-      if (video.scenes.length > 0) {
-        const { start, end } = video.scenes[0];
-        updateTime({
-          start,
-          end,
-        });
-      }
+      dispatch(fetchVideo(videoId));
     }
   }, [video, dispatch]);
 
@@ -87,7 +78,6 @@ function Video() {
             <Scenes
               videoId={videoId}
               publishedAt={video.publishedAt}
-              scenes={video.scenes}
               onTimecodeSet={onTimecodeSet}
               onSceneClick={onSceneClick}
             />
@@ -98,4 +88,4 @@ function Video() {
   );
 }
 
-export default Video;
+export default VideoDetails;

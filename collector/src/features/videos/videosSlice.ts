@@ -9,7 +9,9 @@ import { VideoItemInListInterface } from '../../types';
 
 import { APIClient } from '../../actions/APIClient';
 
-const videosAdapter = createEntityAdapter<VideoItemInListInterface>();
+const videosAdapter = createEntityAdapter<VideoItemInListInterface>({
+  selectId: (video) => video.videoId,
+});
 
 const initialState = videosAdapter.getInitialState({
   status: 'idle',
@@ -24,10 +26,6 @@ const videoEntities = `
   publishedAt
   thumbnail(size: high) {
     url
-  }
-  scenes {
-    start
-    end
   }
   channel {
     title
@@ -75,6 +73,25 @@ export const fetchVideos = createAsyncThunk(
   }
 );
 
+const fetchVideoQuery = `
+query video($videoId: ID!) {
+  video(id: $videoId) {
+    ${videoEntities}
+  }
+}
+`;
+
+export const fetchVideo = createAsyncThunk('videos/fetchVideo', async (videoId: string) => {
+  const response = await APIClient.graphql({
+    query: fetchVideoQuery,
+    variables: {
+      videoId,
+    },
+  });
+
+  return response.data.video;
+});
+
 const VideosSlice = createSlice({
   name: 'videos',
   initialState,
@@ -92,6 +109,10 @@ const VideosSlice = createSlice({
     [fetchVideos.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
+    },
+
+    [fetchVideo.fulfilled]: (state, action) => {
+      videosAdapter.upsertOne(state, action.payload);
     },
   },
 });

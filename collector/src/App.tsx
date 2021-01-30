@@ -3,8 +3,8 @@ import { Switch, Route, useHistory } from 'react-router-dom';
 
 import { ContentsWrapper, NavigationWrapper } from './App.style';
 
-import Videos from './features/videos/Videos';
-import Video from './features/video/Video';
+import VideoList from './features/videos/VideoList';
+import VideoDetails from './features/videos/VideoDetails';
 import Channels from './features/channels/Channels';
 
 export default function App(): ReactElement {
@@ -22,13 +22,13 @@ export default function App(): ReactElement {
       <ContentsWrapper>
         <Switch>
           <Route exact path="/">
-            <Videos />
+            <VideoList />
           </Route>
           <Route path="/channel/:channelId">
-            <Videos />
+            <VideoList />
           </Route>
           <Route path="/video/:videoId">
-            <Video />
+            <VideoDetails />
           </Route>
         </Switch>
       </ContentsWrapper>

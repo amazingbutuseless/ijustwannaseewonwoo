@@ -6,18 +6,24 @@ import { fetchVideos, selectAllVideos, selectVideosByChannel } from './videosSli
 
 import Header from '../../container/Header';
 import VideoItem from '../../components/VideoItem';
-import { VideoItemsWrapper } from './Videos.style';
+import { VideoItemsWrapper } from './VideoList.style';
 
 interface VideoRouterParams {
   channelId: string;
 }
 
-export default function Videos() {
+export default function VideoList() {
   const dispatch = useDispatch();
   const history = useHistory();
   const { channelId }: VideoRouterParams = useParams();
 
-  const videoItems = useSelector(selectAllVideos);
+  const videoItems = useSelector((state) => {
+    if (typeof channelId !== 'undefined') {
+      return selectVideosByChannel(state, channelId);
+    } else {
+      return selectAllVideos(state);
+    }
+  });
 
   const videoStatus = useSelector((state) => {
     return state.videos.status;

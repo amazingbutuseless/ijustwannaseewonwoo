@@ -10,6 +10,7 @@ export const SceneList = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
+  white-space: nowrap;
   overflow: auto;
 `;
 

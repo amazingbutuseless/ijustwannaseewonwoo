@@ -1,12 +1,12 @@
-import React, { FormEvent, useRef } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { SceneAddFormProps, SceneTimecodeInterface, SceneItemInterface } from '../types';
+import { SceneAddFormProps, SceneTimecodeInterface, SceneItemInterface } from '../../types';
 
-import { addScene } from '../actions/video';
+import { fetchScenes, addScene, selectAllScenesForVideo } from './scenesSlice';
 
-import SceneListItem from '../components/SceneListItem';
+import SceneListItem from '../../components/SceneListItem';
 import { SceneList, SceneWrapper, AddSceneContainer } from './Scenes.style';
 
 const Button = styled.button`
@@ -30,34 +30,49 @@ const Button = styled.button`
   }
 `;
 
-function SceneAddForm({ videoId, onTimecodeSet }: SceneAddFormProps) {
+function SceneAddForm({ videoId, publishedAt, onTimecodeSet }: SceneAddFormProps) {
+  const dispatch = useDispatch();
+
   const startMin = useRef<HTMLInputElement>(null);
   const startSec = useRef<HTMLInputElement>(null);
   const endMin = useRef<HTMLInputElement>(null);
   const endSec = useRef<HTMLInputElement>(null);
 
-  const addScene = (e) => {
-    e.preventDefault();
-
-    console.log('add scene');
-  };
-
-  const onTimeUpdate = () => {
+  const getTimecode = () => {
     const startMinTime = startMin.current.value.length > 0 ? parseInt(startMin.current.value) : 0;
     const startSecTime = startSec.current.value.length > 0 ? parseInt(startSec.current.value) : 0;
     const endMinTime = endMin.current.value.length > 0 ? parseInt(endMin.current.value) : 0;
     const endSecTime = endSec.current.value.length > 0 ? parseInt(endSec.current.value) : 0;
 
-    onTimecodeSet({
+    return {
       start: startMinTime * 60 + startSecTime,
       end: endMinTime > 0 || endSecTime > 0 ? endMinTime * 60 + endSecTime : null,
+    };
+  };
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    dispatch(addScene({ videoId, ...getTimecode() }));
+  };
+
+  const onTimeUpdate = (e) => {
+    const timecode = getTimecode();
+
+    onTimecodeSet({
+      start: e.target.name.startsWith('start') ? timecode.start : timecode.end,
+      end: e.target.name.startsWith('end') ? timecode.end : null,
     });
+  };
+
+  const playDuration = () => {
+    onTimecodeSet(getTimecode());
   };
 
   return (
     <div>
       <h3>장면 추가</h3>
-      <AddSceneContainer action="" onSubmit={addScene}>
+      <AddSceneContainer action="" onSubmit={onSubmit}>
         <input
           type="number"
           name="start_min"
@@ -95,8 +110,10 @@ function SceneAddForm({ videoId, onTimecodeSet }: SceneAddFormProps) {
           ref={endSec}
           onChange={onTimeUpdate}
         />
-        <input type="hidden" name="videoId" value={videoId} />
-        <Button type="submit" onClick={addScene}>
+        <Button type="button" onClick={playDuration}>
+          재생
+        </Button>
+        <Button type="submit" onClick={onSubmit}>
           추가
         </Button>
       </AddSceneContainer>
@@ -106,23 +123,38 @@ function SceneAddForm({ videoId, onTimecodeSet }: SceneAddFormProps) {
 
 interface SceneProps {
   videoId: string;
-  scenes: SceneInterface[];
+  publishedAt: string;
+  scenes: SceneItemInterface[];
   onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
 }
 
-export default function Scenes({ videoId, scenes, onTimecodeSet, onSceneClick }: SceneProps) {
+export default function Scenes({ videoId, publishedAt, onTimecodeSet, onSceneClick }: SceneProps) {
+  const dispatch = useDispatch();
+
+  const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
+  const scenesStatus = useSelector((state) => state.scenes.status);
+
+  useEffect(() => {
+    if (scenesStatus === 'idle') {
+      dispatch(fetchScenes(videoId));
+    } else if (scenesStatus === 'succeeded') {
+      const { start, end } = scenes[0];
+      onTimecodeSet({ start, end });
+    }
+  }, []);
+
   return (
     <SceneWrapper>
-      <SceneAddForm videoId={videoId} onTimecodeSet={onTimecodeSet} />
+      <SceneAddForm videoId={videoId} publishedAt={publishedAt} onTimecodeSet={onTimecodeSet} />
 
-      <div>
+      <div style={{ overflow: 'hidden' }}>
         <h3>😺🍿 장면들</h3>
         <SceneList>
-          <SceneListItem title={'test'} start={30} end={40} onSceneClick={onTimecodeSet} />
-          {scenes.map((scene) => (
-            <SceneListItem {...scene} onSceneClick={onSceneClick} />
-          ))}
+          {scenesStatus === 'succeeded' &&
+            scenes.map((scene, idx) => (
+              <SceneListItem key={`scene-${idx + 1}`} {...scene} onSceneClick={onSceneClick} />
+            ))}
         </SceneList>
       </div>
     </SceneWrapper>

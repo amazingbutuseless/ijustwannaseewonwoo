@@ -10,7 +10,7 @@ interface SceneListItemProps extends SceneItemInterface {
 }
 
 export default function SceneListItem({
-  thumbnails,
+  thumbnail,
   start,
   end,
   onSceneClick,
@@ -20,15 +20,15 @@ export default function SceneListItem({
     onSceneClick({ start, end });
   };
 
-  const startTimecode = `${Math.floor(start / 60)}:${start % 60}`;
-  const endTimecode = `${Math.floor(end / 60)}:${end % 60}`;
+  const startTimecode = `${Math.floor(start / 60)}:${('00' + (start % 60)).substr(-2)}`;
+  const endTimecode = `${Math.floor(end / 60)}:${('00' + (end % 60)).substr(-2)}`;
   const durationMin = Math.floor((end - start) / 60);
   const durationSec = (end - start) % 60;
   const duration = `${durationMin > 0 ? durationMin + 'm ' : ''}${durationSec}s`;
 
   return (
     <SceneListItemWrapper onClick={onClick} active={active}>
-      <img src={thumbnails} alt="" />
+      <img src={thumbnail} alt="" />
       {startTimecode} ~ {endTimecode}
       <span>{duration}</span>
     </SceneListItemWrapper>

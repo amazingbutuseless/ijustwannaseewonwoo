@@ -136,13 +136,15 @@ export default function Scenes({ videoId, publishedAt, onTimecodeSet, onSceneCli
   const scenesStatus = useSelector((state) => state.scenes.status);
 
   useEffect(() => {
-    if (scenesStatus === 'idle') {
-      dispatch(fetchScenes(videoId));
-    } else if (scenesStatus === 'succeeded') {
+    dispatch(fetchScenes(videoId));
+  }, [videoId]);
+
+  useEffect(() => {
+    if (scenesStatus === 'succeeded' && scenes.length > 0) {
       const { start, end } = scenes[0];
       onTimecodeSet({ start, end });
     }
-  }, []);
+  }, [scenesStatus]);
 
   return (
     <SceneWrapper>

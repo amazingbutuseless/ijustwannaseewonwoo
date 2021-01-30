@@ -17,7 +17,7 @@ interface ReactPlayerOnProgressInterface {
 
 export default function VideoPlayer({ videoId, timecode, onPaused }: VideoPlayerProps) {
   const player = useRef(null);
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
 
   const onProgress = ({ playedSeconds }: ReactPlayerOnProgressInterface) => {

@@ -96,19 +96,14 @@ const VideosSlice = createSlice({
   },
 });
 
-export default VideosSlice.reducer;
-
-export const { selectAll: selectAllVideos } = videosAdapter.getSelectors((state) => state.videos);
+export const {
+  selectAll: selectAllVideos,
+  selectById: selectVideoById,
+} = videosAdapter.getSelectors((state) => state.videos);
 
 export const selectVideosByChannel = createSelector(
   [selectAllVideos, (state, channelId: string) => channelId],
   (videos, channelId) => videos.filter((video) => video.channelId === channelId)
 );
 
-export const selectVideoById = createSelector(
-  [selectAllVideos, (state, videoId: string) => videoId],
-  (videos, videoId) => {
-    const filteredVideos = videos.filter((video) => video.videoId === videoId);
-    return filteredVideos.length > 0 ? filteredVideos[0] : null;
-  }
-);
+export default VideosSlice.reducer;

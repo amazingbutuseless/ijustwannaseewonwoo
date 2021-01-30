@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchVideo, selectVideoById } from './videoSlice';
+import { SceneTimecodeInterface } from '../../types';
+
+import { selectVideoById } from '../videos/videosSlice';
+import { fetchVideo } from './videoSlice';
 
 import { VideoWrapper } from './Video.style';
 
 import Header from '../../container/Header';
 import VideoPlayer from '../../components/VideoPlayer';
 import Scenes from '../../container/Scenes';
-import { SceneTimecodeInterface } from '../../components/SceneListItem';
 
 interface VideoRouterParams {
   videoId: string;

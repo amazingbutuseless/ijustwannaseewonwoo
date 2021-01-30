@@ -80,10 +80,8 @@ const VideoSlice = createSlice({
       state.error = action.error.message;
     },
     [addScene.fulfilled]: (state, action) => {
-      console.log('addScene.fulfilled');
       videoAdapter.updateOne(state, action.payload);
       const video = selectVideoById(state, action.payload.videoId);
-      console.log({ video });
     },
   },
 });

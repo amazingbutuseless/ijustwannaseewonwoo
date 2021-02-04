@@ -44,6 +44,49 @@ export default {
       });
   },
 
+  getForPlaylist({ playlistId, lastId, limit }) {
+    const ExpressionAttributeValues = {
+      ':video': {
+        S: 'video',
+      },
+      ':playlistId': {
+        S: playlistId,
+      },
+    };
+    const KeyConditionExpression = 'id = :video AND playlistId = :playlistId';
+
+    const params = {
+      IndexName: 'playlistIdIndex',
+      ExpressionAttributeValues,
+      KeyConditionExpression,
+      Limit: limit,
+      ScanIndexForward: false,
+    };
+
+    if (lastId.length > 0) {
+      params.ExclusiveStartKey = {
+        id: {
+          S: 'video',
+        },
+        relId: {
+          S: lastId,
+        },
+        playlistId: {
+          S: playlistId,
+        },
+      };
+    }
+
+    return DB.query(params)
+      .then((response) => {
+        return response.Items.map((item) => DB.parse(item));
+      })
+      .catch((err) => {
+        console.log(err);
+        return [];
+      });
+  },
+
   get({ limit = 20, lastId = '' }) {
     const KeyConditionExpression = 'id = :video';
 

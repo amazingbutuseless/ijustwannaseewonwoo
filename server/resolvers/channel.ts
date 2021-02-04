@@ -1,6 +1,7 @@
 import DB from './dynamodb_helper';
 import YoutubeHelper from './youtube_helper';
-import Video from './video';
+
+import { IChannelRegisterParams } from '../types';
 
 export default {
   get(id) {
@@ -35,9 +36,14 @@ export default {
     });
   },
 
-  async register(channelUrl) {
-    const channelData = await YoutubeHelper.getChannelData(channelUrl);
-    // todo: channelData에서 확인한 id로 채널이 중복 등록되지 않도록 주의 (Google API 호출 횟수 증가)
+  async register({ channelUrl, channelId }: IChannelRegisterParams) {
+    let channelData = {};
+
+    if (typeof channelUrl !== 'undefined') {
+      channelData = await YoutubeHelper.getChannelDataByUrl(channelUrl);
+    } else if (typeof channelId !== 'undefined') {
+      channelData = await YoutubeHelper.getChannelDataById(channelId);
+    }
 
     const thumbnails = {
       default: channelData.snippet.thumbnails.default.url,
@@ -71,19 +77,12 @@ export default {
     };
 
     return DB.putItem(Item)
-      .then(async () => {
-        const videos = await YoutubeHelper.getPlaylistItems(
-          channelData.contentDetails.relatedPlaylists.uploads
-        );
-
-        const channel = DB.parse(Item);
-        channel.videos = await Video.registerBulk(videos);
-
-        return channel;
+      .then(() => {
+        return DB.parse(Item);
       })
       .catch((err) => {
         console.log(err);
-        return {};
+        return null;
       });
   },
 };

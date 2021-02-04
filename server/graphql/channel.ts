@@ -40,7 +40,7 @@ export const ChannelResolvers = {
 
   Mutation: {
     registerChannel(root, { channelUrl }, ctx) {
-      return Channel.register(channelUrl);
+      return Channel.register({ channelUrl });
     },
   },
 

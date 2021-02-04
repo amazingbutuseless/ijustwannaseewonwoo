@@ -1,7 +1,9 @@
 import DB from './dynamodb_helper';
 
+import { VideoDataInterface } from '../types';
+
 export default {
-  prepareDataForCreating(videoItem) {
+  prepareDataForCreating(videoItem, playlistId) {
     const thumbnails = {};
 
     Object.entries(videoItem.snippet.thumbnails).forEach(([size, details]) => {
@@ -20,7 +22,7 @@ export default {
       };
     });
 
-    return {
+    const video = {
       id: {
         S: 'video',
       },
@@ -49,9 +51,17 @@ export default {
         N: '0',
       },
     };
+
+    if (playlistId.length > 0) {
+      video.playlistId = {
+        S: playlistId,
+      };
+    }
+
+    return video;
   },
 
-  get(videoId) {
+  get(videoId: string): Promise<VideoDataInterface | Record<string, never>> {
     const ExpressionAttributeValues = {
       ':video': {
         S: 'video',
@@ -94,14 +104,14 @@ export default {
       });
   },
 
-  registerBulk(videos) {
+  registerBulk(videos, playlistId = '') {
     let updatedVideos = [];
 
     const tasks = [];
 
     while (videos.length > 0) {
       const videoChunk = videos.splice(0, Math.min(25, videos.length));
-      const items = videoChunk.map((video) => this.prepareDataForCreating(video));
+      const items = videoChunk.map((video) => this.prepareDataForCreating(video, playlistId));
 
       tasks.push(DB.putItems(items));
       updatedVideos = updatedVideos.concat(items.map((video) => DB.parse(video)));

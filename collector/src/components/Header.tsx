@@ -3,7 +3,7 @@ import { useLocation, useParams } from 'react-router';
 
 import { HeaderWrapper, BackButton } from './Header.style';
 
-import Logo from '../components/Logo';
+import Logo from './Logo';
 
 interface HeaderProps {
   title?: string;

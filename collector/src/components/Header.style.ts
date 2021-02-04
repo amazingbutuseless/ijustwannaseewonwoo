@@ -5,14 +5,14 @@ export const BackButton = styled.a`
   text-decoration: none;
 
   path {
-    fill: var(--pumpkin);
+    fill: var(--silver-chalice);
   }
 `;
 
 export const HeaderWrapper = styled.header`
   position: fixed;
   top: 0;
-  left: 9.6rem;
+  left: 8rem;
 
   padding: 1.6rem;
   width: 100vw;
@@ -32,6 +32,6 @@ export const HeaderWrapper = styled.header`
     margin: 0;
     margin-left: 3.2rem;
     padding: 0;
-    color: var(--pumpkin);
+    color: var(--silver-chalice);
   }
 `;

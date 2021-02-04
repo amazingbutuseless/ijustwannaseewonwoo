@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { fetchVideos, selectAllVideos, selectVideosByChannel } from './videosSlice';
 
-import Header from '../../container/Header';
 import VideoItem from '../../components/VideoItem';
 import { VideoItemsWrapper } from './VideoList.style';
 
@@ -42,7 +41,6 @@ export default function VideoList() {
 
   return (
     <>
-      <Header />
       {['idle', 'pending'].includes(videoStatus) && <div>loading...</div>}
 
       {videoStatus === 'succeeded' && (

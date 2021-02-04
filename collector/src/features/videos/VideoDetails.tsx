@@ -8,7 +8,7 @@ import { fetchVideo, selectVideoById } from './videosSlice';
 
 import { VideoWrapper } from './VideoDetails.style';
 
-import Header from '../../container/Header';
+import Header from '../../components/Header';
 import VideoPlayer from '../../components/VideoPlayer';
 import Scenes from '../scenes/Scenes';
 

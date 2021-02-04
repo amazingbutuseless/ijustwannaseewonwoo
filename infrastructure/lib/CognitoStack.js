@@ -78,6 +78,9 @@ export default class CognitoStack extends sst.Stack {
           providerName: userPool.userPoolProviderName,
         },
       ],
+      supportedLoginProviders: {
+        'accounts.google.com': process.env.GOOGLE_SIGNIN_CLIENT_ID,
+      },
     });
 
     const authenticatedRole = new CognitoAuthRole(this, 'CognitoAuthRole', {

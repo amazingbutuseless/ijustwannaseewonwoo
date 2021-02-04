@@ -9,6 +9,8 @@ import VideoDetails from './features/videos/VideoDetails';
 import UserSignIn from './features/user/UserSignIn';
 import UserSignedIn from './features/user/UserSignedIn';
 
+import Drawer from './components/Drawer';
+
 export default function App(): ReactElement {
   const userStatus = useSelector((state) => state.user.status);
 
@@ -18,12 +20,14 @@ export default function App(): ReactElement {
         {userStatus === 'signedOut' && <UserSignIn />}
         {userStatus === 'signedIn' && (
           <>
-            <UserSignedIn />
+            <Drawer>
+              <UserSignedIn />
+            </Drawer>
             <Switch>
               <Route exact path="/">
                 <VideoList />
               </Route>
-              <Route path="/channel/:channelId">
+              <Route exact path="/video">
                 <VideoList />
               </Route>
               <Route path="/video/:videoId">

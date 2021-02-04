@@ -12,7 +12,7 @@ export const BackButton = styled.a`
 export const HeaderWrapper = styled.header`
   position: fixed;
   top: 0;
-  left: 0;
+  left: 9.6rem;
 
   padding: 1.6rem;
   width: 100vw;

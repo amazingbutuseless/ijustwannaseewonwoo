@@ -57,7 +57,7 @@ export interface SceneItemInterface extends SceneTimecodeInterface {
   };
 }
 
-export interface AddSceneReducerParameters extends SceneItemInterface {
+export interface AddSceneReducerParameters extends SceneTimecodeInterface {
   videoId: VideoId;
 }
 
@@ -69,6 +69,9 @@ export interface ChannelItemThumbnails {
 
 export interface SceneAddFormProps {
   videoId: VideoId;
-  publishedAt: VideoPublishedAt;
   onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
+}
+
+export interface IDrawerStyleProps {
+  expanded: boolean;
 }

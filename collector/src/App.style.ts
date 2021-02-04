@@ -1,20 +1,6 @@
 import styled from '@emotion/styled';
 
-export const NavigationWrapper = styled.nav`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  padding: 6.4rem 1.6rem 0;
-  width: 8.4rem;
-  height: 100vh;
-  box-sizing: border-box;
-
-  z-index: 2;
-`;
-
 export const ContentsWrapper = styled.div`
-  margin-left: 8.4rem;
   padding: 5.6rem 1.6rem 2.4rem;
   z-index: 1;
 `;

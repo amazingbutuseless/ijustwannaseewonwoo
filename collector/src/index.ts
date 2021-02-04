@@ -18,10 +18,12 @@ app.whenReady().then(() => {
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 1024,
+    height: 800,
+    width: 1080,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
+      nativeWindowOpen: true,
     },
   });
 

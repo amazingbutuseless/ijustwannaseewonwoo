@@ -1,36 +1,37 @@
 import React, { ReactElement } from 'react';
-import { Switch, Route, useHistory } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import { ContentsWrapper, NavigationWrapper } from './App.style';
+import { ContentsWrapper } from './App.style';
 
 import VideoList from './features/videos/VideoList';
 import VideoDetails from './features/videos/VideoDetails';
-import Channels from './features/channels/Channels';
+import UserSignIn from './features/user/UserSignIn';
+import UserSignedIn from './features/user/UserSignedIn';
 
 export default function App(): ReactElement {
-  const history = useHistory();
-
-  const onClick = (channelId: string) => {
-    history.push(`/channel/${channelId}`);
-  };
+  const userStatus = useSelector((state) => state.user.status);
 
   return (
     <>
-      <NavigationWrapper>
-        <Channels onClick={onClick} />
-      </NavigationWrapper>
       <ContentsWrapper>
-        <Switch>
-          <Route exact path="/">
-            <VideoList />
-          </Route>
-          <Route path="/channel/:channelId">
-            <VideoList />
-          </Route>
-          <Route path="/video/:videoId">
-            <VideoDetails />
-          </Route>
-        </Switch>
+        {userStatus === 'signedOut' && <UserSignIn />}
+        {userStatus === 'signedIn' && (
+          <>
+            <UserSignedIn />
+            <Switch>
+              <Route exact path="/">
+                <VideoList />
+              </Route>
+              <Route path="/channel/:channelId">
+                <VideoList />
+              </Route>
+              <Route path="/video/:videoId">
+                <VideoDetails />
+              </Route>
+            </Switch>
+          </>
+        )}
       </ContentsWrapper>
     </>
   );

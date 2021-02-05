@@ -32,7 +32,7 @@ export const DrawerWrapper = styled.nav<IDrawerStyleProps>`
   font-size: 1.6rem;
   color: #fff;
   z-index: 5;
-  transform: translateX(calc(-100% + 8rem));
+  transform: translateX(calc(-100% + 6.4rem));
   transition: transform 200ms;
 
   ${({ expanded }) =>
@@ -41,6 +41,7 @@ export const DrawerWrapper = styled.nav<IDrawerStyleProps>`
   box-shadow: var(--boxShadow);`}
 
   button {
+    padding: 0;
     border: 0;
     background-color: transparent;
     color: var(--silver-chalice);

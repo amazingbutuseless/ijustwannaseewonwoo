@@ -47,7 +47,7 @@ export default function Drawer({ children }): ReactElement {
         <ul>
           <li>
             <a href="/" onClick={onLinkClick}>
-              Home
+              Featured
             </a>
           </li>
           <li>

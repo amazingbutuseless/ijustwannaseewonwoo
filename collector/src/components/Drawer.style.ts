@@ -99,6 +99,10 @@ export const DrawerWrapper = styled.nav<IDrawerStyleProps>`
     padding-top: 2.4rem;
     font-size: 1.2rem;
 
+    button {
+      margin-left: 0.8rem;
+    }
+
     &:before {
       position: absolute;
       top: 0;

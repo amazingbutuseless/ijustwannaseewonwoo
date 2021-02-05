@@ -68,6 +68,7 @@ export interface ChannelItemThumbnails {
 }
 
 export interface SceneAddFormProps {
+  visible: boolean;
   videoId: VideoId;
   onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
 }

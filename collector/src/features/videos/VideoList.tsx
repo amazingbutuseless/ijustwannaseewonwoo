@@ -7,6 +7,8 @@ import { fetchVideos, selectAllVideos, selectVideosByChannel } from './videosSli
 import VideoItem from '../../components/VideoItem';
 import { VideoItemsWrapper } from './VideoList.style';
 
+import LoadingAnimation from '../../components/LoadingAnimation';
+
 interface VideoRouterParams {
   channelId: string;
 }
@@ -33,7 +35,7 @@ export default function VideoList() {
     if (videoStatus === 'idle') {
       dispatch(fetchVideos({ channelId: channelId || '', lastId: '' }));
     }
-  }, [videoStatus, dispatch]);
+  }, [videoStatus]);
 
   const onClick = (selectedVideoId: string) => {
     history.push(`/video/${selectedVideoId}`);
@@ -41,7 +43,7 @@ export default function VideoList() {
 
   return (
     <>
-      {['idle', 'pending'].includes(videoStatus) && <div>loading...</div>}
+      {videoStatus !== 'succeeded' && <LoadingAnimation />}
 
       {videoStatus === 'succeeded' && (
         <VideoItemsWrapper>

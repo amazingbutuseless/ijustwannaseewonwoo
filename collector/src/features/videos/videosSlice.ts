@@ -36,9 +36,9 @@ const videoEntities = `
 `;
 
 const queryForFetchChannelVideos = `
-query channel($channelId: ID!) { 
+query channel($channelId: ID!, $lastId: String) { 
   channel(id: $channelId) {
-    videos {
+    videos(limit: 15, lastId: $lastId) {
       ${videoEntities}
     }
   }
@@ -46,7 +46,7 @@ query channel($channelId: ID!) {
 
 const queryForAllVideos = `
 query videos($lastId: String) { 
-  videos(limit: 21, lastId: $lastId) {
+  videos(limit: 15, lastId: $lastId) {
     ${videoEntities}
   }
 }`;

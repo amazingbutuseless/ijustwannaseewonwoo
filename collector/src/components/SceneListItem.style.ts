@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 interface SceneListItemWrapperStyleProps {
-  active: boolean;
+  active?: boolean;
 }
 
 export const SceneListItemWrapper = styled.li`
@@ -9,11 +9,10 @@ export const SceneListItemWrapper = styled.li`
 
   margin-right: 1.6rem;
   padding: 1.6rem;
-  width: 24rem;
+  width: 16rem;
 
   box-sizing: border-box;
-  border: 2px solid
-    ${({ active }: SceneListItemWrapperStyleProps) => (active ? 'var(--pumpkin)' : 'transparent')};
+  border-top: 4px solid transparent;
   border-radius: var(--borderRadius);
 
   background-color: #fff;

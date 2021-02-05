@@ -5,12 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SceneTimecodeInterface } from '../../types';
 
 import { fetchVideo, selectVideoById } from './videosSlice';
+import { selectAllScenesForVideo } from '../scenes/scenesSlice';
 
 import { VideoWrapper } from './VideoDetails.style';
 
 import Header from '../../components/Header';
 import VideoPlayer from '../../components/VideoPlayer';
+import VideoForWonwoo from './VideoForWonwoo';
 import Scenes from '../scenes/Scenes';
+import SceneAddForm from '../scenes/SceneAddForm';
 
 interface VideoRouterParams {
   videoId: string;
@@ -21,25 +24,41 @@ function VideoDetails() {
 
   const [time, updateTime] = useState({ start: 0, end: null });
   const [timeSource, setTimeSource] = useState('scene');
+  const [activeSceneIdx, updateActiveSceneIdx] = useState(-1);
+
+  const [sceneAddFormVisible, setSceneAddFormVisible] = useState(false);
 
   const dispatch = useDispatch();
 
   const video = useSelector((state) => selectVideoById(state, videoId));
 
+  const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
+  const scenesStatus = useSelector((state) => state.scenes.status);
+
   useEffect(() => {
-    if (!video) {
-      dispatch(fetchVideo(videoId));
+    dispatch(fetchVideo(videoId));
+  }, [videoId]);
+
+  useEffect(() => {
+    if (scenesStatus === 'succeeded' && scenes.length > 0) {
+      setTimeSource('scene');
+
+      const { start, end } = scenes[0];
+      updateTime({ start, end });
     }
-  }, [video, dispatch]);
+  }, [scenesStatus]);
+
+  const getSceneIndex = ({ start, end }) => {
+    return scenes.findIndex((scene) => scene.start === start && scene.end === end);
+  };
 
   const playNextScene = () => {
-    const currentSceneIndex = video.scenes.findIndex(
-      (scene) => scene.start === time.start && scene.end === time.end
-    );
+    const currentSceneIndex = getSceneIndex({ start: time.start, end: time.end });
     const nextSceneIndex = currentSceneIndex + 1;
 
-    if (nextSceneIndex < video.scenes.length) {
-      const { start, end } = video.scenes[nextSceneIndex];
+    if (nextSceneIndex < scenes.length) {
+      updateActiveSceneIdx(nextSceneIndex);
+      const { start, end } = scenes[nextSceneIndex];
       updateTime({ start, end });
     }
   };
@@ -54,12 +73,16 @@ function VideoDetails() {
   };
 
   const onSceneClick = (timecode: SceneTimecodeInterface) => {
+    const { start, end } = timecode;
+    const sceneIndex = getSceneIndex({ start, end });
+    updateActiveSceneIdx(sceneIndex);
+
     setTimeSource('scene');
     updateTime(timecode);
   };
 
-  const replay = (seekToFunc) => {
-    seekToFunc(timecode.start);
+  const onAddSceneButtonClick = () => {
+    setSceneAddFormVisible(true);
   };
 
   return (
@@ -68,19 +91,27 @@ function VideoDetails() {
       <VideoWrapper>
         {video && (
           <>
-            <VideoPlayer
-              videoId={videoId}
-              timecode={time}
-              onPaused={timeSource === 'scene' ? playNextScene : playDurationAndStop}
-              replay={replay}
-            />
+            <div style={{ position: 'relative' }}>
+              <VideoPlayer
+                videoId={videoId}
+                timecode={time}
+                onPaused={timeSource === 'scene' ? playNextScene : playDurationAndStop}
+              />
+              <SceneAddForm
+                visible={sceneAddFormVisible}
+                videoId={videoId}
+                onTimecodeSet={onTimecodeSet}
+              />
+            </div>
 
             <Scenes
               videoId={videoId}
-              publishedAt={video.publishedAt}
-              onTimecodeSet={onTimecodeSet}
               onSceneClick={onSceneClick}
+              onAddSceneButtonClick={onAddSceneButtonClick}
+              activeSceneIdx={activeSceneIdx}
             />
+
+            <VideoForWonwoo />
           </>
         )}
       </VideoWrapper>

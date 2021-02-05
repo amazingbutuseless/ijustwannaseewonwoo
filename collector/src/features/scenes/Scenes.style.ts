@@ -1,43 +1,45 @@
 import styled from '@emotion/styled';
 
+interface ISceneListProps {
+  activeItemIdx: number;
+}
+
 export const SceneWrapper = styled.div`
-  display: flex;
   margin: 1.6rem 0;
-  align-content: center;
+  overflow: hidden;
 `;
 
-export const SceneList = styled.ul`
+export const SceneList = styled.ul<ISceneListProps>`
   list-style: none;
   margin: 0;
   padding: 0;
+  padding-bottom: 2.4rem;
   white-space: nowrap;
   overflow: auto;
-`;
 
-export const AddSceneContainer = styled.form`
-  margin-right: 1.6rem;
-  padding: 1.6rem;
-  border-radius: var(--borderRadius);
-  background-color: var(--davys-grey);
-  color: var(--silver-chalice);
-
-  input {
-    padding: 0.8rem 0;
-    width: 2.4rem;
-    border: 1px solid transparent;
-    border-radius: 2px;
-    background-color: transparent;
-    color: var(--silver-chalice);
-    text-align: center;
-
-    &:focus {
-      border: 1px solid var(--silver-chalice);
-    }
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
+  li:nth-of-type(${({ activeItemIdx }) => activeItemIdx + 1}) {
+    border-color: var(--dark-orchid);
   }
 `;
+
+export const AddSceneButton = styled.button`
+  position: fixed;
+  bottom: 3.2rem;
+  right: 2.4rem;
+  width: 6.4rem;
+  height: 6.4rem;
+  border-radius: 3.2rem;
+  border: 0;
+  background-color: var(--russian-violet);
+  box-shadow: var(--boxShadow);
+  outline: none;
+  cursor: pointer;
+
+  span {
+    display: none;
+  }
+`;
+
+AddSceneButton.defaultProps = {
+  type: 'button',
+};

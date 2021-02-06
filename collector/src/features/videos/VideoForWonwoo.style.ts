@@ -61,19 +61,20 @@ export const VideoForWonwooWrapper = styled.form`
       }
     }
 
-    &:hover span[data-description]:after {
+    &:hover span[aria-details]:after {
       display: block;
       position: absolute;
-      left: 0;
+      left: 50%;
       bottom: calc(100% + 0.8rem);
       padding: 0.8rem;
       width: 12rem;
+      transform: translateX(-50%);
       border-radius: 4px;
       background-color: var(--rich-black-fogra-39);
       font-size: 1.2rem;
       color: #fff;
       word-break: keep-all;
-      content: attr(data-description);
+      content: attr(aria-details);
     }
   }
 

@@ -28,13 +28,13 @@ export default function VideoForWonwoo() {
       </label>
       <label className="none">
         <input type="radio" name="scenes" value="none" onClick={onRadioClick} />
-        <span data-description="원우가 나오지 않아요를 선택한 사람 수가 3명 이상일 경우, 이 동영상이 리스트에 표시되지 않습니다.">
+        <span aria-details="원우가 나오지 않아요를 선택한 사람 수가 일정 수 이상일 경우, 이 동영상이 리스트에 표시되지 않습니다.">
           😿가 나오지 않아요. <strong>{numOfPeopleChooseNone}</strong>
         </span>
       </label>
       <label>
         <input type="radio" onClick={reset} />
-        <span data-description="잘못 선택한 경우 선택을 취소하세요.">취소</span>
+        <span aria-details="잘못 선택한 경우 선택을 취소하세요.">취소</span>
       </label>
     </VideoForWonwooWrapper>
   );

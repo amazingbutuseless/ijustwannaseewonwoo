@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,10 +10,10 @@ import { selectAllScenesForVideo } from '../scenes/scenesSlice';
 import { VideoWrapper } from './VideoDetails.style';
 
 import Header from '../../components/Header';
-import VideoPlayer from '../../components/VideoPlayer';
 import VideoForWonwoo from './VideoForWonwoo';
 import Scenes from '../scenes/Scenes';
 import SceneAddForm from '../scenes/SceneAddForm';
+import VideoPlayer from '../../components/VideoPlayer';
 
 interface VideoRouterParams {
   videoId: string;
@@ -22,9 +22,10 @@ interface VideoRouterParams {
 function VideoDetails() {
   const { videoId }: VideoRouterParams = useParams();
 
-  const [time, updateTime] = useState({ start: 0, end: null });
+  const player = useRef(null);
+  const [time, updateTime] = useState({ start: -1, end: null });
   const [timeSource, setTimeSource] = useState('scene');
-  const [activeSceneIdx, updateActiveSceneIdx] = useState(-1);
+  const [activeSceneIdx, updateActiveSceneIdx] = useState(null);
 
   const [sceneAddFormVisible, setSceneAddFormVisible] = useState(false);
 
@@ -40,31 +41,21 @@ function VideoDetails() {
   }, [videoId]);
 
   useEffect(() => {
-    if (scenesStatus === 'succeeded' && scenes.length > 0) {
-      setTimeSource('scene');
+    if (player) {
+      if (scenes.length < 1) {
+        updateTime({ start: 0, end: null });
+        return;
+      }
 
+      setTimeSource('scene');
+      updateActiveSceneIdx(0);
       const { start, end } = scenes[0];
       updateTime({ start, end });
     }
-  }, [scenesStatus]);
+  }, [player, scenes]);
 
   const getSceneIndex = ({ start, end }) => {
     return scenes.findIndex((scene) => scene.start === start && scene.end === end);
-  };
-
-  const playNextScene = () => {
-    const currentSceneIndex = getSceneIndex({ start: time.start, end: time.end });
-    const nextSceneIndex = currentSceneIndex + 1;
-
-    if (nextSceneIndex < scenes.length) {
-      updateActiveSceneIdx(nextSceneIndex);
-      const { start, end } = scenes[nextSceneIndex];
-      updateTime({ start, end });
-    }
-  };
-
-  const playDurationAndStop = () => {
-    console.log('play duration');
   };
 
   const onTimecodeSet = (timecode: SceneTimecodeInterface) => {
@@ -72,13 +63,30 @@ function VideoDetails() {
     updateTime(timecode);
   };
 
+  const playNextScene = () => {
+    const nextSceneIndex = activeSceneIdx + 1;
+
+    if (nextSceneIndex < scenes.length) {
+      updateActiveSceneIdx(nextSceneIndex);
+
+      const { start, end } = scenes[nextSceneIndex];
+      updateTime({ start, end });
+    }
+  };
+
+  const onPlayerPaused = () => {
+    if (timeSource === 'scene') {
+      playNextScene();
+    }
+  };
+
   const onSceneClick = (timecode: SceneTimecodeInterface) => {
-    const { start, end } = timecode;
-    const sceneIndex = getSceneIndex({ start, end });
-    updateActiveSceneIdx(sceneIndex);
+    const sceneIndex = getSceneIndex(timecode);
 
     setTimeSource('scene');
+    updateActiveSceneIdx(sceneIndex);
     updateTime(timecode);
+    player.current.seekTo(timecode.start);
   };
 
   const onAddSceneButtonClick = () => {
@@ -95,7 +103,8 @@ function VideoDetails() {
               <VideoPlayer
                 videoId={videoId}
                 timecode={time}
-                onPaused={timeSource === 'scene' ? playNextScene : playDurationAndStop}
+                onPaused={onPlayerPaused}
+                ref={player}
               />
               <SceneAddForm
                 visible={sceneAddFormVisible}

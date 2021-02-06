@@ -48,17 +48,24 @@ export default function Scenes({
     dispatch(fetchScenes(videoId));
   }, [videoId]);
 
+  const SceneItems = () => {
+    return (
+      <>
+        {scenes.map((scene, idx) => (
+          <SceneListItem key={`scene-${idx + 1}`} {...scene} onSceneClick={onSceneClick} />
+        ))}
+      </>
+    );
+  };
+
   return (
     <SceneWrapper>
       <div style={{ overflow: 'hidden' }}>
         <SceneList activeItemIdx={activeSceneIdx}>
           {scenesStatus === 'pending' && <span>loading...</span>}
-          {(scenesStatus === 'succeeded' &&
-            scenes.length > 0 &&
-            scenes.map((scene, idx) => (
-              <SceneListItem key={`scene-${idx + 1}`} {...scene} onSceneClick={onSceneClick} />
-            ))) ||
-            (scenes.length < 1 && <SceneListItemEmpty onClick={onAddSceneButtonClick} />)}
+          {scenesStatus === 'succeeded' &&
+            ((scenes.length > 0 && <SceneItems />) ||
+              (scenes.length < 1 && <SceneListItemEmpty onClick={onAddSceneButtonClick} />))}
         </SceneList>
       </div>
       <AddSceneButton onClick={onAddSceneButtonClick}>

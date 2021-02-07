@@ -32,9 +32,7 @@ function VideoDetails() {
   const dispatch = useDispatch();
 
   const video = useSelector((state) => selectVideoById(state, videoId));
-
   const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
-  const scenesStatus = useSelector((state) => state.scenes.status);
 
   useEffect(() => {
     dispatch(fetchVideo(videoId));
@@ -52,15 +50,10 @@ function VideoDetails() {
       const { start, end } = scenes[0];
       updateTime({ start, end });
     }
-  }, [player, scenes]);
+  }, [player]);
 
   const getSceneIndex = ({ start, end }) => {
     return scenes.findIndex((scene) => scene.start === start && scene.end === end);
-  };
-
-  const onTimecodeSet = (timecode: SceneTimecodeInterface) => {
-    setTimeSource('addScene');
-    updateTime(timecode);
   };
 
   const playNextScene = () => {
@@ -93,6 +86,20 @@ function VideoDetails() {
     setSceneAddFormVisible(true);
   };
 
+  const onSceneAdded = () => {
+    setSceneAddFormVisible(false);
+  };
+
+  const onTimecodeSet = (timecode: SceneTimecodeInterface) => {
+    setTimeSource('addScene');
+    updateTime(timecode);
+    player.current.seekTo(timecode.start);
+  };
+
+  const onSceneAddFormCloseButtonClick = () => {
+    setSceneAddFormVisible(false);
+  };
+
   return (
     <>
       <Header title={video ? video.title : ''} />
@@ -110,6 +117,8 @@ function VideoDetails() {
                 visible={sceneAddFormVisible}
                 videoId={videoId}
                 onTimecodeSet={onTimecodeSet}
+                onSceneAdded={onSceneAdded}
+                onCloseButtonClick={onSceneAddFormCloseButtonClick}
               />
             </div>
 

@@ -1,13 +1,19 @@
 import React, { FormEvent, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { SceneAddFormProps, SceneTimecodeInterface } from '../../types';
+import { ISceneAddFormProps, SceneTimecodeInterface } from '../../types';
 
 import { addScene } from './scenesSlice';
 
-import { SceneAddFormWrapper, SceneAddFormContainer, TimeInput } from './SceneAddForm.style';
+import { SceneAddFormContainer, TimeInput, CloseButton } from './SceneAddForm.style';
 
-export default function SceneAddForm({ visible, videoId, onTimecodeSet }: SceneAddFormProps) {
+export default function SceneAddForm({
+  visible,
+  videoId,
+  onTimecodeSet,
+  onSceneAdded,
+  onCloseButtonClick,
+}: ISceneAddFormProps) {
   const dispatch = useDispatch();
 
   const startMin = useRef<HTMLInputElement>(null);
@@ -27,10 +33,21 @@ export default function SceneAddForm({ visible, videoId, onTimecodeSet }: SceneA
     };
   };
 
+  const resetTimeInput = () => {
+    startMin.current.value = '';
+    startSec.current.value = '';
+    endMin.current.value = '';
+    endSec.current.value = '';
+  };
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     dispatch(addScene({ videoId, ...getTimecode() }));
+
+    resetTimeInput();
+
+    onSceneAdded();
   };
 
   const onTimeUpdate = (e) => {
@@ -42,12 +59,29 @@ export default function SceneAddForm({ visible, videoId, onTimecodeSet }: SceneA
     });
   };
 
+  const onFormCloseButtonClick = () => {
+    resetTimeInput();
+    onCloseButtonClick();
+  };
+
   const playDuration = () => {
     onTimecodeSet(getTimecode());
   };
 
   return (
     <SceneAddFormContainer action="#" onSubmit={onSubmit} visible={visible}>
+      <CloseButton onClick={onFormCloseButtonClick}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="black"
+          width="24px"
+          height="24px"
+        >
+          <path d="M0 0h24v24H0z" fill="none" />
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+        </svg>
+      </CloseButton>
       <TimeInput name="start_min" ref={startMin} onChange={onTimeUpdate} />
       :
       <TimeInput name="start_sec" max="59" ref={startSec} onChange={onTimeUpdate} />

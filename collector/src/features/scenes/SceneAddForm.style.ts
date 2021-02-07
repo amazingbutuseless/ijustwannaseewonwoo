@@ -30,6 +30,19 @@ TimeInput.defaultProps = {
   min: '0',
 };
 
+export const CloseButton = styled.button`
+  position: absolute;
+  top: -2.4rem;
+  right: 0;
+  border: 0;
+  background-color: transparent;
+  outline: none;
+`;
+
+CloseButton.defaultProps = {
+  type: 'button',
+};
+
 export const SceneAddFormContainer = styled.form<ISceneAddFormWrapperStyleProps>`
   display: ${({ visible }) => (visible ? 'block' : 'none')};
   position: absolute;
@@ -40,7 +53,7 @@ export const SceneAddFormContainer = styled.form<ISceneAddFormWrapperStyleProps>
   background-color: var(--rich-black-fogra-39);
   color: var(--silver-chalice);
 
-  button {
+  button:not(${CloseButton}) {
     margin-left: 1.6rem;
     padding: 0.8rem 1.6rem;
 
@@ -49,8 +62,6 @@ export const SceneAddFormContainer = styled.form<ISceneAddFormWrapperStyleProps>
     background-color: rgba(158, 78, 221, 0);
 
     color: var(--dark-orchid);
-
-    cursor: pointer;
 
     transition: background-color 200ms;
 

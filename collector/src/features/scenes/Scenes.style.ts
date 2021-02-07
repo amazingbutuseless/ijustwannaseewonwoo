@@ -30,7 +30,7 @@ export const AddSceneButton = styled.button`
   height: 6.4rem;
   border-radius: 3.2rem;
   border: 0;
-  background-color: var(--russian-violet);
+  background-color: var(--dark-orchid);
   box-shadow: var(--boxShadow);
   outline: none;
   cursor: pointer;

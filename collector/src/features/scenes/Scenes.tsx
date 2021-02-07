@@ -22,11 +22,21 @@ export default function Scenes({
   onAddSceneButtonClick,
   activeSceneIdx = -1,
 }: SceneProps) {
+  const list = useRef(null);
+
   const dispatch = useDispatch();
 
   const video = useSelector((state) => selectVideoById(state, videoId));
   const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
   const scenesStatus = useSelector((state) => state.scenes.status);
+
+  useEffect(() => {
+    const scenes = list.current.querySelectorAll('li');
+    if (scenes) {
+      const scene = scenes.item(activeSceneIdx);
+      if (scene) list.current.scrollLeft = scene.offsetLeft - 88;
+    }
+  }, [activeSceneIdx]);
 
   useEffect(() => {
     dispatch(fetchScenes(videoId));
@@ -45,13 +55,14 @@ export default function Scenes({
   return (
     <SceneWrapper>
       <div style={{ overflow: 'hidden' }}>
-        <SceneList activeItemIdx={activeSceneIdx}>
+        <SceneList activeItemIdx={activeSceneIdx} ref={list}>
           {scenesStatus === 'pending' && <LoadingAnimation>{video.title}</LoadingAnimation>}
           {scenesStatus === 'succeeded' &&
             ((scenes.length > 0 && <SceneItems />) ||
               (scenes.length < 1 && <SceneListItemEmpty onClick={onAddSceneButtonClick} />))}
         </SceneList>
       </div>
+
       <AddSceneButton onClick={onAddSceneButtonClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

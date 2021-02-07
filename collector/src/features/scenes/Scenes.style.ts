@@ -5,7 +5,7 @@ interface ISceneListProps {
 }
 
 export const SceneWrapper = styled.div`
-  margin: 1.6rem 0;
+  margin-top: 1.6rem;
   overflow: hidden;
 `;
 
@@ -13,12 +13,16 @@ export const SceneList = styled.ul<ISceneListProps>`
   list-style: none;
   margin: 0;
   padding: 0;
-  padding-bottom: 2.4rem;
   white-space: nowrap;
   overflow: auto;
 
   li:nth-of-type(${({ activeItemIdx }) => activeItemIdx + 1}) {
     border-color: var(--dark-orchid);
+  }
+
+  ::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
   }
 `;
 

@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { SceneTimecodeInterface } from '../../types';
 
+import { selectVideoById } from '../videos/videosSlice';
 import { fetchScenes, selectAllScenesForVideo } from './scenesSlice';
 
 import SceneListItem, { SceneListItemEmpty } from '../../components/SceneListItem';
@@ -23,6 +24,7 @@ export default function Scenes({
 }: SceneProps) {
   const dispatch = useDispatch();
 
+  const video = useSelector((state) => selectVideoById(state, videoId));
   const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
   const scenesStatus = useSelector((state) => state.scenes.status);
 
@@ -44,7 +46,7 @@ export default function Scenes({
     <SceneWrapper>
       <div style={{ overflow: 'hidden' }}>
         <SceneList activeItemIdx={activeSceneIdx}>
-          {scenesStatus === 'pending' && <span>loading...</span>}
+          {scenesStatus === 'pending' && <LoadingAnimation>{video.title}</LoadingAnimation>}
           {scenesStatus === 'succeeded' &&
             ((scenes.length > 0 && <SceneItems />) ||
               (scenes.length < 1 && <SceneListItemEmpty onClick={onAddSceneButtonClick} />))}

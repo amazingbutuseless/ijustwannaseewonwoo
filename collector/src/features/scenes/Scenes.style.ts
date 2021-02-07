@@ -43,3 +43,11 @@ export const AddSceneButton = styled.button`
 AddSceneButton.defaultProps = {
   type: 'button',
 };
+
+export const LoadingAnimation = styled.div`
+  margin-bottom: 1.6rem;
+  max-width: 50%;
+  font-size: 3.2rem;
+  color: #fff;
+  word-break: keep-all;
+`;

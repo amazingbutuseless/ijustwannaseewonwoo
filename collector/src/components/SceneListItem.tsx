@@ -2,11 +2,21 @@ import React from 'react';
 
 import { SceneTimecodeInterface, SceneItemInterface } from '../types';
 
-import { SceneListItemWrapper } from './SceneListItem.style';
+import { SceneListItemWrapper, SceneListItemEmptyWrapper } from './SceneListItem.style';
 
 interface SceneListItemProps extends SceneItemInterface {
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
   active?: boolean;
+}
+
+export function SceneListItemEmpty({ onClick }) {
+  return (
+    <SceneListItemEmptyWrapper onClick={onClick}>
+      아직 등록된 장면이 없습니다.
+      <br />
+      장면을 추가해주세요.
+    </SceneListItemEmptyWrapper>
+  );
 }
 
 export default function SceneListItem({
@@ -28,9 +38,9 @@ export default function SceneListItem({
 
   return (
     <SceneListItemWrapper onClick={onClick} active={active}>
-      <img src={thumbnail} alt="" />
       {startTimecode} ~ {endTimecode}
       <span>{duration}</span>
+      <img src={thumbnail} alt="" />
     </SceneListItemWrapper>
   );
 }

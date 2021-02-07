@@ -4,7 +4,14 @@ interface SceneListItemWrapperStyleProps {
   active?: boolean;
 }
 
-export const SceneListItemWrapper = styled.li`
+export const SceneListItemEmptyWrapper = styled.li`
+  display: inline-block;
+  font-size: 1.4rem;
+  color: var(--silver-chalice);
+  cursor: pointer;
+`;
+
+export const SceneListItemWrapper = styled.li<SceneListItemWrapperStyleProps>`
   display: inline-block;
 
   margin-right: 1.6rem;

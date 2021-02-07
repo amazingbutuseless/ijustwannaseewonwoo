@@ -1,36 +1,18 @@
 import React, { useEffect } from 'react';
-import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { SceneTimecodeInterface } from '../../types';
 
 import { fetchScenes, selectAllScenesForVideo } from './scenesSlice';
 
-import SceneListItem from '../../components/SceneListItem';
-import { SceneList, SceneWrapper, AddSceneButton } from './Scenes.style';
+import SceneListItem, { SceneListItemEmpty } from '../../components/SceneListItem';
+import { SceneList, SceneWrapper, AddSceneButton, LoadingAnimation } from './Scenes.style';
 
 interface SceneProps {
   videoId: string;
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
   onAddSceneButtonClick: () => void;
   activeSceneIdx?: number;
-}
-
-const SceneListItemEmptyWrapper = styled.li`
-  display: inline-block;
-  font-size: 1.4rem;
-  color: var(--silver-chalice);
-  cursor: pointer;
-`;
-
-function SceneListItemEmpty({ onClick }) {
-  return (
-    <SceneListItemEmptyWrapper onClick={onClick}>
-      아직 등록된 장면이 없습니다.
-      <br />
-      장면을 추가해주세요.
-    </SceneListItemEmptyWrapper>
-  );
 }
 
 export default function Scenes({

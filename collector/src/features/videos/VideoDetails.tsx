@@ -1,3 +1,5 @@
+import { ipcRenderer } from 'electron';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -36,6 +38,11 @@ function VideoDetails() {
 
   useEffect(() => {
     dispatch(fetchVideo(videoId));
+    ipcRenderer.send('video', { action: 'download', videoId });
+
+    ipcRenderer.on(`videoDetails/${videoId}`, (event, progress) => {
+      console.log(progress);
+    });
   }, [videoId]);
 
   useEffect(() => {

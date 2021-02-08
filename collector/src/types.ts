@@ -67,10 +67,12 @@ export interface ChannelItemThumbnails {
   high?: ThumbnailImageUrl;
 }
 
-export interface SceneAddFormProps {
+export interface ISceneAddFormProps {
   visible: boolean;
   videoId: VideoId;
   onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
+  onSceneAdded: () => void;
+  onCloseButtonClick: () => void;
 }
 
 export interface IDrawerStyleProps {

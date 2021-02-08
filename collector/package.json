@@ -120,6 +120,8 @@
     "@babel/runtime": "^7.12.5",
     "@emotion/react": "11.0.0-next.15",
     "@reduxjs/toolkit": "^1.5.0",
+    "aws-amplify": "^3.3.17",
+    "aws-amplify-react": "^4.2.21",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -127,7 +129,8 @@
     "react-redux": "^7.2.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-thunk": "^1.0.0"
+    "react-thunk": "^1.0.0",
+    "ytdl-core": "^4.4.5"
   },
   "jest": {
     "setupFiles": [

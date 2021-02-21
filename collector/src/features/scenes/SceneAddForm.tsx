@@ -1,3 +1,4 @@
+import { ipcRenderer } from 'electron';
 import React, { FormEvent, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -44,6 +45,7 @@ export default function SceneAddForm({
     e.preventDefault();
 
     dispatch(addScene({ videoId, ...getTimecode() }));
+    ipcRenderer.send('from-main-to-worker', { action: 'prepare', videoId, ...getTimecode() });
 
     resetTimeInput();
 

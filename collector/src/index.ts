@@ -1,25 +1,33 @@
 import fs from 'fs';
-import { app, BrowserWindow, ipcMain } from 'electron';
+
+import { app, BrowserWindow, ipcMain, protocol } from 'electron';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import YoutubeDownloader from './youtube_downloader';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
-const VIDEO_DOWNLOADED_DIR = `${app.getPath('userData')}/temp`;
+declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
 
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
 app.whenReady().then(() => {
-  fs.mkdirSync(VIDEO_DOWNLOADED_DIR);
+  protocol.registerFileProtocol('video', (request, callback) => {
+    const url = /video:\/\/([^#]+)(#t=.+)?/.exec(request.url);
+    const videoPath = `${app.getPath('temp')}${url[1]}.mp4`;
+    callback({ path: videoPath });
+  });
 
   installExtension(REDUX_DEVTOOLS)
     .then((name) => console.log({ name }))
     .catch((err) => console.log({ err }));
 });
 
+let mainWindow: BrowserWindow = null;
+let workerWindow: BrowserWindow = null;
+
 const createWindow = (): void => {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 800,
     width: 1080,
     webPreferences: {
@@ -31,15 +39,23 @@ const createWindow = (): void => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
+  workerWindow = new BrowserWindow({
+    // show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    },
+  });
+
+  workerWindow.loadURL(WORKER_WINDOW_WEBPACK_ENTRY);
+
   mainWindow.webContents.openDevTools();
+  workerWindow.webContents.openDevTools();
 };
 
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
-  fs.truncateSync(VIDEO_DOWNLOADED_DIR);
-  fs.rmdirSync(VIDEO_DOWNLOADED_DIR);
-
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -57,7 +73,18 @@ function VideoChannelHandler(event, message) {
       const downloader = new YoutubeDownloader(message.videoId);
       downloader.run(event);
       break;
+
+    case 'stream':
+      break;
   }
 }
 
 ipcMain.on('video', VideoChannelHandler);
+
+ipcMain.on('from-main-to-worker', (event, message) => {
+  workerWindow.webContents.send('worker', message);
+});
+
+ipcMain.on('from-worker-to-main', (event, message) => {
+  mainWindow.webContents.send(message.channel, message);
+});

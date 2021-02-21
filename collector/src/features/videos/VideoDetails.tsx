@@ -21,6 +21,14 @@ interface VideoRouterParams {
   videoId: string;
 }
 
+ipcRenderer.on('video', (event, message) => {
+  if (message.action === 'download') {
+    console.log(message.rates);
+  } else if (message.action === 'detectFaces') {
+    console.log(message.results);
+  }
+});
+
 function VideoDetails() {
   const { videoId }: VideoRouterParams = useParams();
 
@@ -39,10 +47,6 @@ function VideoDetails() {
   useEffect(() => {
     dispatch(fetchVideo(videoId));
     ipcRenderer.send('video', { action: 'download', videoId });
-
-    ipcRenderer.on(`videoDetails/${videoId}`, (event, progress) => {
-      console.log(progress);
-    });
   }, [videoId]);
 
   useEffect(() => {

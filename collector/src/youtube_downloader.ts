@@ -6,7 +6,7 @@ export default class YoutubeDownloader {
   outputPath: string;
 
   constructor(private videoId: string) {
-    this.outputPath = `${app.getPath('userData')}/temp/${this.videoId}.mp4`;
+    this.outputPath = `${app.getPath('temp')}/${this.videoId}.mp4`;
   }
 
   async run(renderer) {
@@ -34,13 +34,19 @@ export default class YoutubeDownloader {
 
     video.on('error', (e) => {
       if (e.statusCode === 416) {
-        renderer.sender.send(`videoDetails/${this.videoId}`, 1);
+        renderer.sender.send('video', {
+          action: 'download',
+          rates: 1,
+        });
       }
     });
 
     video.on('progress', (chunkLength, totalBytesDownloaded, totalBytes) => {
       const downloadRates = totalBytesDownloaded / totalBytes;
-      renderer.sender.send(`videoDetails/${this.videoId}`, downloadRates);
+      renderer.sender.send('video', {
+        action: 'download',
+        rates: downloadRates,
+      });
     });
   }
 }

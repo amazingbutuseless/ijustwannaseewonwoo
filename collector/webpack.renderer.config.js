@@ -1,5 +1,20 @@
+const path = require('path');
 const rules = require('./webpack.rules');
 const plugins = require('./webpack.plugins');
+
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const assets = ['data'];
+const copyPlugins = assets.map((asset) => {
+  return new CopyWebpackPlugin({
+    patterns: [
+      {
+        from: path.resolve(__dirname, 'src', asset),
+        to: asset,
+      },
+    ],
+  });
+});
 
 rules.push({
   test: /\.css$/,
@@ -7,11 +22,15 @@ rules.push({
 });
 
 module.exports = {
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
   module: {
     rules,
   },
-  plugins: plugins,
+  plugins: [...plugins, ...copyPlugins],
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css']
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.css'],
   },
 };

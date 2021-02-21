@@ -60,6 +60,11 @@
                   "html": "./src/index.html",
                   "js": "./src/renderer.tsx",
                   "name": "main_window"
+                },
+                {
+                  "html": "./src/worker.html",
+                  "js": "./src/worker.ts",
+                  "name": "worker_window"
                 }
               ]
             },
@@ -100,6 +105,7 @@
     "@typescript-eslint/parser": "^4.9.0",
     "babel-loader": "^8.2.2",
     "babel-plugin-emotion": "^11.0.0",
+    "canvas": "^2.6.1",
     "css-loader": "^4.3.0",
     "electron": "11.0.3",
     "electron-devtools-installer": "^3.1.1",
@@ -120,9 +126,12 @@
     "@babel/runtime": "^7.12.5",
     "@emotion/react": "11.0.0-next.15",
     "@reduxjs/toolkit": "^1.5.0",
+    "@tensorflow/tfjs-node": "^2.8.6",
     "aws-amplify": "^3.3.17",
     "aws-amplify-react": "^4.2.21",
+    "copy-webpack-plugin": "6.3.2",
     "electron-squirrel-startup": "^1.0.0",
+    "face-api.js": "^0.22.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-player": "^2.8.1",
@@ -147,5 +156,8 @@
     "testMatch": [
       "**/*.test.(ts|tsx|js)"
     ]
+  },
+  "browser": {
+    "crypto": false
   }
 }

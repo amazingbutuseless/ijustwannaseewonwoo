@@ -67,24 +67,15 @@ app.on('activate', () => {
   }
 });
 
-function VideoChannelHandler(event, message) {
-  switch (message.action) {
-    case 'download':
-      const downloader = new YoutubeDownloader(message.videoId);
-      downloader.run(event);
-      break;
-
-    case 'stream':
-      break;
-  }
-}
-
-ipcMain.on('video', VideoChannelHandler);
+ipcMain.on('video/download', (event, message) => {
+  const downloader = new YoutubeDownloader(message.videoId);
+  downloader.run(event);
+});
 
 ipcMain.on('from-main-to-worker', (event, message) => {
-  workerWindow.webContents.send('worker', message);
+  workerWindow.webContents.send(`worker/${message.action}`, message);
 });
 
 ipcMain.on('from-worker-to-main', (event, message) => {
-  mainWindow.webContents.send(message.channel, message);
+  mainWindow.webContents.send(`${message.channel}/${message.action}`, message);
 });

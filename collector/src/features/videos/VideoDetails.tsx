@@ -21,12 +21,12 @@ interface VideoRouterParams {
   videoId: string;
 }
 
-ipcRenderer.on('video', (event, message) => {
-  if (message.action === 'download') {
-    console.log(message.rates);
-  } else if (message.action === 'detectFaces') {
-    console.log(message.results);
-  }
+ipcRenderer.on('video/download', (event, message) => {
+  console.log(message.rates);
+});
+
+ipcRenderer.on('video/detectFaces', (event, message) => {
+  console.log(message.results);
 });
 
 function VideoDetails() {
@@ -46,7 +46,7 @@ function VideoDetails() {
 
   useEffect(() => {
     dispatch(fetchVideo(videoId));
-    ipcRenderer.send('video', { action: 'download', videoId });
+    ipcRenderer.send('video/download', { videoId });
   }, [videoId]);
 
   const getSceneIndex = ({ start, end }) => {

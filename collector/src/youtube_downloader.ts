@@ -34,8 +34,7 @@ export default class YoutubeDownloader {
 
     video.on('error', (e) => {
       if (e.statusCode === 416) {
-        renderer.sender.send('video', {
-          action: 'download',
+        renderer.sender.send('video/download', {
           rates: 1,
         });
       }
@@ -43,8 +42,7 @@ export default class YoutubeDownloader {
 
     video.on('progress', (chunkLength, totalBytesDownloaded, totalBytes) => {
       const downloadRates = totalBytesDownloaded / totalBytes;
-      renderer.sender.send('video', {
-        action: 'download',
+      renderer.sender.send('video/download', {
         rates: downloadRates,
       });
     });

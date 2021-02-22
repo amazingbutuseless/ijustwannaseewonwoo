@@ -1,25 +1,15 @@
-import { ipcRenderer, IpcRendererEvent } from 'electron';
+import { ipcRenderer } from 'electron';
 
 import FaceRecognizer, { IFaceRecognitionResult } from './face_recorgnizer';
 
 let videoId = '';
+let start: number, end: number;
+
 const video = document.querySelector('video');
 
-let timer = null;
 let detections: Array<IFaceRecognitionResult> = [];
 
-const onVideoPlay = () => {
-  detections = [];
-
-  timer = setInterval(async () => {
-    const faces = await FaceRecognizer.detectFaces(video, videoId);
-    detections = detections.concat(faces);
-  }, 500);
-};
-
-const onVideoPause = () => {
-  clearInterval(timer);
-
+const sendFaceDetectionResultsToMain = () => {
   const results = FaceRecognizer.groupByMemberName(detections);
   FaceRecognizer.sortByDistance(results);
 
@@ -31,27 +21,43 @@ const onVideoPause = () => {
   });
 };
 
-video.addEventListener('play', onVideoPlay);
-video.addEventListener('pause', onVideoPause);
-video.addEventListener('loadeddata', () => {
-  if (video.readyState >= 3 && video.paused) {
-    video.play();
+const onVideoTimeUpdate = () => {
+  if (Math.floor(video.currentTime) >= end) {
+    if (!video.paused) {
+      video.pause();
+
+      sendFaceDetectionResultsToMain();
+    }
+
+    return;
   }
+
+  FaceRecognizer.detectFaces(video, videoId).then((faces) => {
+    detections = detections.concat(faces);
+  });
+};
+
+video.addEventListener('timeupdate', onVideoTimeUpdate);
+
+video.addEventListener('loadedmetadata', () => {
+  const loadedTimer = window.setInterval(() => {
+    if (video.readyState >= 3 && video.paused) {
+      window.clearInterval(loadedTimer);
+
+      detections = [];
+      video.play();
+    }
+  }, 200);
 });
 
 FaceRecognizer.loadNet().then((net) => {
   ipcRenderer.send('worker', { action: 'ready' });
 });
 
-function workerChannelHandler(event: IpcRendererEvent, message: any) {
-  const { start, end } = message;
+ipcRenderer.on('worker/prepare', (event, message) => {
   videoId = message.videoId;
+  start = message.start;
+  end = message.end;
 
-  switch (message.action) {
-    case 'prepare':
-      video.src = `video://${videoId}#t=${start},${end}`;
-      break;
-  }
-}
-
-ipcRenderer.on('worker', workerChannelHandler);
+  video.src = `video://${videoId}#t=${start}`;
+});

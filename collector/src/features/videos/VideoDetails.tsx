@@ -49,20 +49,6 @@ function VideoDetails() {
     ipcRenderer.send('video', { action: 'download', videoId });
   }, [videoId]);
 
-  useEffect(() => {
-    if (player) {
-      if (scenes.length < 1) {
-        updateTime({ start: 0, end: null });
-        return;
-      }
-
-      setTimeSource('scene');
-      updateActiveSceneIdx(0);
-      const { start, end } = scenes[0];
-      updateTime({ start, end });
-    }
-  }, [player]);
-
   const getSceneIndex = ({ start, end }) => {
     return scenes.findIndex((scene) => scene.start === start && scene.end === end);
   };
@@ -111,6 +97,24 @@ function VideoDetails() {
     setSceneAddFormVisible(false);
   };
 
+  const onScenesLoaded = () => {
+    const scenesLoadedTimer = window.setInterval(() => {
+      if (player) window.clearInterval(scenesLoadedTimer);
+
+      if (scenes.length > 0) {
+        setTimeSource('scene');
+        updateActiveSceneIdx(0);
+        const { start, end } = scenes[0];
+        updateTime({ start, end });
+      } else {
+        if (scenes.length < 1) {
+          updateTime({ start: 0, end: null });
+          return;
+        }
+      }
+    }, 500);
+  };
+
   return (
     <>
       <Header title={video ? video.title : ''} />
@@ -138,6 +142,7 @@ function VideoDetails() {
               onSceneClick={onSceneClick}
               onAddSceneButtonClick={onAddSceneButtonClick}
               activeSceneIdx={activeSceneIdx}
+              onLoaded={onScenesLoaded}
             />
 
             <VideoForWonwoo />

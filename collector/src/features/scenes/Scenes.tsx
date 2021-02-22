@@ -13,6 +13,7 @@ interface SceneProps {
   videoId: string;
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
   onAddSceneButtonClick: () => void;
+  onLoaded: () => void;
   activeSceneIdx?: number;
 }
 
@@ -20,6 +21,7 @@ export default function Scenes({
   videoId,
   onSceneClick,
   onAddSceneButtonClick,
+  onLoaded,
   activeSceneIdx = -1,
 }: SceneProps) {
   const list = useRef(null);
@@ -39,8 +41,12 @@ export default function Scenes({
   }, [activeSceneIdx]);
 
   useEffect(() => {
-    dispatch(fetchScenes(videoId));
-  }, [videoId]);
+    if (scenesStatus === 'idle') {
+      dispatch(fetchScenes(videoId));
+    } else if (scenesStatus === 'succeeded') {
+      onLoaded();
+    }
+  }, [videoId, scenesStatus]);
 
   const SceneItems = () => {
     return (

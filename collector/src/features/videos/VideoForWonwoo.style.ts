@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 export const VideoForWonwooWrapper = styled.form`
   display: flex;
+  margin-top: 1.6rem;
 
   input {
     display: none;

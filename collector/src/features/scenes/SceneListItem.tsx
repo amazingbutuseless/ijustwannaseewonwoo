@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SceneTimecodeInterface, SceneItemInterface } from '../types';
+import { SceneTimecodeInterface, SceneItemInterface } from '../../types';
 
 import { SceneListItemWrapper, SceneListItemEmptyWrapper } from './SceneListItem.style';
 

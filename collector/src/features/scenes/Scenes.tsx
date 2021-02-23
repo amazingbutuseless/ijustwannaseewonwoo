@@ -6,7 +6,7 @@ import { SceneTimecodeInterface } from '../../types';
 import { selectVideoById } from '../videos/videosSlice';
 import { fetchScenes, selectAllScenesForVideo } from './scenesSlice';
 
-import SceneListItem, { SceneListItemEmpty } from '../../components/SceneListItem';
+import SceneListItem, { SceneListItemEmpty } from './SceneListItem';
 import { SceneList, SceneWrapper, AddSceneButton, LoadingAnimation } from './Scenes.style';
 
 interface SceneProps {

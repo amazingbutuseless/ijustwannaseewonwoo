@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ChannelItemThumbnails } from '../types';
+import { ChannelItemThumbnails } from '../../types';
 
 import { ChannelButton } from './ChannelItem.style';
 
@@ -17,14 +17,16 @@ export default function ChannelItem({ id, title, thumbnails, onClick }: ChannelI
   };
 
   return (
-    <ChannelButton
-      type="button"
-      thumbnails={thumbnails}
-      data-id={id}
-      aria-label={title}
-      onClick={handleClick}
-    >
-      <span>{title}</span>
-    </ChannelButton>
+    <li>
+      <ChannelButton
+        type="button"
+        thumbnails={thumbnails}
+        data-id={id}
+        aria-label={title}
+        onClick={handleClick}
+      >
+        <span>{title}</span>
+      </ChannelButton>
+    </li>
   );
 }

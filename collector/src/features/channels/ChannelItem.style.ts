@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ChannelItemThumbnails } from '../types';
+import { ChannelItemThumbnails } from '../../types';
 
 interface ChannelItemButtonStyleProps {
   thumbnails: ChannelItemThumbnails;

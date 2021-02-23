@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { ChannelsList } from './Channels.style';
 
-import ChannelItem, { ChannelItemProps } from '../../components/ChannelItem';
+import ChannelItem from './ChannelItem';
 import { fetchChannels, selectAllChannels } from './channelsSlice';
 
 interface ChannelsProps {
@@ -27,21 +27,14 @@ export default function Channels({ onClick }: ChannelsProps): ReactElement {
     }
   }, [channelStatus, dispatch]);
 
-  const ChannelItems = () => {
-    const channels = channelItems.map((channel: ChannelItemProps, idx: number) => (
-      <li key={`channel-${idx + 1}`}>
-        <ChannelItem {...channel} onClick={onClick} />
-      </li>
-    ));
-
-    return <>{channels}</>;
-  };
-
   return (
     <ChannelsList>
       {['idle', 'pending'].includes(channelStatus) && <li>loading...</li>}
 
-      {channelStatus === 'succeeded' && <ChannelItems />}
+      {channelStatus === 'succeeded' &&
+        channelItems.map((channel, idx: number) => (
+          <ChannelItem key={`channel-${idx + 1}`} {...channel} onClick={onClick} />
+        ))}
     </ChannelsList>
   );
 }

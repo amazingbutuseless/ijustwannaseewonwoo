@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import { app, BrowserWindow, ipcMain, protocol } from 'electron';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
-import YoutubeDownloader from './youtube_downloader';
+import YoutubeDownloader from './utils/youtube_downloader';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
@@ -67,9 +67,9 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.on('video/download', (event, message) => {
+ipcMain.on('video/download', async (event, message) => {
   const downloader = new YoutubeDownloader(message.videoId);
-  downloader.run(event);
+  await downloader.run(event);
 });
 
 ipcMain.on('from-main-to-worker', (event, message) => {

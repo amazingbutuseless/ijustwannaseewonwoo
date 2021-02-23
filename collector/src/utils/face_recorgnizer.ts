@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import * as faceapi from 'face-api.js';
 
-import ImageCreator from './ImageCreator';
+import ImageCreator from './image_creator';
 
 faceapi.env.monkeyPatch({
   Canvas: HTMLCanvasElement,
@@ -25,9 +25,9 @@ export interface IFaceRecognitionResultWithGroup {
 }
 
 export default {
-  faceMatcher: faceapi.FaceMatcher.fromJSON(require('./data/faceMatcher.json')),
+  faceMatcher: faceapi.FaceMatcher.fromJSON(import('../data/faceMatcher.json')),
 
-  async loadNet() {
+  async loadNet(): Promise<faceapi.SsdMobilenetv1> {
     const detectionNet = faceapi.nets.ssdMobilenetv1;
     await detectionNet.load('/data/weights');
     await faceapi.loadFaceLandmarkModel('/data/weights');
@@ -37,7 +37,10 @@ export default {
     return detectionNet;
   },
 
-  async detectFaces(video, videoId: string): Promise<Array<IFaceRecognitionResult>> {
+  async detectFaces(
+    video: HTMLVideoElement,
+    videoId: string
+  ): Promise<Array<IFaceRecognitionResult>> {
     const canvas = faceapi.createCanvasFromMedia(video);
 
     const detections = await faceapi

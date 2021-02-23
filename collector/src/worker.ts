@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 
-import FaceRecognizer, { IFaceRecognitionResult } from './face_recorgnizer';
+import FaceRecognizer, { IFaceRecognitionResult } from './utils/face_recorgnizer';
 
 let videoId = '';
 let start: number, end: number;

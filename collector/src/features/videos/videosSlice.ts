@@ -7,7 +7,7 @@ import {
 
 import { VideoItemInListInterface } from '../../types';
 
-import { APIClient } from '../../APIClient';
+import { APIClient } from '../../utils/api_client';
 
 const videosAdapter = createEntityAdapter<VideoItemInListInterface>({
   selectId: (video) => video.videoId,

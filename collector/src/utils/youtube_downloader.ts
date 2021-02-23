@@ -1,15 +1,25 @@
 import fs from 'fs';
-import { app } from 'electron';
+import { app, IpcMainEvent } from 'electron';
 import ytdl from 'ytdl-core';
 
 export default class YoutubeDownloader {
   outputPath: string;
 
+  readonly errorCode: {
+    ALREADY_DOWNLOADED: 416;
+  };
+
   constructor(private videoId: string) {
     this.outputPath = `${app.getPath('temp')}/${this.videoId}.mp4`;
   }
 
-  async run(renderer) {
+  private sendMessageToRenderer(renderer: IpcMainEvent, rates: number): void {
+    renderer.sender.send('video/download', {
+      rates,
+    });
+  }
+
+  async run(renderer: IpcMainEvent) {
     let downloaded = 0;
 
     if (fs.existsSync(this.outputPath)) {
@@ -33,18 +43,14 @@ export default class YoutubeDownloader {
     video.pipe(fs.createWriteStream(this.outputPath, { flags: 'a' }));
 
     video.on('error', (e) => {
-      if (e.statusCode === 416) {
-        renderer.sender.send('video/download', {
-          rates: 1,
-        });
+      if (e.statusCode === this.errorCode.ALREADY_DOWNLOADED) {
+        this.sendMessageToRenderer(renderer, 1);
       }
     });
 
     video.on('progress', (chunkLength, totalBytesDownloaded, totalBytes) => {
       const downloadRates = totalBytesDownloaded / totalBytes;
-      renderer.sender.send('video/download', {
-        rates: downloadRates,
-      });
+      this.sendMessageToRenderer(renderer, downloadRates);
     });
   }
 }

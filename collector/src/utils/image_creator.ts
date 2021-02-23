@@ -1,12 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { createCanvas } from 'canvas';
+import { Canvas, createCanvas } from 'canvas';
 
 export default {
   DATASET_IMAGE: 160,
 
-  saveFile(memberName: string, fileName: string, buf: Buffer) {
+  saveFile(memberName: string, fileName: string, buf: Buffer): void {
     const baseDir = `./src/data/references/${memberName}`;
 
     if (!fs.existsSync(baseDir)) {
@@ -16,7 +16,7 @@ export default {
     fs.writeFileSync(path.resolve(baseDir, fileName), buf);
   },
 
-  createAlignedImage(img, detection) {
+  createAlignedImage(img: HTMLCanvasElement, detection): Canvas {
     const { x, y, width, height } = detection.alignedRect.box;
 
     const croppedCanvas = createCanvas(img.width, img.height);

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/too
 
 import { ChannelDataInterface } from '../../types';
 
-import { APIClient } from '../../actions/APIClient';
+import { APIClient } from '../../APIClient';
 
 const channelsAdapter = createEntityAdapter<ChannelDataInterface>();
 

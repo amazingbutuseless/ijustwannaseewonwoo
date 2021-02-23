@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { fetchVideos, selectAllVideos, selectVideosByChannel } from './videosSlice';
 
-import VideoItem from '../../components/VideoItem';
+import VideoItem from './VideoItem';
 import { VideoItemsWrapper } from './VideoList.style';
 
 import LoadingAnimation from '../../components/LoadingAnimation';

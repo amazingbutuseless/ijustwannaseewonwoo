@@ -15,7 +15,7 @@ import Header from '../../components/Header';
 import VideoForWonwoo from './VideoForWonwoo';
 import Scenes from '../scenes/Scenes';
 import SceneAddForm from '../scenes/SceneAddForm';
-import VideoPlayer from '../../components/VideoPlayer';
+import VideoPlayer from './VideoPlayer';
 
 interface VideoRouterParams {
   videoId: string;

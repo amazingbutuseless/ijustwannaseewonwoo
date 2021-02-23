@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 
-import { IDrawerStyleProps } from '../types';
+interface DrawerStyleProps {
+  expanded: boolean;
+}
 
-export const DrawerBackground = styled.div<IDrawerStyleProps>`
+export const DrawerBackground = styled.div<DrawerStyleProps>`
   position: fixed;
   top: 0;
   left: 0;
@@ -17,7 +19,14 @@ export const DrawerBackground = styled.div<IDrawerStyleProps>`
   `}
 `;
 
-export const DrawerWrapper = styled.nav<IDrawerStyleProps>`
+export const DrawerNavigation = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+`;
+
+export const DrawerWrapper = styled.nav<DrawerStyleProps>`
   display: flex;
   flex-direction: column;
   align-items: self-start;
@@ -40,6 +49,11 @@ export const DrawerWrapper = styled.nav<IDrawerStyleProps>`
     `transform: translateX(0);
   box-shadow: var(--boxShadow);`}
 
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+
   button {
     padding: 0;
     border: 0;
@@ -47,69 +61,5 @@ export const DrawerWrapper = styled.nav<IDrawerStyleProps>`
     color: var(--silver-chalice);
     outline: none;
     cursor: pointer;
-  }
-
-  a {
-    color: #fff;
-    text-decoration: none;
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-  }
-
-  li a {
-    display: inline-block;
-    position: relative;
-    margin-bottom: 0.4rem;
-    padding: 0.8rem 0;
-    border-bottom: 2px solid transparent;
-    overflow: hidden;
-
-    &:before {
-      position: absolute;
-      bottom: 0.2rem;
-      width: 100%;
-      height: 4px;
-      background-color: #fff;
-      transform: translateX(calc(-100%));
-      transition: transform 100ms;
-      content: '';
-    }
-
-    &:hover:before {
-      transform: translateX(0);
-    }
-  }
-
-  & > button {
-    align-self: flex-end;
-
-    span {
-      display: none;
-    }
-  }
-
-  & > div:last-child {
-    position: relative;
-    margin-top: 2.4rem;
-    padding-top: 2.4rem;
-    font-size: 1.2rem;
-
-    button {
-      margin-left: 0.8rem;
-    }
-
-    &:before {
-      position: absolute;
-      top: 0;
-      width: 4rem;
-      height: 1px;
-      background-color: #fff;
-      content: '';
-    }
   }
 `;

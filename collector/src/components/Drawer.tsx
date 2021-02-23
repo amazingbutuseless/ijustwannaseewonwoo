@@ -1,9 +1,17 @@
 import React, { ReactElement, useState } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import { DrawerWrapper, DrawerBackground } from './Drawer.style';
+import { DrawerBackground, DrawerWrapper, DrawerNavigation } from './Drawer.style';
 
-export default function Drawer({ children }): ReactElement {
+import Item from './DrawerItem';
+import ExpandButton from './DrawerExpandButton';
+import UserMenu from './DrawerUserMenu';
+
+interface DrawerProps {
+  children: ReactElement;
+}
+
+export default function Drawer({ children }: DrawerProps): ReactElement {
   const [expanded, setExpanded] = useState(false);
   const history = useHistory();
 
@@ -15,61 +23,28 @@ export default function Drawer({ children }): ReactElement {
     setExpanded(false);
   };
 
-  const onLinkClick = (e) => {
+  const onLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
-    history.push(e.target.pathname);
+    history.push((e.target as HTMLAnchorElement).pathname);
     setExpanded(false);
   };
 
   return (
     <>
       <DrawerWrapper expanded={expanded}>
-        <button onClick={onExpandButtonClick}>
-          <>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="white"
-              width="32px"
-              height="32px"
-            >
-              <path d="M0 0h24v24H0V0z" fill="none" />
-              {expanded && (
-                <path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z" />
-              )}
-              {!expanded && <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />}
-            </svg>
-            <span>Expand Panel</span>
-          </>
-        </button>
+        <ExpandButton expanded={expanded} onClick={onExpandButtonClick} />
 
-        <ul>
-          <li>
-            <a href="/" onClick={onLinkClick}>
-              Featured
-            </a>
-          </li>
-          <li>
-            <a href="/playlist" onClick={onLinkClick}>
-              Playlist
-            </a>
-          </li>
-          <li>
-            <a href="/video" onClick={onLinkClick}>
-              Video
-            </a>
-          </li>
-        </ul>
+        <DrawerNavigation>
+          <Item key="featured" title="Featured" link="/" onClick={onLinkClick} />
+          <Item key="channel" title="Channel" link="/channel" onClick={onLinkClick} />
+          <Item key="playlist" title="Playlist" link="/playlist" onClick={onLinkClick} />
+          <Item key="video" title="Video" link="/video" onClick={onLinkClick} />
+        </DrawerNavigation>
 
-        <div>
-          {children}
-          <br />
-          <a href="/about" onClick={onLinkClick}>
-            ijustwannaseewonwoo
-          </a>
-        </div>
+        <UserMenu onLinkClick={onLinkClick}>{children}</UserMenu>
       </DrawerWrapper>
+
       <DrawerBackground expanded={expanded} onClick={onBackgroundClick} />
     </>
   );

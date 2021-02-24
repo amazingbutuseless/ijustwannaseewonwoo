@@ -10,7 +10,7 @@ export default class CognitoStack extends sst.Stack {
     super(scope, id, props);
 
     const app = this.node.root;
-    const { tableArn } = props;
+    const { tableArn, bucketArn } = props;
 
     const userPool = new cognito.UserPool(this, 'UserPool', {
       userPoolName: `${process.env.APP_NAME}-${process.env.ENV}-userpool`,
@@ -99,6 +99,14 @@ export default class CognitoStack extends sst.Stack {
         ],
         effect: iam.Effect.ALLOW,
         resources: [tableArn],
+      })
+    );
+
+    authenticatedRole.role.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:ListBucket', 's3:GetObject', 's3:PutObject', 's3:DeleteObject'],
+        effect: iam.Effect.ALLOW,
+        resources: [bucketArn],
       })
     );
 

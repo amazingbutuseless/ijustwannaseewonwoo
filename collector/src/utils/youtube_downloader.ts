@@ -5,12 +5,15 @@ import ytdl from 'ytdl-core';
 export default class YoutubeDownloader {
   outputPath: string;
 
-  readonly errorCode: {
-    ALREADY_DOWNLOADED: 416;
+  errorCode: {
+    [key: string]: number;
   };
 
   constructor(private videoId: string) {
     this.outputPath = `${app.getPath('temp')}/${this.videoId}.mp4`;
+    this.errorCode = {
+      ALREADY_DOWNLOADED: 416,
+    };
   }
 
   private sendMessageToRenderer(renderer: IpcMainEvent, rates: number): void {

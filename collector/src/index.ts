@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { app, BrowserWindow, ipcMain, protocol } from 'electron';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import YoutubeDownloader from './utils/youtube_downloader';

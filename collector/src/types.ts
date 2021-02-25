@@ -74,7 +74,3 @@ export interface ISceneAddFormProps {
   onSceneAdded: () => void;
   onCloseButtonClick: () => void;
 }
-
-export interface IDrawerStyleProps {
-  expanded: boolean;
-}

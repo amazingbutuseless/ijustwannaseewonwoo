@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -17,17 +17,12 @@ import Scenes from '../scenes/Scenes';
 import SceneAddForm from '../scenes/SceneAddForm';
 import VideoPlayer from './VideoPlayer';
 
+import { IFaceRecognitionResult } from '../../utils/face_recorgnizer';
+import { upload } from '../../utils/image_uploader';
+
 interface VideoRouterParams {
   videoId: string;
 }
-
-ipcRenderer.on('video/download', (event, message) => {
-  console.log(message.rates);
-});
-
-ipcRenderer.on('video/detectFaces', (event, message) => {
-  console.log(message.results);
-});
 
 function VideoDetails() {
   const { videoId }: VideoRouterParams = useParams();
@@ -44,9 +39,31 @@ function VideoDetails() {
   const video = useSelector((state) => selectVideoById(state, videoId));
   const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
 
+  const onVideoDownloaded = (event: IpcRendererEvent, message: any) => {
+    console.log(message.rates);
+  };
+
+  const onFaceDetected = (event: IpcRendererEvent, message: any) => {
+    Object.entries(message.results).forEach(([memberName, recognitions]) => {
+      recognitions.forEach((recognition: IFaceRecognitionResult) => {
+        const { name, videoId, timestamp, url } = recognition;
+        console.log({ recognition });
+        upload(name, videoId, timestamp, url);
+      });
+    });
+  };
+
   useEffect(() => {
     dispatch(fetchVideo(videoId));
     ipcRenderer.send('video/download', { videoId });
+
+    ipcRenderer.on('video/download', onVideoDownloaded);
+    ipcRenderer.on('video/detectFaces', onFaceDetected);
+
+    return () => {
+      ipcRenderer.off('video/download', onVideoDownloaded);
+      ipcRenderer.off('video/detectFaces', onFaceDetected);
+    };
   }, [videoId]);
 
   const getSceneIndex = ({ start, end }) => {

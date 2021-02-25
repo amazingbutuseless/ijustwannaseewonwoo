@@ -25,7 +25,7 @@ export interface IFaceRecognitionResultWithGroup {
 }
 
 export default {
-  faceMatcher: faceapi.FaceMatcher.fromJSON(import('../data/faceMatcher.json')),
+  faceMatcher: faceapi.FaceMatcher.fromJSON(require('../data/faceMatcher.json')),
 
   async loadNet(): Promise<faceapi.SsdMobilenetv1> {
     const detectionNet = faceapi.nets.ssdMobilenetv1;
@@ -59,7 +59,7 @@ export default {
           timestamp: video.currentTime,
           name: bestMatch.label,
           distance: bestMatch.distance,
-          url: ImageCreator.createAlignedImage(canvas, detection).toDataURL(),
+          url: ImageCreator.createAlignedImage(canvas, detection).toDataURL('image/jpeg'),
         });
       }
     });

@@ -104,9 +104,17 @@ export default class CognitoStack extends sst.Stack {
 
     authenticatedRole.role.addToPolicy(
       new iam.PolicyStatement({
-        actions: ['s3:ListBucket', 's3:GetObject', 's3:PutObject', 's3:DeleteObject'],
+        actions: ['s3:ListBucket'],
         effect: iam.Effect.ALLOW,
         resources: [bucketArn],
+      })
+    );
+
+    authenticatedRole.role.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject'],
+        effect: iam.Effect.ALLOW,
+        resources: [`${bucketArn}/*`],
       })
     );
 

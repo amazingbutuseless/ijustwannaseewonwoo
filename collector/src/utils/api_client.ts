@@ -2,7 +2,7 @@ import { APIClientRequestParameters, APIClientRequestConfig } from '../types';
 
 import Configure from '../configure';
 
-export async function APIClient(
+export default async function APIClient(
   endpoint: string,
   { body, ...customConfig }: APIClientRequestParameters = {}
 ) {

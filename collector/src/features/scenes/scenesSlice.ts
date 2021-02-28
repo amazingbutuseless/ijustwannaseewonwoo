@@ -7,7 +7,7 @@ import {
 
 import { AddSceneReducerParameters, SceneItemInterface } from '../../types';
 
-import { APIClient } from '../../utils/api_client';
+import APIClient from '../../utils/api_client';
 
 const scenesAdapter = createEntityAdapter<SceneItemInterface>({
   sortComparer: (a, b) => {

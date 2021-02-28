@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-
 import Amplify, { Auth, Hub } from 'aws-amplify';
-
 import { useDispatch, useSelector } from 'react-redux';
 
-import { signIn, signOut } from './userSlice';
-
 import configure from '../../configure';
+import YoutubeAPI from '../../utils/youtube_api';
+
+import { signIn, signOut } from './userSlice';
 
 Amplify.configure({
   Auth: configure.AUTH,
@@ -14,50 +13,73 @@ Amplify.configure({
 
 export default function useAuthentication() {
   const [userId, setUserId] = useState('');
+  const [googleAPIReady, setGoogleAPIReady] = useState(false);
+
   const dispatch = useDispatch();
 
-  const getUser = () =>
-    Auth.currentAuthenticatedUser().then((userData) => {
-      setUserId(userData.id);
-      return userData;
+  const getUser = () => {
+    return new Promise((resolve, reject) => {
+      if (!googleAPIReady) return reject('Google API Not ready');
+
+      Auth.currentAuthenticatedUser()
+        .then((userData) => {
+          setUserId(userData.id);
+          resolve(userData);
+        })
+        .catch((err) => reject(err));
     });
+  };
 
-  useEffect(() => {
-    const ga = window.gapi && window.gapi.auth2 ? window.gapi.auth2.getAuthInstance() : null;
-
-    if (!ga) createScript();
-
-    Hub.listen('auth', ({ payload: { event, data } }) => {
-      switch (event) {
-        case 'signIn':
-          getUser().then((userData) => {
-            dispatch(signIn(userData));
-          });
-          break;
-
-        case 'signOut':
-          dispatch(signOut(data));
-          break;
-
-        case 'customOAuthState':
-        default:
-          console.log({ event, data });
-      }
-    });
-
+  const signInWithCurrentUser = () => {
     getUser()
       .then((userData) => {
         dispatch(signIn(userData));
       })
       .catch((err) => {
-        console.log(err);
-        console.log('Not signed in');
+        console.log(err.message);
       });
-  }, []);
+  };
+
+  const handleAuthEvent = ({ payload: { event, data } }) => {
+    switch (event) {
+      case 'signIn':
+        signInWithCurrentUser();
+        break;
+
+      case 'signOut':
+        dispatch(signOut(data));
+        break;
+
+      case 'customOAuthState':
+      default:
+        console.log({ event, data });
+    }
+  };
+
+  useEffect(() => {
+    if (!googleAPIReady) {
+      const ga = window.gapi && window.gapi.auth2 ? window.gapi.auth2.getAuthInstance() : null;
+
+      if (!ga) {
+        createScript();
+      } else {
+        setGoogleAPIReady(true);
+      }
+    }
+
+    Hub.listen('auth', handleAuthEvent);
+
+    signInWithCurrentUser();
+
+    return () => {
+      Hub.remove('auth', handleAuthEvent);
+    };
+  }, [googleAPIReady]);
 
   const googleSignIn = () => {
     const ga = window.gapi.auth2.getAuthInstance();
-    ga.signIn()
+
+    ga.signIn({ scope: 'https://www.googleapis.com/auth/youtube.readonly' })
       .then((googleUser) => getAWSCredentials(googleUser))
       .catch((err) => {
         console.log(err);
@@ -101,9 +123,16 @@ export default function useAuthentication() {
     const g = window.gapi;
 
     g.load('auth2', () => {
-      const auth2 = g.auth2.init({
+      g.auth2.init({
         client_id: configure.GOOGLE_CLIENT_ID,
         scope: 'profile email openid',
+      });
+    });
+
+    g.load('client:auth2', () => {
+      g.client.setApiKey(configure.YOUTUBE_API_KEY);
+      g.client.load('https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest').then(() => {
+        setGoogleAPIReady(true);
       });
     });
   };

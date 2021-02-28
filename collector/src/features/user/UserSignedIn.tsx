@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 
 import useAuthentication from './UseAuthentication';
 import { selectUserById } from './userSlice';
 
-export default function UserSignedIn() {
+export default function UserSignedIn(): ReactElement {
   const { googleSignOut, userId } = useAuthentication();
   const user = useSelector((state) => selectUserById(state, userId));
 

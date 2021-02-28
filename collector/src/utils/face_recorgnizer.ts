@@ -59,7 +59,7 @@ export default {
           timestamp: video.currentTime,
           name: bestMatch.label,
           distance: bestMatch.distance,
-          url: ImageCreator.createAlignedImage(canvas, detection).toDataURL('image/jpeg'),
+          url: ImageCreator.createAlignedImage(canvas, detection),
         });
       }
     });
@@ -80,12 +80,10 @@ export default {
     return results;
   },
 
-  sortByDistance(results: IFaceRecognitionResultWithGroup): void {
-    Object.entries(results).forEach(([memberName, result]) => {
-      result.sort((prev, next) => {
-        if (prev.distance < next.distance) return 1;
-        if (prev.distance > next.distance) return -1;
-      });
+  sortByDistance(results: Array<IFaceRecognitionResult>): void {
+    results.sort((prev, next) => {
+      if (prev.distance < next.distance) return 1;
+      if (prev.distance > next.distance) return -1;
     });
   },
 };

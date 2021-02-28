@@ -16,7 +16,22 @@ export default {
     fs.writeFileSync(path.resolve(baseDir, fileName), buf);
   },
 
-  createAlignedImage(img: HTMLCanvasElement, detection): Canvas {
+  createThumbnailImage(video: HTMLVideoElement): string {
+    const videoWidth = video.clientWidth;
+    const videoHeight = video.clientHeight;
+    const scale = 360 / videoWidth;
+
+    const thumbnailCanvas = document.createElement('canvas');
+    thumbnailCanvas.width = 360;
+    thumbnailCanvas.height = videoHeight * scale;
+
+    const thumbnailCtx = thumbnailCanvas.getContext('2d');
+    thumbnailCtx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, 360, videoHeight * scale);
+
+    return thumbnailCanvas.toDataURL('image/jpeg');
+  },
+
+  createAlignedImage(img: HTMLCanvasElement, detection): string {
     const { x, y, width, height } = detection.alignedRect.box;
 
     const croppedCanvas = createCanvas(img.width, img.height);
@@ -40,6 +55,6 @@ export default {
       this.DATASET_IMAGE
     );
 
-    return croppedCanvas;
+    return croppedCanvas.toDataURL('image/jpeg');
   },
 };

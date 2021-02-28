@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { ContentsWrapper } from './App.style';
 
+import PlaylistList from './features/playlists/PlaylistList';
 import VideoList from './features/videos/VideoList';
 import VideoDetails from './features/videos/VideoDetails';
 import UserSignIn from './features/user/UserSignIn';
@@ -23,8 +24,15 @@ export default function App(): ReactElement {
             <Drawer>
               <UserSignedIn />
             </Drawer>
+
             <Switch>
               <Route exact path="/">
+                <VideoList />
+              </Route>
+              <Route exact path="/playlist">
+                <PlaylistList />
+              </Route>
+              <Route path="/playlist/:playlistId">
                 <VideoList />
               </Route>
               <Route exact path="/video">

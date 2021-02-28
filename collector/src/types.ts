@@ -74,3 +74,15 @@ export interface ISceneAddFormProps {
   onSceneAdded: () => void;
   onCloseButtonClick: () => void;
 }
+
+export interface IPlaylist {
+  id: string;
+  title: string;
+  channel: {
+    id: string;
+    title: string;
+    thumbnails: {
+      medium: string;
+    };
+  };
+}

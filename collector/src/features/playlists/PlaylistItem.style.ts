@@ -25,6 +25,7 @@ export const ChannelInfo = styled.cite`
 export const PlaylistItemWrapper = styled.li`
   padding: 1.6rem;
   width: calc(50% - 0.8rem);
+  box-sizing: border-box;
   border-radius: var(--borderRadius);
   background-color: #fff;
   cursor: pointer;

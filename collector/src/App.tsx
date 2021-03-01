@@ -6,6 +6,7 @@ import { ContentsWrapper } from './App.style';
 
 import PlaylistList from './features/playlists/PlaylistList';
 import VideoList from './features/videos/VideoList';
+import VideoListForPlaylist from './features/videos/VideoListForPlaylist';
 import VideoDetails from './features/videos/VideoDetails';
 import UserSignIn from './features/user/UserSignIn';
 import UserSignedIn from './features/user/UserSignedIn';
@@ -33,7 +34,7 @@ export default function App(): ReactElement {
                 <PlaylistList />
               </Route>
               <Route path="/playlist/:playlistId">
-                <VideoList />
+                <VideoListForPlaylist />
               </Route>
               <Route exact path="/video">
                 <VideoList />

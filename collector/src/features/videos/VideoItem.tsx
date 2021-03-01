@@ -6,9 +6,7 @@ interface VideoItemProps {
   videoId: string;
   title: string;
   publishedAt: string;
-  thumbnail: {
-    url: string;
-  };
+  thumbnail: string;
   channel: {
     thumbnails: {
       default: string;
@@ -34,7 +32,6 @@ export default function VideoItem({
       <VideoItemThumbnail src={thumbnail.url} alt={title} />
 
       <VideoItemInfo>
-        <img src={channel.thumbnails.default} alt="" />
         <strong>
           {title} <span>{new Date(publishedAt).toLocaleDateString()}</span>
         </strong>

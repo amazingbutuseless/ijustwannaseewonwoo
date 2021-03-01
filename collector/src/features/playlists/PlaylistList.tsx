@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchPlaylists, selectAllPlaylists } from './playlistsSlice';
 
-import { PlaylistListWrapper, PlaylistListItems } from './PlaylistList.style';
+import { MenuTitle, PlaylistListWrapper, PlaylistListItems } from './PlaylistList.style';
 
 import PlaylistItem from './PlaylistItem';
 
@@ -18,11 +18,11 @@ export default function PlaylistList() {
     if (playlistStatus === 'idle') {
       dispatch(fetchPlaylists({ lastId: lastPlaylistId }));
     }
-  }, [playlistStatus, dispatch]);
+  }, []);
 
   return (
     <PlaylistListWrapper>
-      <h2>Playlist</h2>
+      <MenuTitle>Playlist</MenuTitle>
 
       {['idle', 'loading'].includes(playlistStatus) && <div>loading...</div>}
 

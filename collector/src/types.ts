@@ -1,5 +1,6 @@
 type SceneTime = number;
 type ChannelId = string;
+type PlaylistId = string;
 type VideoId = string;
 type VideoPublishedAt = string;
 type ThumbnailImageUrl = string;
@@ -28,20 +29,21 @@ export interface ChannelDataInterface {
   };
 }
 
-export interface VideoItemInListInterface extends VideoItemInterface {
+export interface IVideoItemWithChannel extends IVideoItem {
   channel: ChannelDataInterface;
 }
 
-export interface VideoItemInterface {
+export interface IVideoItem {
   id: string;
   channelId: ChannelId;
+  playlistId: PlaylistId;
   videoId: VideoId;
   title: string;
   publishedAt: VideoPublishedAt;
   thumbnail: {
     url: ThumbnailImageUrl;
   };
-  scenes: SceneItemInterface[];
+  scenes: Array<SceneItemInterface>;
 }
 
 export interface SceneTimecodeInterface {

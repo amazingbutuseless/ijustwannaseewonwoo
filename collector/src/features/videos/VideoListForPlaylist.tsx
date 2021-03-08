@@ -1,31 +1,87 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchPlaylist, selectPlaylistById } from '../playlists/playlistsSlice';
-import { fetchPlaylistVideos, selectVideosByPlaylist } from './videosSlice';
 
-import useVideoList from './UseVideoList';
+import YoutubeAPI from '../../utils/youtube_api';
+
+import Header from '../../components/Header';
+import LoadingAnimation from '../../components/LoadingAnimation';
+import VideoItems from './VideoItems';
+import { IVideoItemWithChannel } from '../../types';
+
+interface fetchPlaylistVideosParams {
+  playlistId: string;
+  pageToken?: string;
+}
+
+async function fetchVideos({ playlistId, pageToken = '' }: fetchPlaylistVideosParams) {
+  const response = await YoutubeAPI.listPlaylistItem({ playlistId, pageToken });
+
+  const videos = response.result.items.map((item) => {
+    const { channelId, playlistId, title, publishedAt } = item.snippet;
+
+    return {
+      id: 'video',
+      channelId,
+      playlistId,
+      videoId: item.contentDetails.videoId,
+      title,
+      publishedAt,
+      thumbnail: item.snippet.thumbnails.high,
+      scenes: [],
+    };
+  });
+
+  return {
+    videos,
+    pageToken: response.result.nextPageToken,
+  };
+}
 
 export default function VideoListForPlaylist() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { playlistId } = useParams();
 
   const playlist = useSelector((state) => selectPlaylistById(state, playlistId));
 
-  const videoItems = useSelector((state) => selectVideosByPlaylist(state, playlistId));
-  const { status: videoStatus, pageToken } = useSelector((state) => {
-    return state.videos;
-  });
-
-  const updateList = () => {
-    dispatch(fetchPlaylistVideos({ playlistId, pageToken }));
-  };
+  const [pageToken, updatePageToken] = useState('');
+  const [videos, updateVideos] = useState<Array<IVideoItemWithChannel>>([]);
 
   useEffect(() => {
-    if (!playlist) dispatch(fetchPlaylist({ playlistId }));
-    if (videoStatus === 'idle') updateList();
-  }, []);
+    if (!playlist) {
+      dispatch(fetchPlaylist({ playlistId }));
+    }
+    updateList();
+  }, [playlistId]);
 
-  return useVideoList(playlist?.title, videoStatus, videoItems, pageToken, updateList);
+  const onVideoItemClick = (selectedVideoId: string) => {
+    history.push(`/video/${selectedVideoId}`);
+  };
+
+  const hasNextPage = () => {
+    return playlist && pageToken?.length > 0;
+  };
+
+  const updateList = async () => {
+    const { videos: updatedVideos, pageToken: newPageToken } = await fetchVideos({
+      playlistId,
+      pageToken,
+    });
+
+    updateVideos(videos.concat(updatedVideos));
+    updatePageToken(newPageToken);
+  };
+
+  return (
+    <>
+      <Header title={playlist?.title} />
+
+      <VideoItems items={videos} onClick={onVideoItemClick} />
+
+      {hasNextPage() && <button onClick={updateList}>next page</button>}
+    </>
+  );
 }

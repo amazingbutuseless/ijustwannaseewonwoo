@@ -8,7 +8,6 @@ import {
 import { SceneItemInterface, IVideoItemWithChannel } from '../../types';
 
 import APIClient from '../../utils/api_client';
-import YoutubeAPI from '../../utils/youtube_api';
 
 const videosAdapter = createEntityAdapter<IVideoItemWithChannel>({
   selectId: (video) => video.videoId,
@@ -17,8 +16,6 @@ const videosAdapter = createEntityAdapter<IVideoItemWithChannel>({
 const initialState = videosAdapter.getInitialState({
   status: 'idle',
   error: null,
-  pageToken: '',
-  pageInfo: null,
 });
 
 const videoEntities = `
@@ -95,34 +92,6 @@ export const fetchVideo = createAsyncThunk('videos/fetchVideo', async (videoId: 
   return response.data.video;
 });
 
-export const fetchPlaylistVideos = createAsyncThunk(
-  'videos/fetchPlaylistVideos',
-  async ({ playlistId, pageToken = '' }) => {
-    const response = await YoutubeAPI.listPlaylistItem({ playlistId, pageToken });
-
-    const videos = response.result.items.map((item) => {
-      const { channelId, playlistId, title, publishedAt } = item.snippet;
-
-      return {
-        id: 'video',
-        channelId,
-        playlistId,
-        videoId: item.contentDetails.videoId,
-        title,
-        publishedAt,
-        thumbnail: item.snippet.thumbnails.high,
-        scenes: [],
-      };
-    });
-
-    return {
-      videos,
-      pageToken: response.result.nextPageToken,
-      pageInfo: response.result.pageInfo,
-    };
-  }
-);
-
 const VideosSlice = createSlice({
   name: 'videos',
   initialState,
@@ -145,18 +114,6 @@ const VideosSlice = createSlice({
     [fetchVideo.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       videosAdapter.upsertOne(state, action.payload);
-    },
-
-    [fetchPlaylistVideos.fulfilled]: (state, action) => {
-      state.status = 'succeeded';
-      state.pageToken = action.payload.pageToken;
-      state.pageInfo = action.payload.pageInfo;
-      videosAdapter.upsertMany(state, action.payload.videos);
-    },
-
-    [fetchPlaylistVideos.rejected]: (state, action) => {
-      state.status = 'failed';
-      console.log(action.error);
     },
   },
 });

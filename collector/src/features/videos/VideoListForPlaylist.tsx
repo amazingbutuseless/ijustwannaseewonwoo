@@ -57,8 +57,13 @@ export default function VideoListForPlaylist() {
     updateList();
   }, [playlistId]);
 
-  const onVideoItemClick = (selectedVideoId: string) => {
-    history.push(`/video/${selectedVideoId}`);
+  const onVideoItemClick = (selectedVideoId: string, videoTitle: string) => {
+    history.push({
+      pathname: `/video/${selectedVideoId}`,
+      state: {
+        title: videoTitle,
+      },
+    });
   };
 
   const hasNextPage = () => {

@@ -24,7 +24,7 @@ export default function VideoItem({
   onClick,
 }: VideoItemProps) {
   const handleClick = () => {
-    onClick(videoId);
+    onClick(videoId, title);
   };
 
   return (

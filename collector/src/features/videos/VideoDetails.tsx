@@ -1,12 +1,11 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import { SceneTimecodeInterface } from '../../types';
 
-import { fetchVideo, selectVideoById } from './videosSlice';
 import { selectAllScenesForVideo } from '../scenes/scenesSlice';
 
 import { VideoWrapper } from './VideoDetails.style';
@@ -24,8 +23,9 @@ interface VideoRouterParams {
   videoId: string;
 }
 
-function VideoDetails() {
+function VideoDetails(): ReactElement {
   const { videoId }: VideoRouterParams = useParams();
+  const { title } = useLocation().state;
 
   const player = useRef(null);
   const [time, updateTime] = useState({ start: -1, end: null });
@@ -34,9 +34,6 @@ function VideoDetails() {
 
   const [sceneAddFormVisible, setSceneAddFormVisible] = useState(false);
 
-  const dispatch = useDispatch();
-
-  const video = useSelector((state) => selectVideoById(state, videoId));
   const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
 
   const onVideoDownloaded = (event: IpcRendererEvent, message: any) => {
@@ -54,7 +51,6 @@ function VideoDetails() {
   };
 
   useEffect(() => {
-    dispatch(fetchVideo(videoId));
     ipcRenderer.send('video/download', { videoId });
 
     ipcRenderer.on('video/download', onVideoDownloaded);
@@ -134,37 +130,29 @@ function VideoDetails() {
 
   return (
     <>
-      <Header title={video ? video.title : ''} />
+      <Header title={title} />
+
       <VideoWrapper>
-        {video && (
-          <>
-            <div style={{ position: 'relative' }}>
-              <VideoPlayer
-                videoId={videoId}
-                timecode={time}
-                onPaused={onPlayerPaused}
-                ref={player}
-              />
-              <SceneAddForm
-                visible={sceneAddFormVisible}
-                videoId={videoId}
-                onTimecodeSet={onTimecodeSet}
-                onSceneAdded={onSceneAdded}
-                onCloseButtonClick={onSceneAddFormCloseButtonClick}
-              />
-            </div>
+        <div style={{ position: 'relative' }}>
+          <VideoPlayer videoId={videoId} timecode={time} onPaused={onPlayerPaused} ref={player} />
+          <SceneAddForm
+            visible={sceneAddFormVisible}
+            videoId={videoId}
+            onTimecodeSet={onTimecodeSet}
+            onSceneAdded={onSceneAdded}
+            onCloseButtonClick={onSceneAddFormCloseButtonClick}
+          />
+        </div>
 
-            <Scenes
-              videoId={videoId}
-              onSceneClick={onSceneClick}
-              onAddSceneButtonClick={onAddSceneButtonClick}
-              activeSceneIdx={activeSceneIdx}
-              onLoaded={onScenesLoaded}
-            />
+        <Scenes
+          videoId={videoId}
+          onSceneClick={onSceneClick}
+          onAddSceneButtonClick={onAddSceneButtonClick}
+          activeSceneIdx={activeSceneIdx}
+          onLoaded={onScenesLoaded}
+        />
 
-            <VideoForWonwoo />
-          </>
-        )}
+        <VideoForWonwoo />
       </VideoWrapper>
     </>
   );

@@ -8,7 +8,7 @@ import VideoItem from './VideoItem';
 
 interface VideoItemsProps {
   items: Array<IVideoItemWithChannel>;
-  onClick: (videoId: string) => void;
+  onClick: (videoId: string, title: string) => void;
 }
 
 export default function VideoItems({ items, onClick }: VideoItemsProps) {

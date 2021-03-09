@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,9 +7,10 @@ import { fetchPlaylist, selectPlaylistById } from '../playlists/playlistsSlice';
 import YoutubeAPI from '../../utils/youtube_api';
 
 import Header from '../../components/Header';
-import LoadingAnimation from '../../components/LoadingAnimation';
 import VideoItems from './VideoItems';
 import { IVideoItemWithChannel } from '../../types';
+
+import MoreVideosButton from '../../components/MoreVideosButton';
 
 interface fetchPlaylistVideosParams {
   playlistId: string;
@@ -30,17 +31,17 @@ async function fetchVideos({ playlistId, pageToken = '' }: fetchPlaylistVideosPa
       title,
       publishedAt,
       thumbnail: item.snippet.thumbnails.high,
-      scenes: [],
     };
   });
 
   return {
     videos,
     pageToken: response.result.nextPageToken,
+    pageInfo: response.result.pageInfo,
   };
 }
 
-export default function VideoListForPlaylist() {
+export default function VideoListForPlaylist(): ReactElement {
   const dispatch = useDispatch();
   const history = useHistory();
   const { playlistId } = useParams();
@@ -49,6 +50,7 @@ export default function VideoListForPlaylist() {
 
   const [pageToken, updatePageToken] = useState('');
   const [videos, updateVideos] = useState<Array<IVideoItemWithChannel>>([]);
+  const [totalVideos, updateTotalVideos] = useState(0);
 
   useEffect(() => {
     if (!playlist) {
@@ -71,13 +73,14 @@ export default function VideoListForPlaylist() {
   };
 
   const updateList = async () => {
-    const { videos: updatedVideos, pageToken: newPageToken } = await fetchVideos({
+    const { videos: updatedVideos, pageToken: newPageToken, pageInfo } = await fetchVideos({
       playlistId,
       pageToken,
     });
 
     updateVideos(videos.concat(updatedVideos));
     updatePageToken(newPageToken);
+    updateTotalVideos(pageInfo.totalResults);
   };
 
   return (
@@ -86,7 +89,9 @@ export default function VideoListForPlaylist() {
 
       <VideoItems items={videos} onClick={onVideoItemClick} />
 
-      {hasNextPage() && <button onClick={updateList}>next page</button>}
+      {hasNextPage() && (
+        <MoreVideosButton current={videos.length} total={totalVideos} onClick={updateList} />
+      )}
     </>
   );
 }

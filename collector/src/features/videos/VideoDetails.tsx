@@ -33,11 +33,14 @@ function VideoDetails(): ReactElement {
   const [activeSceneIdx, updateActiveSceneIdx] = useState(null);
 
   const [sceneAddFormVisible, setSceneAddFormVisible] = useState(false);
+  const [enableSceneAddButton, setEnableSceneAddButton] = useState(false);
 
   const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
 
   const onVideoDownloaded = (event: IpcRendererEvent, message: any) => {
-    console.log(message.rates);
+    if (message.videoId !== videoId) return;
+
+    setEnableSceneAddButton(message.rates >= 1);
   };
 
   const onFaceDetected = (event: IpcRendererEvent, message: any) => {
@@ -150,6 +153,7 @@ function VideoDetails(): ReactElement {
           onAddSceneButtonClick={onAddSceneButtonClick}
           activeSceneIdx={activeSceneIdx}
           onLoaded={onScenesLoaded}
+          enableButton={enableSceneAddButton}
         />
 
         <VideoForWonwoo />

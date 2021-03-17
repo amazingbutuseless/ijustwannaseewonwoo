@@ -42,6 +42,11 @@ export const AddSceneButton = styled.button`
   span {
     display: none;
   }
+
+  &[disabled] {
+    background-color: var(--battleship-grey);
+    cursor: default;
+  }
 `;
 
 AddSceneButton.defaultProps = {

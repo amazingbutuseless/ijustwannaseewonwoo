@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
+import styled from '@emotion/styled';
 
 import { SceneTimecodeInterface } from '../../types';
 
-import { selectVideoById } from '../videos/videosSlice';
 import { fetchScenes, selectAllScenesForVideo } from './scenesSlice';
 
 import SceneListItem, { SceneListItemEmpty } from './SceneListItem';
@@ -15,6 +16,24 @@ interface SceneProps {
   onAddSceneButtonClick: () => void;
   onLoaded: () => void;
   activeSceneIdx?: number;
+  enableButton: boolean;
+}
+
+const SceneListWrapper = styled.div``;
+
+function AddSceneIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="white"
+      width="24px"
+      height="24px"
+    >
+      <path d="M0 0h24v24H0z" fill="none" />
+      <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z" />
+    </svg>
+  );
 }
 
 export default function Scenes({
@@ -23,12 +42,14 @@ export default function Scenes({
   onAddSceneButtonClick,
   onLoaded,
   activeSceneIdx = -1,
-}: SceneProps) {
+  enableButton = false,
+}: SceneProps): ReactElement {
+  const { title: videoTitle } = useLocation().state;
+
   const list = useRef(null);
 
   const dispatch = useDispatch();
 
-  const video = useSelector((state) => selectVideoById(state, videoId));
   const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
   const scenesStatus = useSelector((state) => state.scenes.status);
 
@@ -60,26 +81,17 @@ export default function Scenes({
 
   return (
     <SceneWrapper>
-      <div style={{ overflow: 'hidden' }}>
+      <SceneListWrapper>
         <SceneList activeItemIdx={activeSceneIdx} ref={list}>
-          {scenesStatus === 'pending' && <LoadingAnimation>{video.title}</LoadingAnimation>}
+          {scenesStatus === 'pending' && <LoadingAnimation>{videoTitle}</LoadingAnimation>}
           {scenesStatus === 'succeeded' &&
             ((scenes.length > 0 && <SceneItems />) ||
               (scenes.length < 1 && <SceneListItemEmpty onClick={onAddSceneButtonClick} />))}
         </SceneList>
-      </div>
+      </SceneListWrapper>
 
-      <AddSceneButton onClick={onAddSceneButtonClick}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="white"
-          width="24px"
-          height="24px"
-        >
-          <path d="M0 0h24v24H0z" fill="none" />
-          <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z" />
-        </svg>
+      <AddSceneButton onClick={onAddSceneButtonClick} disabled={!enableButton}>
+        <AddSceneIcon />
         <span>장면 추가</span>
       </AddSceneButton>
     </SceneWrapper>

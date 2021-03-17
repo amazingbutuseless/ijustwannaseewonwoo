@@ -18,6 +18,7 @@ export default class YoutubeDownloader {
 
   private sendMessageToRenderer(renderer: IpcMainEvent, rates: number): void {
     renderer.sender.send('video/download', {
+      videoId: this.videoId,
       rates,
     });
   }

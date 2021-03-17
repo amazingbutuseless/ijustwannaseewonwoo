@@ -1,16 +1,15 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchPlaylist, selectPlaylistById } from '../playlists/playlistsSlice';
-
+import { fetchPlaylist, updateMetadata, selectPlaylistById } from '../playlists/playlistsSlice';
+import { addPlaylistVideos, selectVideosByPlaylist } from './videosSlice';
 import YoutubeAPI from '../../utils/youtube_api';
 
 import Header from '../../components/Header';
-import VideoItems from './VideoItems';
-import { IVideoItemWithChannel } from '../../types';
-
 import MoreVideosButton from '../../components/MoreVideosButton';
+
+import VideoItems from './VideoItems';
 
 interface fetchPlaylistVideosParams {
   playlistId: string;
@@ -47,16 +46,15 @@ export default function VideoListForPlaylist(): ReactElement {
   const { playlistId } = useParams();
 
   const playlist = useSelector((state) => selectPlaylistById(state, playlistId));
-
-  const [pageToken, updatePageToken] = useState('');
-  const [videos, updateVideos] = useState<Array<IVideoItemWithChannel>>([]);
-  const [totalVideos, updateTotalVideos] = useState(0);
+  const videos = useSelector((state) => selectVideosByPlaylist(state, playlistId));
 
   useEffect(() => {
     if (!playlist) {
       dispatch(fetchPlaylist({ playlistId }));
     }
-    updateList();
+    if (typeof playlist?.pageToken === 'undefined') {
+      updateList();
+    }
   }, [playlistId]);
 
   const onVideoItemClick = (selectedVideoId: string, videoTitle: string) => {
@@ -69,18 +67,23 @@ export default function VideoListForPlaylist(): ReactElement {
   };
 
   const hasNextPage = () => {
-    return playlist && pageToken?.length > 0;
+    return playlist && playlist.pageToken?.length > 0;
   };
 
   const updateList = async () => {
     const { videos: updatedVideos, pageToken: newPageToken, pageInfo } = await fetchVideos({
       playlistId,
-      pageToken,
+      pageToken: playlist?.pageToken,
     });
 
-    updateVideos(videos.concat(updatedVideos));
-    updatePageToken(newPageToken);
-    updateTotalVideos(pageInfo.totalResults);
+    dispatch(addPlaylistVideos(updatedVideos));
+    dispatch(
+      updateMetadata({
+        id: playlistId,
+        pageToken: newPageToken,
+        numOfVideos: pageInfo.totalResults,
+      })
+    );
   };
 
   return (
@@ -90,7 +93,11 @@ export default function VideoListForPlaylist(): ReactElement {
       <VideoItems items={videos} onClick={onVideoItemClick} />
 
       {hasNextPage() && (
-        <MoreVideosButton current={videos.length} total={totalVideos} onClick={updateList} />
+        <MoreVideosButton
+          current={videos.length}
+          total={playlist.numOfVideos || 0}
+          onClick={updateList}
+        />
       )}
     </>
   );

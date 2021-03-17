@@ -87,4 +87,6 @@ export interface IPlaylist {
       medium: string;
     };
   };
+  pageToken?: string;
+  numOfVideos?: number;
 }

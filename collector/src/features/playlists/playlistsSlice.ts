@@ -80,7 +80,11 @@ query playlists($limit: Int, $lastId: String) {
 const PlaylistsSlice = createSlice({
   name: 'playlists',
   initialState,
-  reducers: {},
+  reducers: {
+    updateMetadata(state, action) {
+      playlistAdapter.upsertOne(state, action.payload);
+    },
+  },
   extraReducers: {
     [fetchPlaylists.pending]: (state, action) => {
       state.status = 'loading';
@@ -106,5 +110,7 @@ export const {
   selectAll: selectAllPlaylists,
   selectById: selectPlaylistById,
 } = playlistAdapter.getSelectors((state) => state.playlists);
+
+export const { updateMetadata } = PlaylistsSlice.actions;
 
 export default PlaylistsSlice.reducer;

@@ -95,7 +95,11 @@ export const fetchVideo = createAsyncThunk('videos/fetchVideo', async (videoId: 
 const VideosSlice = createSlice({
   name: 'videos',
   initialState,
-  reducers: {},
+  reducers: {
+    addPlaylistVideos(state, action) {
+      videosAdapter.upsertMany(state, action.payload);
+    },
+  },
   extraReducers: {
     [fetchVideos.pending]: (state, action) => {
       state.status = 'loading';
@@ -132,5 +136,7 @@ export const selectVideosByPlaylist = createSelector(
   [selectAllVideos, (state, playlistId: string) => playlistId],
   (videos, playlistId) => videos.filter((video) => video.playlistId === playlistId)
 );
+
+export const { addPlaylistVideos } = VideosSlice.actions;
 
 export default VideosSlice.reducer;

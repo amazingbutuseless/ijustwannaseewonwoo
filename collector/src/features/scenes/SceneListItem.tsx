@@ -9,7 +9,7 @@ interface SceneListItemProps extends SceneItemInterface {
   active?: boolean;
 }
 
-export function SceneListItemEmpty({ onClick }) {
+export function EmptyItem({ onClick }) {
   return (
     <SceneListItemEmptyWrapper onClick={onClick}>
       아직 등록된 장면이 없습니다.

@@ -1,14 +1,12 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { ReactElement } from 'react';
 import { useLocation } from 'react-router';
-import styled from '@emotion/styled';
 
 import { SceneTimecodeInterface } from '../../types';
 
-import { fetchScenes, selectAllScenesForVideo } from './scenesSlice';
+import { SceneWrapper } from './Scenes.style';
 
-import SceneListItem, { SceneListItemEmpty } from './SceneListItem';
-import { SceneList, SceneWrapper, AddSceneButton, LoadingAnimation } from './Scenes.style';
+import AddSceneButton from '../../components/AddSceneButton';
+import SceneList from './SceneList';
 
 interface SceneProps {
   videoId: string;
@@ -19,23 +17,6 @@ interface SceneProps {
   enableButton: boolean;
 }
 
-const SceneListWrapper = styled.div``;
-
-function AddSceneIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="white"
-      width="24px"
-      height="24px"
-    >
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z" />
-    </svg>
-  );
-}
-
 export default function Scenes({
   videoId,
   onSceneClick,
@@ -44,56 +25,23 @@ export default function Scenes({
   activeSceneIdx = -1,
   enableButton = false,
 }: SceneProps): ReactElement {
-  const { title: videoTitle } = useLocation().state;
-
-  const list = useRef(null);
-
-  const dispatch = useDispatch();
-
-  const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
-  const scenesStatus = useSelector((state) => state.scenes.status);
-
-  useEffect(() => {
-    const scenes = list.current.querySelectorAll('li');
-    if (scenes) {
-      const scene = scenes.item(activeSceneIdx);
-      if (scene) list.current.scrollLeft = scene.offsetLeft - 88;
-    }
-  }, [activeSceneIdx]);
-
-  useEffect(() => {
-    if (scenesStatus === 'idle') {
-      dispatch(fetchScenes(videoId));
-    } else if (scenesStatus === 'succeeded') {
-      onLoaded();
-    }
-  }, [videoId, scenesStatus]);
-
-  const SceneItems = () => {
-    return (
-      <>
-        {scenes.map((scene, idx) => (
-          <SceneListItem key={`scene-${idx + 1}`} {...scene} onSceneClick={onSceneClick} />
-        ))}
-      </>
-    );
-  };
+  let videoTitle = '';
+  if (typeof useLocation().state !== 'undefined') {
+    videoTitle = useLocation().state.title;
+  }
 
   return (
     <SceneWrapper>
-      <SceneListWrapper>
-        <SceneList activeItemIdx={activeSceneIdx} ref={list}>
-          {scenesStatus === 'pending' && <LoadingAnimation>{videoTitle}</LoadingAnimation>}
-          {scenesStatus === 'succeeded' &&
-            ((scenes.length > 0 && <SceneItems />) ||
-              (scenes.length < 1 && <SceneListItemEmpty onClick={onAddSceneButtonClick} />))}
-        </SceneList>
-      </SceneListWrapper>
+      <SceneList
+        videoId={videoId}
+        videoTitle={videoTitle}
+        activeSceneIdx={activeSceneIdx}
+        onLoaded={onLoaded}
+        onSceneClick={onSceneClick}
+        onEmptyListClick={onAddSceneButtonClick}
+      />
 
-      <AddSceneButton onClick={onAddSceneButtonClick} disabled={!enableButton}>
-        <AddSceneIcon />
-        <span>장면 추가</span>
-      </AddSceneButton>
+      <AddSceneButton onClick={onAddSceneButtonClick} enable={enableButton} />
     </SceneWrapper>
   );
 }

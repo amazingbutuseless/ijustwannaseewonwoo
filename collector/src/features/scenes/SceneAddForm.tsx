@@ -1,12 +1,20 @@
 import { ipcRenderer } from 'electron';
-import React, { FormEvent, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { FormEvent, RefObject, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { ISceneAddFormProps, SceneTimecodeInterface } from '../../types';
 
+import { selectVideoById, registerVideo } from '../videos/videosSlice';
 import { addScene } from './scenesSlice';
 
-import { SceneAddFormContainer, TimeInput, CloseButton } from './SceneAddForm.style';
+import { SceneAddFormContainer } from './SceneAddForm.style';
+
+import SceneAddFormCloseButton from '../../components/SceneAddFormCloseButton';
+import SceneRange from '../../components/SceneRange';
+
+interface rangeInputSets {
+  [name: string]: RefObject<HTMLInputElement>;
+}
 
 export default function SceneAddForm({
   visible,
@@ -17,16 +25,22 @@ export default function SceneAddForm({
 }: ISceneAddFormProps) {
   const dispatch = useDispatch();
 
-  const startMin = useRef<HTMLInputElement>(null);
-  const startSec = useRef<HTMLInputElement>(null);
-  const endMin = useRef<HTMLInputElement>(null);
-  const endSec = useRef<HTMLInputElement>(null);
+  const video = useSelector((state) => selectVideoById(state, videoId));
+
+  const rangeInput: rangeInputSets = {};
+  const createRangeInput = (input: RefObject<HTMLInputElement>) => {
+    if (input) {
+      rangeInput[input.name] = input;
+    }
+  };
 
   const getTimecode = (): SceneTimecodeInterface => {
-    const startMinTime = startMin.current.value.length > 0 ? parseInt(startMin.current.value) : 0;
-    const startSecTime = startSec.current.value.length > 0 ? parseInt(startSec.current.value) : 0;
-    const endMinTime = endMin.current.value.length > 0 ? parseInt(endMin.current.value) : 0;
-    const endSecTime = endSec.current.value.length > 0 ? parseInt(endSec.current.value) : 0;
+    const startMinTime =
+      rangeInput.startMin.value.length > 0 ? parseInt(rangeInput.startMin.value) : 0;
+    const startSecTime =
+      rangeInput.startSec.value.length > 0 ? parseInt(rangeInput.startSec.value) : 0;
+    const endMinTime = rangeInput.endMin.value.length > 0 ? parseInt(rangeInput.endMin.value) : 0;
+    const endSecTime = rangeInput.endSec.value.length > 0 ? parseInt(rangeInput.endSec.value) : 0;
 
     return {
       start: startMinTime * 60 + startSecTime,
@@ -35,10 +49,10 @@ export default function SceneAddForm({
   };
 
   const resetTimeInput = () => {
-    startMin.current.value = '';
-    startSec.current.value = '';
-    endMin.current.value = '';
-    endSec.current.value = '';
+    rangeInput.startMin.value = '';
+    rangeInput.startSec.value = '';
+    rangeInput.endMin.value = '';
+    rangeInput.endSec.value = '';
   };
 
   const onSubmit = (e: FormEvent) => {
@@ -72,25 +86,8 @@ export default function SceneAddForm({
 
   return (
     <SceneAddFormContainer action="#" onSubmit={onSubmit} visible={visible}>
-      <CloseButton onClick={onFormCloseButtonClick}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="black"
-          width="24px"
-          height="24px"
-        >
-          <path d="M0 0h24v24H0z" fill="none" />
-          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-        </svg>
-      </CloseButton>
-      <TimeInput name="start_min" ref={startMin} onChange={onTimeUpdate} />
-      :
-      <TimeInput name="start_sec" max="59" ref={startSec} onChange={onTimeUpdate} />
-      ~
-      <TimeInput name="end_min" ref={endMin} onChange={onTimeUpdate} />
-      :
-      <TimeInput name="end_sec" max="59" ref={endSec} onChange={onTimeUpdate} />
+      <SceneAddFormCloseButton onClick={onFormCloseButtonClick} />
+      <SceneRange createRangeRef={createRangeInput} onTimeUpdate={onTimeUpdate} />
       <button type="button" onClick={playDuration}>
         재생
       </button>

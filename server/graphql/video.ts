@@ -22,6 +22,7 @@ export const VideoTypesDef = gql`
   type Video {
     id: String
     channelId: String
+    playlistId: String
     videoId: ID!
     title: String
     thumbnail(size: ThumbnailSize = standard): Thumbnails
@@ -40,11 +41,37 @@ export const VideoTypesDef = gql`
     registerVideo(data: registerVideoData): Video
   }
 
+  input VideoThumbnailDetails {
+    url: String
+    width: Int
+    height: Int
+  }
+
+  input VideoThumbnails {
+    default: VideoThumbnailDetails
+    medium: VideoThumbnailDetails
+    high: VideoThumbnailDetails
+    standard: VideoThumbnailDetails
+    maxres: VideoThumbnailDetails
+  }
+
+  input VideoSnippet {
+    channelId: String
+    playlistId: String
+    title: String
+    thumbnails: VideoThumbnails
+    publishedAt: String
+  }
+
+  input VideoContentDetails {
+    videoId: String
+    videoPublishedAt: String
+  }
+
   input registerVideoData {
-    id: String!
-    title: String!
-    thumbnail: String!
-    channelId: String!
+    id: String
+    snippet: VideoSnippet
+    contentDetails: VideoContentDetails
   }
 `;
 
@@ -60,7 +87,9 @@ export const VideoResolvers = {
   },
 
   Mutation: {
-    registerVideo(root, { data }, ctx) {},
+    registerVideo(root, { data }, ctx) {
+      return Video.register(data);
+    },
   },
 
   Video: {

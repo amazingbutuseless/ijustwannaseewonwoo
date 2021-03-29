@@ -3,7 +3,7 @@ import DB from './dynamodb_helper';
 import { VideoDataInterface } from '../types';
 
 export default {
-  prepareDataForCreating(videoItem, playlistId) {
+  prepareDataForCreating(videoItem) {
     const thumbnails = {};
 
     Object.entries(videoItem.snippet.thumbnails).forEach(([size, details]) => {
@@ -22,18 +22,21 @@ export default {
       };
     });
 
+    const videoId = videoItem.contentDetails?.videoId || videoItem.id;
+    const publishedAt = videoItem.contentDetails?.videoPublishedAt || videoItem.snippet.publishedAt;
+
     const video = {
       id: {
         S: 'video',
       },
       relId: {
-        S: `${videoItem.contentDetails.videoPublishedAt}/${videoItem.contentDetails.videoId}`,
+        S: `${publishedAt}/${videoId}`,
       },
       channelId: {
         S: videoItem.snippet.channelId,
       },
       videoId: {
-        S: videoItem.contentDetails.videoId,
+        S: videoId,
       },
       title: {
         S: videoItem.snippet.title,
@@ -42,7 +45,7 @@ export default {
         M: { ...thumbnails },
       },
       publishedAt: {
-        S: videoItem.contentDetails.videoPublishedAt,
+        S: publishedAt,
       },
       updatedAt: {
         S: new Date().toISOString(),
@@ -52,9 +55,9 @@ export default {
       },
     };
 
-    if (playlistId.length > 0) {
+    if (typeof videoItem.snippet.playlistId !== 'undefined') {
       video.playlistId = {
-        S: playlistId,
+        S: videoItem.snippet.playlistId,
       };
     }
 
@@ -102,23 +105,5 @@ export default {
         console.log(err);
         return {};
       });
-  },
-
-  registerBulk(videos, playlistId = '') {
-    let updatedVideos = [];
-
-    const tasks = [];
-
-    while (videos.length > 0) {
-      const videoChunk = videos.splice(0, Math.min(25, videos.length));
-      const items = videoChunk.map((video) => this.prepareDataForCreating(video, playlistId));
-
-      tasks.push(DB.putItems(items));
-      updatedVideos = updatedVideos.concat(items.map((video) => DB.parse(video)));
-    }
-
-    return Promise.all(tasks).then((results) => {
-      return updatedVideos;
-    });
   },
 };

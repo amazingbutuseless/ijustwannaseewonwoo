@@ -89,4 +89,6 @@ export interface IPlaylist {
   };
   pageToken?: string;
   numOfVideos?: number;
+  videos?: Array<IVideoItemWithChannel>;
+  ytVideos?: Array<IVideoItemWithChannel>;
 }

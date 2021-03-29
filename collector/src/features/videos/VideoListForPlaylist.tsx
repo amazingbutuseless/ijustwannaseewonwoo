@@ -2,58 +2,32 @@ import React, { ReactElement, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchPlaylist, updateMetadata, selectPlaylistById } from '../playlists/playlistsSlice';
-import { addPlaylistVideos, selectVideosByPlaylist } from './videosSlice';
-import YoutubeAPI from '../../utils/youtube_api';
+import {
+  fetchPlaylist,
+  updateMetadata,
+  selectPlaylistById,
+  fetchPlaylistVideos,
+} from '../playlists/playlistsSlice';
 
 import Header from '../../components/Header';
 import MoreVideosButton from '../../components/MoreVideosButton';
 
 import VideoItems from './VideoItems';
 
-interface fetchPlaylistVideosParams {
+interface VideoListForPlaylistUrlParams {
   playlistId: string;
-  pageToken?: string;
-}
-
-async function fetchVideos({ playlistId, pageToken = '' }: fetchPlaylistVideosParams) {
-  const response = await YoutubeAPI.listPlaylistItem({ playlistId, pageToken });
-
-  const videos = response.result.items.map((item) => {
-    const { channelId, playlistId, title, publishedAt } = item.snippet;
-
-    return {
-      id: 'video',
-      channelId,
-      playlistId,
-      videoId: item.contentDetails.videoId,
-      title,
-      publishedAt,
-      thumbnail: item.snippet.thumbnails.high,
-    };
-  });
-
-  return {
-    videos,
-    pageToken: response.result.nextPageToken,
-    pageInfo: response.result.pageInfo,
-  };
 }
 
 export default function VideoListForPlaylist(): ReactElement {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { playlistId } = useParams();
+  const { playlistId }: VideoListForPlaylistUrlParams = useParams();
 
   const playlist = useSelector((state) => selectPlaylistById(state, playlistId));
-  const videos = useSelector((state) => selectVideosByPlaylist(state, playlistId));
 
   useEffect(() => {
-    if (!playlist) {
+    if (!playlist || typeof playlist.ytVideos === 'undefined') {
       dispatch(fetchPlaylist({ playlistId }));
-    }
-    if (typeof playlist?.pageToken === 'undefined') {
-      updateList();
     }
   }, [playlistId]);
 
@@ -71,17 +45,17 @@ export default function VideoListForPlaylist(): ReactElement {
   };
 
   const updateList = async () => {
-    const { videos: updatedVideos, pageToken: newPageToken, pageInfo } = await fetchVideos({
+    const { ytVideos, pageToken, numOfVideos } = await fetchPlaylistVideos({
       playlistId,
-      pageToken: playlist?.pageToken,
+      pageToken: playlist.pageToken,
     });
 
-    dispatch(addPlaylistVideos(updatedVideos));
     dispatch(
       updateMetadata({
         id: playlistId,
-        pageToken: newPageToken,
-        numOfVideos: pageInfo.totalResults,
+        pageToken,
+        numOfVideos,
+        ytVideos: playlist.ytVideos.concat(ytVideos),
       })
     );
   };
@@ -90,15 +64,13 @@ export default function VideoListForPlaylist(): ReactElement {
     <>
       <Header title={playlist?.title} />
 
-      <VideoItems items={videos} onClick={onVideoItemClick} />
+      {playlist?.ytVideos && <VideoItems items={playlist.ytVideos} onClick={onVideoItemClick} />}
 
-      {hasNextPage() && (
-        <MoreVideosButton
-          current={videos.length}
-          total={playlist.numOfVideos || 0}
-          onClick={updateList}
-        />
-      )}
+      <MoreVideosButton
+        current={playlist?.ytVideos?.length || 0}
+        total={playlist?.numOfVideos || 0}
+        onClick={hasNextPage() ? updateList : undefined}
+      />
     </>
   );
 }

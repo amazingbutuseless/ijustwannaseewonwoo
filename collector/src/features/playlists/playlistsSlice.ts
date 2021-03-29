@@ -1,13 +1,9 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  createEntityAdapter,
-  createSelector,
-} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
 
 import { IPlaylist } from '../../types';
 
 import APIClient from '../../utils/api_client';
+import YoutubeAPI from '../../utils/youtube_api';
 
 const playlistAdapter = createEntityAdapter<IPlaylist>({});
 
@@ -15,11 +11,6 @@ const initialState = playlistAdapter.getInitialState({
   status: 'idle',
   error: '',
 });
-
-interface IFetchPlaylistsParams {
-  limit?: number;
-  lastId?: string;
-}
 
 const playlistEntities = `
 id
@@ -33,9 +24,48 @@ channel {
 }
 `;
 
+interface fetchPlaylistVideosParams {
+  playlistId: string;
+  pageToken?: string;
+}
+
+export async function fetchPlaylistVideos({
+  playlistId,
+  pageToken = '',
+}: fetchPlaylistVideosParams) {
+  const response = await YoutubeAPI.listPlaylistItem({ playlistId, pageToken });
+
+  const videos = response.result.items.map((item) => {
+    const { channelId, playlistId, title, publishedAt } = item.snippet;
+
+    return {
+      id: 'video',
+      channelId,
+      playlistId,
+      videoId: item.contentDetails.videoId,
+      title,
+      publishedAt,
+      thumbnail: item.snippet.thumbnails.high,
+    };
+  });
+
+  return {
+    id: playlistId,
+    ytVideos: videos,
+    pageToken: response.result.nextPageToken,
+    numOfVideos: response.result.pageInfo.totalResults,
+  };
+}
+
+interface fetchPlaylistParams {
+  playlistId: string;
+  limit?: number;
+  lastId?: string;
+}
+
 export const fetchPlaylist = createAsyncThunk(
   'playlist/fetchPlaylist',
-  async ({ playlistId, limit = 21, lastId = '' }) => {
+  async ({ playlistId, limit = 21, lastId = '' }: fetchPlaylistParams) => {
     const response = await APIClient.graphql({
       query: `
 query playlist($playlistId: ID!, $limit: Int, $lastId: String) {
@@ -53,9 +83,17 @@ query playlist($playlistId: ID!, $limit: Int, $lastId: String) {
       },
     });
 
-    return response.data.playlist;
+    return {
+      ...response.data.playlist,
+      ...(await fetchPlaylistVideos({ playlistId })),
+    };
   }
 );
+
+interface IFetchPlaylistsParams {
+  limit?: number;
+  lastId?: string;
+}
 
 export const fetchPlaylists = createAsyncThunk(
   'playlist/fetchPlaylists',

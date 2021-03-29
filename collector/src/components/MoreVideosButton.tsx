@@ -15,7 +15,10 @@ export default function MoreVideosButton({
 }: MoreVideosButtonProps): ReactElement {
   return (
     <MoreButtonContainer>
-      <MoreVideosButtonWrapper onClick={onClick}>{`${current} / ${total}`}</MoreVideosButtonWrapper>
+      <MoreVideosButtonWrapper onClick={onClick}>
+        {total > 0 && `${current} / ${total}`}
+        {total < 1 && 'Loading...'}
+      </MoreVideosButtonWrapper>
     </MoreButtonContainer>
   );
 }

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Amplify, { Auth, Hub } from 'aws-amplify';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import configure from '../../configure';
-import YoutubeAPI from '../../utils/youtube_api';
 
 import { signIn, signOut } from './userSlice';
 

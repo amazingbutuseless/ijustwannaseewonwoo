@@ -41,4 +41,12 @@ export const { signIn, signOut } = userSlice.actions;
 
 export const { selectById: selectUserById } = userAdapter.getSelectors((state) => state.user);
 
+export const selectCurrentUser = createSelector(
+  (state) => state,
+  () => null,
+  (state, _) => {
+    return selectUserById(state, state.user.ids[0]);
+  }
+);
+
 export default userSlice.reducer;

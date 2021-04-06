@@ -4,7 +4,7 @@ const plugins = require('./webpack.plugins');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const assets = ['data'];
+const assets = ['data', 'assets'];
 const copyPlugins = assets.map((asset) => {
   return new CopyWebpackPlugin({
     patterns: [

@@ -10,16 +10,19 @@ import VideoListForPlaylist from './features/videos/VideoListForPlaylist';
 import VideoDetails from './features/videos/VideoDetails';
 import UserSignIn from './features/user/UserSignIn';
 import UserSignedIn from './features/user/UserSignedIn';
+import useAuthentication from './features/user/UseAuthentication';
 
 import Drawer from './components/Drawer';
 
 export default function App(): ReactElement {
+  const { googleSignIn } = useAuthentication();
+
   const userStatus = useSelector((state) => state.user.status);
 
   return (
     <>
       <ContentsWrapper>
-        {userStatus === 'signedOut' && <UserSignIn />}
+        {userStatus === 'signedOut' && <UserSignIn onClick={googleSignIn} />}
         {userStatus === 'signedIn' && (
           <>
             <Drawer>

@@ -2,15 +2,15 @@ import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 
 import useAuthentication from './UseAuthentication';
-import { selectUserById } from './userSlice';
+import { selectCurrentUser } from './userSlice';
 
 export default function UserSignedIn(): ReactElement {
-  const { googleSignOut, userId } = useAuthentication();
-  const user = useSelector((state) => selectUserById(state, userId));
+  const { googleSignOut } = useAuthentication();
+  const currentUser = useSelector(selectCurrentUser);
 
   return (
     <>
-      {user && user.name}
+      {currentUser && currentUser.name}
       <button onClick={googleSignOut}>Sign Out</button>
     </>
   );

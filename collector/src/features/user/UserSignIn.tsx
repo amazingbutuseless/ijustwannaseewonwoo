@@ -1,13 +1,16 @@
 import React from 'react';
 
-import useAuthentication from './UseAuthentication';
+import LogoImage from '../../components/LogoImage';
+import GoogleSignInButton from '../../components/GoogleSignInButton';
+import { UserSignInWrapper } from './UserSignIn.style';
 
-export default function UserSignIn() {
-  const { googleSignIn } = useAuthentication();
-
+export default function UserSignIn({ onClick }) {
   return (
-    <>
-      <button onClick={googleSignIn}>Sign in with Google</button>
-    </>
+    <UserSignInWrapper>
+      <LogoImage />
+      <div>
+        <GoogleSignInButton type="button" onClick={onClick} aria-label="Sign in with Google" />
+      </div>
+    </UserSignInWrapper>
   );
 }

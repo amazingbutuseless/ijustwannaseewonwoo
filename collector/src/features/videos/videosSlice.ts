@@ -8,6 +8,7 @@ import {
 import { SceneItemInterface, IVideoItemWithChannel } from '../../types';
 
 import APIClient from '../../utils/api_client';
+import YoutubeAPI from '../../utils/youtube_api';
 
 const videosAdapter = createEntityAdapter<IVideoItemWithChannel>({
   selectId: (video) => video.videoId,
@@ -22,6 +23,7 @@ const videoEntities = `
   id
   videoId
   channelId
+  playlistId
   title
   publishedAt
   thumbnail(size: high) {
@@ -34,6 +36,45 @@ const videoEntities = `
     }
   }
 `;
+
+interface registerVideoParams {
+  videoId: string;
+  playlistId?: string;
+}
+
+export const registerVideo = createAsyncThunk(
+  'videos/register',
+  async ({ videoId, playlistId = '' }: registerVideoParams) => {
+    const { snippet: rawSnippet } = await YoutubeAPI.getVideo(videoId);
+    const { publishedAt, channelId, title, thumbnails } = rawSnippet;
+    const snippet = {
+      publishedAt,
+      channelId,
+      title,
+      thumbnails,
+    };
+    if (playlistId.length > 0) {
+      snippet.playlistId = playlistId;
+    }
+
+    const response = await APIClient.graphql({
+      query: `
+mutation registerVideo($data: registerVideoData) {
+  registerVideo(data: $data) {
+    ${videoEntities}
+  }
+}`,
+      variables: {
+        data: {
+          id: videoId,
+          snippet,
+        },
+      },
+    });
+
+    return response.data.video;
+  }
+);
 
 const queryForFetchChannelVideos = `
 query channel($channelId: ID!, $lastId: String) { 
@@ -117,6 +158,10 @@ const VideosSlice = createSlice({
 
     [fetchVideo.fulfilled]: (state, action) => {
       state.status = 'succeeded';
+      videosAdapter.upsertOne(state, action.payload);
+    },
+
+    [registerVideo.fulfilled]: (state, action) => {
       videosAdapter.upsertOne(state, action.payload);
     },
   },

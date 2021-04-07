@@ -22,6 +22,7 @@ export default function SceneAddForm({
   onTimecodeSet,
   onSceneAdded,
   onCloseButtonClick,
+  playlistId,
 }: ISceneAddFormProps) {
   const dispatch = useDispatch();
 
@@ -58,6 +59,9 @@ export default function SceneAddForm({
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
 
+    if (!video) {
+      dispatch(registerVideo({ videoId, playlistId }));
+    }
     dispatch(addScene({ videoId, ...getTimecode() }));
     ipcRenderer.send('from-main-to-worker', { action: 'prepare', videoId, ...getTimecode() });
 

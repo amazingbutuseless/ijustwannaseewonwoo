@@ -37,7 +37,6 @@ export default function Drawer({ children }: DrawerProps): ReactElement {
 
         <DrawerNavigation>
           <Item key="featured" title="Featured" link="/" onClick={onLinkClick} />
-          <Item key="channel" title="Channel" link="/channel" onClick={onLinkClick} />
           <Item key="playlist" title="Playlist" link="/playlist" onClick={onLinkClick} />
           <Item key="video" title="Video" link="/video" onClick={onLinkClick} />
         </DrawerNavigation>

@@ -15,7 +15,7 @@ export const DrawerItemWrapper = styled.li`
       width: 100%;
       height: 4px;
       background-color: #fff;
-      transform: translateX(calc(-100%));
+      transform: translateX(calc(-100% - 0.8rem));
       transition: transform 100ms;
       content: '';
     }

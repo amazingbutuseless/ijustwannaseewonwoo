@@ -8,14 +8,11 @@ export const Wrapper = styled.div``;
 
 export const List = styled.ul<ISceneListProps>`
   list-style: none;
+  display: flex;
   margin: 0;
   padding: 0;
   white-space: nowrap;
   overflow: auto;
-
-  li:nth-of-type(${({ activeItemIdx }) => activeItemIdx + 1}) {
-    border-color: var(--dark-orchid);
-  }
 
   ::-webkit-scrollbar {
     width: 0;

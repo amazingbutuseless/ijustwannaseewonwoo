@@ -1,16 +1,19 @@
 import DB from './dynamodb_helper';
 
-interface SceneRegisterDataInterface {
+interface IScene {
   videoId: string;
   start: number;
-  end: number;
-  thumbnails: string;
 }
 
-interface SceneDeleteDataInterface {
-  videoId: string;
-  start: number;
+interface withThumbnail {
+  thumbnail: string;
 }
+
+interface SceneRegisterDataInterface extends IScene, withThumbnail {
+  end: number;
+}
+
+interface SceneUpdateDataInterface extends IScene, withThumbnail {}
 
 export default {
   register({ videoId, start, end, thumbnail }: SceneRegisterDataInterface) {
@@ -77,7 +80,50 @@ export default {
       });
   },
 
-  delete({ videoId, start }: SceneDeleteDataInterface) {
+  get({ videoId, start }: IScene) {
+    const Key = {
+      id: {
+        S: 'scene',
+      },
+      relId: {
+        S: `${videoId}/${start}`,
+      },
+    };
+
+    return DB.getItem(Key).then((response) => {
+      if (!response.hasOwnProperty('Item')) return null;
+
+      return DB.parse(response.Item);
+    });
+  },
+
+  async update({ videoId, start, thumbnail }: SceneUpdateDataInterface) {
+    const params = {
+      ExpressionAttributeNames: {
+        '#thumbnail': 'thumbnail',
+      },
+      ExpressionAttributeValues: {
+        ':t': {
+          S: thumbnail,
+        },
+      },
+      Key: {
+        id: {
+          S: 'scene',
+        },
+        relId: {
+          S: `${videoId}/${start}`,
+        },
+      },
+      UpdateExpression: 'SET #thumbnail = :t',
+    };
+
+    await DB.updateItem(params);
+
+    return this.get({ videoId, start });
+  },
+
+  delete({ videoId, start }: IScene) {
     const Key = {
       id: {
         S: 'scene',

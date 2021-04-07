@@ -36,6 +36,7 @@ export default function VideoListForPlaylist(): ReactElement {
       pathname: `/video/${selectedVideoId}`,
       state: {
         title: videoTitle,
+        playlistId,
       },
     });
   };

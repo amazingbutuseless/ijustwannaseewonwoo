@@ -36,7 +36,6 @@ export interface IVideoItemWithChannel extends IVideoItem {
 export interface IVideoItem {
   id: string;
   channelId: ChannelId;
-  playlistId: PlaylistId;
   videoId: VideoId;
   title: string;
   publishedAt: VideoPublishedAt;
@@ -44,6 +43,7 @@ export interface IVideoItem {
     url: ThumbnailImageUrl;
   };
   scenes: Array<SceneItemInterface>;
+  playlistId?: PlaylistId;
 }
 
 export interface SceneTimecodeInterface {
@@ -75,6 +75,7 @@ export interface ISceneAddFormProps {
   onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
   onSceneAdded: () => void;
   onCloseButtonClick: () => void;
+  playlistId?: string;
 }
 
 export interface IPlaylist {

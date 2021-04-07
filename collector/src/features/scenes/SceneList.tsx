@@ -56,7 +56,12 @@ export default function SceneList({
         {scenesStatus === 'succeeded' &&
           ((scenes.length > 0 &&
             scenes.map((scene, idx) => (
-              <Item key={`scene-${idx + 1}`} {...scene} onSceneClick={onSceneClick} />
+              <Item
+                key={`scene-${idx + 1}`}
+                {...scene}
+                onSceneClick={onSceneClick}
+                active={activeSceneIdx === idx}
+              />
             ))) ||
             (scenes.length < 1 && <EmptyItem onClick={onEmptyListClick} />))}
       </List>

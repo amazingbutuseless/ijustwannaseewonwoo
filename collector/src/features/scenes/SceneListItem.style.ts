@@ -5,28 +5,20 @@ interface SceneListItemWrapperStyleProps {
 }
 
 export const SceneListItemEmptyWrapper = styled.li`
-  display: inline-block;
   font-size: 1.4rem;
   color: var(--silver-chalice);
   cursor: pointer;
 `;
 
-export const SceneListItemWrapper = styled.li<SceneListItemWrapperStyleProps>`
-  display: inline-block;
+export const SceneThumbnail = styled.img`
+  display: block;
+  width: 100%;
+  height: auto;
+`;
 
-  margin-right: 1.6rem;
+export const SceneDetails = styled.div`
   padding: 1.6rem;
-  width: 16rem;
-
-  box-sizing: border-box;
-  border-top: 4px solid transparent;
-  border-radius: var(--borderRadius);
-
-  background-color: #fff;
-
   font-size: 1.4rem;
-
-  cursor: pointer;
 
   span {
     display: block;
@@ -34,6 +26,21 @@ export const SceneListItemWrapper = styled.li<SceneListItemWrapperStyleProps>`
     font-size: 1.2rem;
     color: var(--silver-chalice);
   }
+`;
+
+export const SceneListItemWrapper = styled.li<SceneListItemWrapperStyleProps>`
+  display: inline-block;
+
+  margin-right: 1.6rem;
+  width: 16rem;
+
+  box-sizing: border-box;
+  border-top: 4px solid var(${({ active }) => (active ? '--dark-orchid' : '--silver-chalice')});
+  border-radius: var(--borderRadius);
+
+  background-color: #fff;
+
+  cursor: pointer;
 
   &:last-child {
     margin-right: 0;

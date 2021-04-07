@@ -2,11 +2,11 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { SceneTimecodeInterface } from '../../types';
 
-import { selectAllScenesForVideo } from '../scenes/scenesSlice';
+import { selectAllScenesForVideo, uploadSceneThumbnail } from '../scenes/scenesSlice';
 
 import { VideoWrapper } from './VideoDetails.style';
 
@@ -25,7 +25,15 @@ interface VideoRouterParams {
 
 function VideoDetails(): ReactElement {
   const { videoId }: VideoRouterParams = useParams();
-  const { title } = useLocation().state;
+  const dispatch = useDispatch();
+
+  let title, playlistId;
+
+  if (typeof useLocation().state !== 'undefined') {
+    const locationState = useLocation().state;
+    title = locationState.title;
+    playlistId = locationState.playlistId;
+  }
 
   const player = useRef(null);
   const [time, updateTime] = useState({ start: -1, end: null });
@@ -44,11 +52,14 @@ function VideoDetails(): ReactElement {
   };
 
   const onFaceDetected = (event: IpcRendererEvent, message: any) => {
+    const { videoId, start, thumbnail } = message;
+    dispatch(uploadSceneThumbnail({ videoId, start, imageUrl: thumbnail }));
+
     Object.entries(message.results).forEach(([memberName, recognitions]) => {
       recognitions.forEach((recognition: IFaceRecognitionResult) => {
         const { name, videoId, timestamp, url } = recognition;
-        console.log({ recognition });
-        upload(name, videoId, timestamp, url);
+        const key = `recognized/${name}/${videoId}--${timestamp}.jpg`;
+        upload(key, url);
       });
     });
   };
@@ -141,6 +152,7 @@ function VideoDetails(): ReactElement {
           <SceneAddForm
             visible={sceneAddFormVisible}
             videoId={videoId}
+            playlistId={playlistId}
             onTimecodeSet={onTimecodeSet}
             onSceneAdded={onSceneAdded}
             onCloseButtonClick={onSceneAddFormCloseButtonClick}
@@ -155,8 +167,6 @@ function VideoDetails(): ReactElement {
           onLoaded={onScenesLoaded}
           enableButton={enableSceneAddButton}
         />
-
-        <VideoForWonwoo />
       </VideoWrapper>
     </>
   );

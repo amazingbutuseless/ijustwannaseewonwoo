@@ -21,12 +21,12 @@ function dataURItoBlob(dataURI: string) {
   return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
 }
 
-export function upload(memberName: string, videoId: string, timestamp: number, dataUrl: string) {
-  return Storage.put(
-    `recognized/${memberName}/${videoId}--${timestamp}.jpg`,
-    dataURItoBlob(dataUrl),
-    {
-      contentType: 'image/jpeg',
-    }
-  );
+export function upload(key, dataUrl: string) {
+  return Storage.put(key, dataURItoBlob(dataUrl), {
+    contentType: 'image/jpeg',
+  });
+}
+
+export function getUrl(key: string): Promise<string> {
+  return Storage.get(key);
 }

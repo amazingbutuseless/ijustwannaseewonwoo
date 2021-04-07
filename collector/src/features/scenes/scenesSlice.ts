@@ -8,6 +8,7 @@ import {
 import { AddSceneReducerParameters, SceneItemInterface } from '../../types';
 
 import APIClient from '../../utils/api_client';
+import { upload, getUrl } from '../../utils/image_uploader';
 
 const scenesAdapter = createEntityAdapter<SceneItemInterface>({
   sortComparer: (a, b) => {
@@ -21,19 +22,35 @@ const initialState = scenesAdapter.getInitialState({
   error: null,
 });
 
+const sceneEntities = `
+id
+start
+end
+thumbnail
+video {
+  videoId
+}`;
+
+const getScenesQuery = `
+query scenes($videoId: String) {
+  scenes(videoId: $videoId) {
+    ${sceneEntities}
+  }
+}`;
+
 const addSceneQuery = `
 mutation registerScene($sceneData: registerSceneData) {
   registerScene(data: $sceneData) {
-    id
-    start
-    end
-    thumbnail
-    video {
-      videoId
-    }
+    ${sceneEntities}
   }
-}
-`;
+}`;
+
+const updateSceneQuery = `
+mutation updateScene($sceneData: updateSceneData) {
+  updateScene(data: $sceneData) {
+    ${sceneEntities}
+  }
+}`;
 
 export const addScene = createAsyncThunk(
   'scene/addScene',
@@ -54,19 +71,33 @@ export const addScene = createAsyncThunk(
   }
 );
 
-const getScenesQuery = `
-query scenes($videoId: String) {
-  scenes(videoId: $videoId) {
-    id
-    start
-    end
-    thumbnail
-    video {
-      videoId
-    }
-  }
+interface uploadSceneThumbnailParams {
+  videoId: string;
+  start: number;
+  imageUrl: string;
 }
-`;
+
+export const uploadSceneThumbnail = createAsyncThunk(
+  'scene/uploadThumbnail',
+  async ({ videoId, start, imageUrl }: uploadSceneThumbnailParams) => {
+    const thumbnail = `thumbnail/${videoId}--${start}.jpg`;
+
+    await upload(thumbnail, imageUrl);
+
+    const response = await APIClient.graphql({
+      query: updateSceneQuery,
+      variables: {
+        sceneData: {
+          videoId,
+          start,
+          thumbnail,
+        },
+      },
+    });
+
+    return response.data.updateScene;
+  }
+);
 
 export const fetchScenes = createAsyncThunk('scenes/fetch', async (videoId: string) => {
   const response = await APIClient.graphql({
@@ -95,6 +126,9 @@ const ScenesSlice = createSlice({
       state.status = 'rejected';
     },
     [addScene.fulfilled]: (state, action) => {
+      scenesAdapter.upsertOne(state, action.payload);
+    },
+    [uploadSceneThumbnail.fulfilled]: (state, action) => {
       scenesAdapter.upsertOne(state, action.payload);
     },
   },

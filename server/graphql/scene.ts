@@ -18,6 +18,7 @@ export const SceneTypesDef = gql`
 
   extend type Mutation {
     registerScene(data: registerSceneData): Scene
+    updateScene(data: updateSceneData): Scene
     deleteScene(data: deleteSceneData): Scene
   }
 
@@ -25,6 +26,12 @@ export const SceneTypesDef = gql`
     videoId: String!
     start: Int!
     end: Int!
+    thumbnail: String
+  }
+
+  input updateSceneData {
+    videoId: String!
+    start: Int!
     thumbnail: String
   }
 
@@ -36,18 +43,22 @@ export const SceneTypesDef = gql`
 
 export const SceneResolvers = {
   Query: {
-    scenes(root, { videoId }, ctx) {
+    scenes(_, { videoId }) {
       return Scene.getForVideo(videoId);
     },
   },
 
   Mutation: {
-    registerScene(root, { data }, ctx) {
+    registerScene(_, { data }) {
       return Scene.register(data);
     },
 
-    deleteScene(root, { data }, ctx) {
-      return Scene.delete(...data);
+    updateScene(_, { data }) {
+      return Scene.update(data);
+    },
+
+    deleteScene(_, { data }) {
+      return Scene.delete(data);
     },
   },
 

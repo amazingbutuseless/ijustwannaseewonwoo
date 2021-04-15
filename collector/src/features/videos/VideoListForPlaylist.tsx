@@ -46,26 +46,42 @@ export default function VideoListForPlaylist(): ReactElement {
   };
 
   const updateList = async () => {
-    const { ytVideos, pageToken, numOfVideos } = await fetchPlaylistVideos({
+    const params = {
       playlistId,
       pageToken: playlist.pageToken,
-    });
+    };
 
-    dispatch(
-      updateMetadata({
-        id: playlistId,
-        pageToken,
-        numOfVideos,
-        ytVideos: playlist.ytVideos.concat(ytVideos),
-      })
-    );
+    if (playlist.videos.length > 0) {
+      params.lastVideoPublishedAt = playlist.videos[playlist.videos.length - 1].publishedAt;
+    }
+
+    const { ytVideos, videos, pageToken, numOfVideos } = await fetchPlaylistVideos(params);
+
+    const metadata = {
+      id: playlistId,
+      pageToken,
+      numOfVideos,
+      ytVideos: playlist.ytVideos.concat(ytVideos),
+    };
+
+    if (videos) {
+      metadata.videos = playlist.videos.concat(videos);
+    }
+
+    dispatch(updateMetadata(metadata));
   };
 
   return (
     <>
       <Header title={playlist?.title} />
 
-      {playlist?.ytVideos && <VideoItems items={playlist.ytVideos} onClick={onVideoItemClick} />}
+      {playlist?.ytVideos && (
+        <VideoItems
+          items={playlist.ytVideos}
+          sceneRegisteredVideos={playlist.videos}
+          onClick={onVideoItemClick}
+        />
+      )}
 
       <MoreVideosButton
         current={playlist?.ytVideos?.length || 0}

@@ -32,6 +32,7 @@ interface fetchPlaylistVideosParams {
 export async function fetchPlaylistVideos({
   playlistId,
   pageToken = '',
+  lastVideoPublishedAt = '',
 }: fetchPlaylistVideosParams) {
   const response = await YoutubeAPI.listPlaylistItem({ playlistId, pageToken });
 
@@ -49,12 +50,18 @@ export async function fetchPlaylistVideos({
     };
   });
 
-  return {
+  const data = {
     id: playlistId,
     ytVideos: videos,
     pageToken: response.result.nextPageToken,
     numOfVideos: response.result.pageInfo.totalResults,
   };
+
+  if (lastVideoPublishedAt.length > 0) {
+    data.videos = await getVideosIds(playlistId, lastVideoPublishedAt);
+  }
+
+  return data;
 }
 
 interface fetchPlaylistParams {
@@ -63,29 +70,52 @@ interface fetchPlaylistParams {
   lastId?: string;
 }
 
+async function getVideosIds(playlistId: string, lastVideoPublishedAt: string) {
+  const response = await APIClient.graphql({
+    query: `
+query playlist($playlistId: ID!, $lastVideoPublishedAt: String) {
+  playlist(playlistId: $playlistId){
+    videos(limit: 21, lastId: $lastVideoPublishedAt) {
+      videoId
+      publishedAt
+      noAppears
+    }
+  }
+}`,
+    variables: {
+      playlistId,
+      lastVideoPublishedAt,
+    },
+  });
+
+  return response.data.videos;
+}
+
 export const fetchPlaylist = createAsyncThunk(
   'playlist/fetchPlaylist',
-  async ({ playlistId, limit = 21, lastId = '' }: fetchPlaylistParams) => {
+  async ({ playlistId }: fetchPlaylistParams) => {
     const response = await APIClient.graphql({
       query: `
-query playlist($playlistId: ID!, $limit: Int, $lastId: String) {
+query playlist($playlistId: ID!) {
   playlist(playlistId: $playlistId) {
     ${playlistEntities}
-    videos(lastId: $lastId, limit: $limit) {
+    videos(limit: 21) {
       videoId
+      publishedAt
+      noAppears
     }
   }
 }`,
       variables: {
         playlistId,
-        limit,
-        lastId,
       },
     });
 
+    const playlistVideos = await fetchPlaylistVideos({ playlistId });
+
     return {
       ...response.data.playlist,
-      ...(await fetchPlaylistVideos({ playlistId })),
+      ...playlistVideos,
     };
   }
 );

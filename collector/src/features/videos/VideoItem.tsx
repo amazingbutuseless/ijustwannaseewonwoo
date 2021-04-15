@@ -1,18 +1,13 @@
 import React from 'react';
 
-import { VideoItemWrapper, VideoItemThumbnail, VideoItemInfo } from './VideoItem.style';
+import { Video, WithPublishedAt } from '../../types';
+import { VideoItemWrapper, VideoItemThumbnail, VideoItemInfo, ForWonwoo } from './VideoItem.style';
 
-interface VideoItemProps {
-  videoId: string;
+interface VideoItemProps extends Video, WithPublishedAt {
   title: string;
-  publishedAt: string;
   thumbnail: string;
-  channel: {
-    thumbnails: {
-      default: string;
-    };
-  };
-  onClick: (videoId: string) => void;
+  onClick: (videoId: string, title: string) => void;
+  forWonwoo: boolean;
 }
 
 export default function VideoItem({
@@ -20,8 +15,8 @@ export default function VideoItem({
   title,
   publishedAt,
   thumbnail,
-  channel,
   onClick,
+  forWonwoo,
 }: VideoItemProps) {
   const handleClick = () => {
     onClick(videoId, title);
@@ -30,6 +25,8 @@ export default function VideoItem({
   return (
     <VideoItemWrapper onClick={handleClick}>
       <VideoItemThumbnail src={thumbnail.url} alt={title} />
+
+      {forWonwoo && <ForWonwoo />}
 
       <VideoItemInfo>
         <strong>

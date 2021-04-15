@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IVideoItemWithChannel } from '../../types';
+import { IVideoItemWithChannel, RegisteredVideo } from '../../types';
 
 import { VideoItemsWrapper } from './VideoList.style';
 
@@ -8,14 +8,29 @@ import VideoItem from './VideoItem';
 
 interface VideoItemsProps {
   items: Array<IVideoItemWithChannel>;
+  sceneRegisteredVideos: Array<RegisteredVideo>;
   onClick: (videoId: string, title: string) => void;
 }
 
-export default function VideoItems({ items, onClick }: VideoItemsProps) {
+export default function VideoItems({ items, sceneRegisteredVideos, onClick }: VideoItemsProps) {
+  const findRegisteredVideo = (videoId: string): RegisteredVideo => {
+    return sceneRegisteredVideos.find((video) => video.videoId === videoId);
+  };
+
+  const haveScenesRegistered = (registeredVideo: RegisteredVideo) => {
+    return typeof registeredVideo !== 'undefined';
+  };
+
+  const doesWonwooNotAppear = (registeredVideo: RegisteredVideo) => {
+    return registeredVideo.noAppears > 0;
+  };
+
   return (
     <VideoItemsWrapper>
       {items.map((video) => {
-        const { videoId, title, thumbnail, publishedAt, channel } = video;
+        const { videoId, title, thumbnail, publishedAt } = video;
+
+        const registered = findRegisteredVideo(videoId);
 
         return (
           <VideoItem
@@ -24,7 +39,7 @@ export default function VideoItems({ items, onClick }: VideoItemsProps) {
             title={title}
             thumbnail={thumbnail}
             publishedAt={publishedAt}
-            channel={channel}
+            forWonwoo={haveScenesRegistered(registered) && !doesWonwooNotAppear(registered)}
             onClick={onClick}
           />
         );

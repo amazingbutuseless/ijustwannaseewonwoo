@@ -20,6 +20,12 @@ export interface APIClientRequestConfig {
   body?: string;
 }
 
+export interface ChannelItemThumbnails {
+  default?: ThumbnailImageUrl;
+  medium?: ThumbnailImageUrl;
+  high?: ThumbnailImageUrl;
+}
+
 export interface ChannelDataInterface {
   id?: string;
   title: string;
@@ -29,21 +35,35 @@ export interface ChannelDataInterface {
   };
 }
 
-export interface IVideoItemWithChannel extends IVideoItem {
-  channel: ChannelDataInterface;
+interface WithChannelId {
+  channelId: ChannelId;
 }
 
-export interface IVideoItem {
-  id: string;
-  channelId: ChannelId;
-  videoId: VideoId;
-  title: string;
-  publishedAt: VideoPublishedAt;
-  thumbnail: {
-    url: ThumbnailImageUrl;
-  };
+interface WithScenes {
   scenes: Array<SceneItemInterface>;
+}
+
+export interface WithPublishedAt {
+  publishedAt: VideoPublishedAt;
+}
+
+export interface Video {
+  videoId: VideoId;
+}
+
+export interface RegisteredVideo extends Video, WithPublishedAt {
+  noAppears: number;
+}
+
+export interface IVideoItem extends Video, WithPublishedAt, WithChannelId, WithScenes {
+  id: string;
+  title: string;
+  thumbnail: ThumbnailImageUrl;
   playlistId?: PlaylistId;
+}
+
+export interface IVideoItemWithChannel extends IVideoItem {
+  channel: ChannelDataInterface;
 }
 
 export interface SceneTimecodeInterface {
@@ -52,26 +72,15 @@ export interface SceneTimecodeInterface {
 }
 
 export interface SceneItemInterface extends SceneTimecodeInterface {
+  video: Video;
   id?: string;
   thumbnail?: ThumbnailImageUrl;
-  video: {
-    videoId: VideoId;
-  };
 }
 
-export interface AddSceneReducerParameters extends SceneTimecodeInterface {
-  videoId: VideoId;
-}
+export interface AddSceneReducerParameters extends Video, SceneTimecodeInterface {}
 
-export interface ChannelItemThumbnails {
-  default?: ThumbnailImageUrl;
-  medium?: ThumbnailImageUrl;
-  high?: ThumbnailImageUrl;
-}
-
-export interface ISceneAddFormProps {
+export interface ISceneAddFormProps extends Video {
   visible: boolean;
-  videoId: VideoId;
   onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
   onSceneAdded: () => void;
   onCloseButtonClick: () => void;
@@ -90,6 +99,6 @@ export interface IPlaylist {
   };
   pageToken?: string;
   numOfVideos?: number;
-  videos?: Array<IVideoItemWithChannel>;
+  videos?: Array<RegisteredVideo>;
   ytVideos?: Array<IVideoItemWithChannel>;
 }

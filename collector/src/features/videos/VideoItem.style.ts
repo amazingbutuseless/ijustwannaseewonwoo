@@ -1,5 +1,19 @@
 import styled from '@emotion/styled';
 
+export const ForWonwoo = styled.i`
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 2.4rem;
+  font-style: normal;
+`;
+
+ForWonwoo.defaultProps = {
+  children: '😻',
+};
+
 export const VideoItemThumbnail = styled.img`
   display: block;
   width: 100%;

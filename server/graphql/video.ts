@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-lambda';
 
 import Channel from '../resolvers/channel';
 import Video from '../resolvers/video';
-import Videos from '../resolvers/videos';
+import VideosResolver from '../resolvers/videos';
 import Scene from '../resolvers/scene';
 
 export const VideoTypesDef = gql`
@@ -30,11 +30,12 @@ export const VideoTypesDef = gql`
     scenes: [Scene]
     publishedAt: String
     updatedAt: String
+    noAppears: Int
   }
 
   extend type Query {
     video(id: ID!): Video
-    videos(lastId: String = "", limit: Int = 20): [Video]
+    videos(lastId: String = "", limit: Int = 21): [Video]
   }
 
   extend type Mutation {
@@ -82,7 +83,8 @@ export const VideoResolvers = {
     },
 
     videos(root, { limit, lastId }, ctx) {
-      return Videos.get({ limit, lastId });
+      const resolver = new VideosResolver();
+      return resolver.get(lastId, limit);
     },
   },
 

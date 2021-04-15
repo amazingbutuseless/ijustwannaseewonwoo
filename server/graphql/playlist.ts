@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-lambda';
 
 import Playlist from '../resolvers/playlist';
 import Channel from '../resolvers/channel';
-import Videos from '../resolvers/videos';
+import { PlaylistVideosResolver } from '../resolvers/videos';
 
 export const PlaylistTypeDefs = gql`
   extend type Query {
@@ -31,7 +31,6 @@ export const PlaylistTypeDefs = gql`
 export const PlaylistRevolvers = {
   Query: {
     playlist(_root, { playlistId }, _ctx) {
-      console.log({ playlistId });
       return Playlist.get(playlistId);
     },
 
@@ -56,7 +55,8 @@ export const PlaylistRevolvers = {
     },
 
     videos(playlist, { lastId, limit }) {
-      return Videos.getForPlaylist({ playlistId: playlist.relId, lastId, limit });
+      const resolver = new PlaylistVideosResolver(playlist.relId);
+      return resolver.get(lastId, limit);
     },
   },
 };

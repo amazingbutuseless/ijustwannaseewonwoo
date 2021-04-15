@@ -16,6 +16,31 @@ const promisify = (func) => {
   });
 };
 
+interface IExpressionAttributeValues {
+  [AttributeName: string]: {
+    S: string;
+  };
+}
+
+interface IExclusiveStartKey {
+  id: {
+    S: string;
+  };
+  relId: {
+    S: string;
+  };
+  [KeyName: string]: {
+    S: string;
+  };
+}
+
+export interface DynamoDBQueryParameters {
+  ExpressionAttributeValues: IExpressionAttributeValues;
+  KeyConditionExpression: string;
+  IndexName?: string;
+  ExclusiveStartKey?: IExclusiveStartKey;
+}
+
 export default {
   isMapTypeItem(value) {
     return Object.keys(value)[0] === 'M';

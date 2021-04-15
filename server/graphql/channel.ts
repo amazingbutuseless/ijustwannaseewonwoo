@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-lambda';
 
 import Channel from '../resolvers/channel';
-import Videos from '../resolvers/videos';
+import { ChannelVideosResolver } from '../resolvers/videos';
 
 export const ChannelTypesDef = gql`
   type ImageResource {
@@ -49,12 +49,9 @@ export const ChannelResolvers = {
       return channel.relId;
     },
 
-    videos(channel, { lastId = '', limit = 20 }, ctx) {
-      return Videos.getForChannel({
-        channelId: channel.relId,
-        limit,
-        lastId,
-      });
+    videos(channel, { lastId = '', limit }, ctx) {
+      const resolver = new ChannelVideosResolver(channel.relId);
+      return resolver.get(lastId, limit);
     },
   },
 };

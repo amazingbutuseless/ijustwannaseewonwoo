@@ -1,124 +1,77 @@
-import DB from './dynamodb_helper';
+import DB, { DynamoDBQueryParameters } from './dynamodb_helper';
+import VideoQueryParametersGenerator from './video_query_parameters_generator';
 
-export default {
-  getForChannel({ limit = 20, lastId = '', channelId }) {
-    const ExpressionAttributeValues = {
-      ':video': {
-        S: 'video',
-      },
-      ':channelId': {
-        S: channelId,
-      },
+interface VideosQueryParameters {
+  params: DynamoDBQueryParameters;
+  limit?: number;
+}
+
+export function queryVideos({
+  params: { IndexName, ExpressionAttributeValues, KeyConditionExpression, ExclusiveStartKey },
+  limit = 21,
+}: VideosQueryParameters) {
+  const params = {
+    ExpressionAttributeValues,
+    KeyConditionExpression,
+    Limit: limit,
+    ScanIndexForward: false,
+  };
+
+  if (IndexName) {
+    params.IndexName = IndexName;
+  }
+
+  if (ExclusiveStartKey) {
+    params.ExclusiveStartKey = ExclusiveStartKey;
+  }
+
+  return DB.query(params)
+    .then((response) => {
+      return response.Items.map((item) => DB.parse(item));
+    })
+    .catch((err) => {
+      console.log(err);
+      return [];
+    });
+}
+
+export default class VideosResolver {
+  private queryParametersGenerator = new VideoQueryParametersGenerator();
+
+  get(lastId, limit) {
+    const params = this.queryParametersGenerator.generate(lastId);
+    return queryVideos({ params, limit });
+  }
+}
+
+export class ChannelVideosResolver {
+  private queryParametersGenerator = new VideoQueryParametersGenerator();
+
+  constructor(channelId: string) {
+    this.queryParametersGenerator.index = {
+      key: 'channelId',
+      value: channelId,
     };
-    const KeyConditionExpression = 'id = :video AND channelId = :channelId';
+  }
 
-    const params = {
-      IndexName: 'channelIdIndex',
-      ExpressionAttributeValues,
-      KeyConditionExpression,
-      Limit: limit,
-      ScanIndexForward: false,
+  get(lastId, limit) {
+    const params = this.queryParametersGenerator.generate(lastId);
+    return queryVideos({ params, limit });
+  }
+}
+
+export class PlaylistVideosResolver {
+  private queryParametersGenerator = new VideoQueryParametersGenerator();
+
+  constructor(playlistId: string) {
+    this.queryParametersGenerator.index = {
+      key: 'playlistId',
+      value: playlistId,
     };
+  }
 
-    if (lastId.length > 0) {
-      params.ExclusiveStartKey = {
-        id: {
-          S: 'video',
-        },
-        relId: {
-          S: lastId,
-        },
-        channelId: {
-          S: channelId,
-        },
-      };
-    }
-
-    return DB.query(params)
-      .then((response) => {
-        return response.Items.map((item) => DB.parse(item));
-      })
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
-  },
-
-  getForPlaylist({ playlistId, lastId, limit }) {
-    const ExpressionAttributeValues = {
-      ':video': {
-        S: 'video',
-      },
-      ':playlistId': {
-        S: playlistId,
-      },
-    };
-    const KeyConditionExpression = 'id = :video AND playlistId = :playlistId';
-
-    const params = {
-      IndexName: 'playlistIdIndex',
-      ExpressionAttributeValues,
-      KeyConditionExpression,
-      Limit: limit,
-      ScanIndexForward: false,
-    };
-
-    if (lastId.length > 0) {
-      params.ExclusiveStartKey = {
-        id: {
-          S: 'video',
-        },
-        relId: {
-          S: lastId,
-        },
-        playlistId: {
-          S: playlistId,
-        },
-      };
-    }
-
-    return DB.query(params)
-      .then((response) => {
-        return response.Items.map((item) => DB.parse(item));
-      })
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
-  },
-
-  get({ limit = 20, lastId = '' }) {
-    const KeyConditionExpression = 'id = :video';
-
-    const params = {
-      ExpressionAttributeValues: {
-        ':video': {
-          S: 'video',
-        },
-      },
-      KeyConditionExpression,
-      ScanIndexForward: false,
-      Limit: limit,
-    };
-
-    if (lastId.length > 0) {
-      params.ExclusiveStartKey = {
-        id: {
-          S: 'video',
-        },
-        relId: {
-          S: lastId,
-        },
-      };
-    }
-
-    return DB.query(params)
-      .then((response) => {
-        return response.Items.map((item) => DB.parse(item));
-      })
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
-  },
-};
+  get(lastId, limit) {
+    const params = this.queryParametersGenerator.generate(lastId);
+    return queryVideos({ params, limit });
+  }
+}

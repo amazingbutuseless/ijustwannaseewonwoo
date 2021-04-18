@@ -1,8 +1,8 @@
-import React, { ChangeEvent, ReactElement, RefObject } from 'react';
+import React, { ChangeEvent, ReactElement } from 'react';
 import { TimeInput } from './SceneRange.style';
 
 interface SceneRangeProps {
-  createRangeRef: (input: RefObject<HTMLInputElement>) => void;
+  createRangeRef: (input: HTMLInputElement) => void;
   onTimeUpdate: (e: ChangeEvent) => void;
 }
 

@@ -13,7 +13,7 @@ import SceneAddFormCloseButton from '../../components/SceneAddFormCloseButton';
 import SceneRange from '../../components/SceneRange';
 
 interface rangeInputSets {
-  [name: string]: RefObject<HTMLInputElement>;
+  [name: string]: HTMLInputElement;
 }
 
 interface SceneAddFormProps extends Video {
@@ -37,7 +37,7 @@ export default function SceneAddForm({
   const video = useAppSelector((state) => selectVideoById(state, videoId));
 
   const rangeInput: rangeInputSets = {};
-  const createRangeInput = (input: RefObject<HTMLInputElement>) => {
+  const createRangeInput = (input: HTMLInputElement) => {
     if (input) {
       rangeInput[input.name] = input;
     }
@@ -78,7 +78,7 @@ export default function SceneAddForm({
     onSceneAdded();
   };
 
-  const onTimeUpdate = (e) => {
+  const onTimeUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     const timecode = getTimecode();
 
     onTimecodeSet({

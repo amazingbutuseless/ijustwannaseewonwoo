@@ -77,16 +77,6 @@ export interface SceneItemInterface extends SceneTimecodeInterface {
   thumbnail?: ThumbnailImageUrl;
 }
 
-export interface AddSceneReducerParameters extends Video, SceneTimecodeInterface {}
-
-export interface ISceneAddFormProps extends Video {
-  visible: boolean;
-  onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
-  onSceneAdded: () => void;
-  onCloseButtonClick: () => void;
-  playlistId?: string;
-}
-
 export interface IPlaylist {
   id: string;
   title: string;

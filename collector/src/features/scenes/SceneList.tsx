@@ -1,16 +1,15 @@
 import React, { ReactElement, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchScenes, selectAllScenesForVideo } from './scenesSlice';
 
-import { SceneTimecodeInterface } from '../../types';
+import { SceneTimecodeInterface, Video } from '../../types';
 
 import { Wrapper, List, LoadingAnimation } from './SceneList.style';
 
 import Item, { EmptyItem } from './SceneListItem';
 
-interface SceneListProps {
-  videoId: string;
+interface SceneListProps extends Video {
   activeSceneIdx: number;
   onLoaded: () => void;
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
@@ -28,10 +27,10 @@ export default function SceneList({
 }: SceneListProps): ReactElement {
   const list = useRef(null);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
-  const scenesStatus = useSelector((state) => state.scenes.status);
+  const scenes = useAppSelector((state) => selectAllScenesForVideo(state, videoId));
+  const scenesStatus = useAppSelector((state) => state.scenes.status);
 
   useEffect(() => {
     const scenes = list.current.querySelectorAll('li');

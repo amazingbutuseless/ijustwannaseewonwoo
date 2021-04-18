@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
+import type { RootState } from '../../store';
 
-import { IPlaylist } from '../../types';
+import { IPlaylist, IVideoItemWithChannel, RegisteredVideo } from '../../types';
 
 import APIClient from '../../utils/api_client';
 import YoutubeAPI from '../../utils/youtube_api';
@@ -24,16 +25,40 @@ channel {
 }
 `;
 
-interface fetchPlaylistVideosParams {
+const playlistVideoEntities = `
+videoId
+      publishedAt
+      noAppears
+`;
+
+interface FetchPlaylistsParams {
+  limit?: number;
+  lastId?: string;
+}
+
+interface FetchPlaylistParamsWithPlaylistId extends FetchPlaylistsParams {
+  playlistId: string;
+}
+
+export interface FetchPlaylistVideosParams {
   playlistId: string;
   pageToken?: string;
+  lastVideoPublishedAt?: string;
+}
+
+export interface PlaylistVideos {
+  id: string;
+  numOfVideos: number;
+  pageToken?: string;
+  ytVideos: Array<IVideoItemWithChannel>;
+  videos?: Array<RegisteredVideo>;
 }
 
 export async function fetchPlaylistVideos({
   playlistId,
   pageToken = '',
   lastVideoPublishedAt = '',
-}: fetchPlaylistVideosParams) {
+}: FetchPlaylistVideosParams): Promise<PlaylistVideos> {
   const response = await YoutubeAPI.listPlaylistItem({ playlistId, pageToken });
 
   const videos = response.result.items.map((item) => {
@@ -50,7 +75,7 @@ export async function fetchPlaylistVideos({
     };
   });
 
-  const data = {
+  const data: PlaylistVideos = {
     id: playlistId,
     ytVideos: videos,
     pageToken: response.result.nextPageToken,
@@ -64,21 +89,13 @@ export async function fetchPlaylistVideos({
   return data;
 }
 
-interface fetchPlaylistParams {
-  playlistId: string;
-  limit?: number;
-  lastId?: string;
-}
-
 async function getVideosIds(playlistId: string, lastVideoPublishedAt: string) {
   const response = await APIClient.graphql({
     query: `
 query playlist($playlistId: ID!, $lastVideoPublishedAt: String) {
   playlist(playlistId: $playlistId){
     videos(limit: 21, lastId: $lastVideoPublishedAt) {
-      videoId
-      publishedAt
-      noAppears
+      ${playlistVideoEntities}
     }
   }
 }`,
@@ -93,16 +110,14 @@ query playlist($playlistId: ID!, $lastVideoPublishedAt: String) {
 
 export const fetchPlaylist = createAsyncThunk(
   'playlist/fetchPlaylist',
-  async ({ playlistId }: fetchPlaylistParams) => {
+  async ({ playlistId }: FetchPlaylistParamsWithPlaylistId) => {
     const response = await APIClient.graphql({
       query: `
 query playlist($playlistId: ID!) {
   playlist(playlistId: $playlistId) {
     ${playlistEntities}
     videos(limit: 21) {
-      videoId
-      publishedAt
-      noAppears
+      ${playlistVideoEntities}
     }
   }
 }`,
@@ -120,14 +135,9 @@ query playlist($playlistId: ID!) {
   }
 );
 
-interface IFetchPlaylistsParams {
-  limit?: number;
-  lastId?: string;
-}
-
 export const fetchPlaylists = createAsyncThunk(
   'playlist/fetchPlaylists',
-  async ({ limit = 10, lastId = '' }: IFetchPlaylistsParams) => {
+  async ({ limit = 10, lastId = '' }: FetchPlaylistsParams) => {
     const response = await APIClient.graphql({
       query: `
 query playlists($limit: Int, $lastId: String) {
@@ -153,31 +163,31 @@ const PlaylistsSlice = createSlice({
       playlistAdapter.upsertOne(state, action.payload);
     },
   },
-  extraReducers: {
-    [fetchPlaylists.pending]: (state, action) => {
+  extraReducers(builder) {
+    builder.addCase(fetchPlaylists.pending, (state) => {
       state.status = 'loading';
-    },
+    });
 
-    [fetchPlaylists.fulfilled]: (state, action) => {
+    builder.addCase(fetchPlaylists.fulfilled, (state, action) => {
       state.status = 'succeeded';
       playlistAdapter.upsertMany(state, action.payload);
-    },
+    });
 
-    [fetchPlaylist.pending]: (state, action) => {
+    builder.addCase(fetchPlaylist.pending, (state) => {
       state.status = 'loading';
-    },
+    });
 
-    [fetchPlaylist.fulfilled]: (state, action) => {
+    builder.addCase(fetchPlaylist.fulfilled, (state, action) => {
       state.status = 'succeeded';
       playlistAdapter.upsertOne(state, action.payload);
-    },
+    });
   },
 });
 
 export const {
   selectAll: selectAllPlaylists,
   selectById: selectPlaylistById,
-} = playlistAdapter.getSelectors((state) => state.playlists);
+} = playlistAdapter.getSelectors((state: RootState) => state.playlists);
 
 export const { updateMetadata } = PlaylistsSlice.actions;
 

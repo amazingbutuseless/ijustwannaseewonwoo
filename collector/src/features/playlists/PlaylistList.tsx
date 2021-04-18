@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppSelector, useAppDispatch } from '../../hooks';
 
 import { fetchPlaylists, selectAllPlaylists } from './playlistsSlice';
 
@@ -8,11 +8,11 @@ import { MenuTitle, PlaylistListWrapper, PlaylistListItems } from './PlaylistLis
 import PlaylistItem from './PlaylistItem';
 
 export default function PlaylistList() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [lastPlaylistId, updateLastPlaylistId] = useState('');
 
-  const playlists = useSelector(selectAllPlaylists);
-  const playlistStatus = useSelector((state) => state.playlists.status);
+  const playlists = useAppSelector(selectAllPlaylists);
+  const playlistStatus = useAppSelector((state) => state.playlists.status);
 
   useEffect(() => {
     if (playlistStatus === 'idle') {

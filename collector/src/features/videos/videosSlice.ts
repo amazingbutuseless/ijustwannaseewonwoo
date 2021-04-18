@@ -5,10 +5,11 @@ import {
   createSelector,
 } from '@reduxjs/toolkit';
 
-import { SceneItemInterface, IVideoItemWithChannel } from '../../types';
+import { IVideoItemWithChannel, RegisteredVideo, Video } from '../../types';
 
 import APIClient from '../../utils/api_client';
 import YoutubeAPI from '../../utils/youtube_api';
+import { RootState } from '../../store';
 
 const videosAdapter = createEntityAdapter<IVideoItemWithChannel>({
   selectId: (video) => video.videoId,
@@ -37,8 +38,50 @@ const videoEntities = `
   }
 `;
 
-interface registerVideoParams {
-  videoId: string;
+const queryForFetchChannelVideos = `
+query channel($channelId: ID!, $lastId: String) { 
+  channel(id: $channelId) {
+    videos(limit: 15, lastId: $lastId) {
+      ${videoEntities}
+    }
+  }
+}`;
+
+const queryForAllVideos = `
+query videos($lastId: String) { 
+  videos(limit: 15, lastId: $lastId) {
+    ${videoEntities}
+  }
+}`;
+
+const fetchVideoQuery = `
+query video($videoId: ID!) {
+  video(id: $videoId) {
+    ${videoEntities}
+  }
+}
+`;
+
+interface registerVideoParams extends Video {
+  playlistId?: string;
+}
+
+interface VideoFetcherProps {
+  channelId?: string;
+  lastId?: string;
+}
+
+interface VideoSnippetForRegister {
+  publishedAt: string;
+  title: string;
+  channelId: string;
+  thumbnails: {
+    [thumbnailType: string]: {
+      url: string;
+      width: number;
+      height: number;
+    };
+  };
   playlistId?: string;
 }
 
@@ -47,7 +90,7 @@ export const registerVideo = createAsyncThunk(
   async ({ videoId, playlistId = '' }: registerVideoParams) => {
     const { snippet: rawSnippet } = await YoutubeAPI.getVideo(videoId);
     const { publishedAt, channelId, title, thumbnails } = rawSnippet;
-    const snippet = {
+    const snippet: VideoSnippetForRegister = {
       publishedAt,
       channelId,
       title,
@@ -76,27 +119,6 @@ mutation registerVideo($data: registerVideoData) {
   }
 );
 
-const queryForFetchChannelVideos = `
-query channel($channelId: ID!, $lastId: String) { 
-  channel(id: $channelId) {
-    videos(limit: 15, lastId: $lastId) {
-      ${videoEntities}
-    }
-  }
-}`;
-
-const queryForAllVideos = `
-query videos($lastId: String) { 
-  videos(limit: 15, lastId: $lastId) {
-    ${videoEntities}
-  }
-}`;
-
-interface VideoFetcherProps {
-  channelId?: string;
-  lastId?: string;
-}
-
 export const fetchVideos = createAsyncThunk(
   'videos/fetchVideos',
   async ({ channelId = '', lastId = '' }: VideoFetcherProps) => {
@@ -113,14 +135,6 @@ export const fetchVideos = createAsyncThunk(
     return fetchForChannel ? response.data.channel.videos : response.data.videos;
   }
 );
-
-const fetchVideoQuery = `
-query video($videoId: ID!) {
-  video(id: $videoId) {
-    ${videoEntities}
-  }
-}
-`;
 
 export const fetchVideo = createAsyncThunk('videos/fetchVideo', async (videoId: string) => {
   const response = await APIClient.graphql({
@@ -141,44 +155,44 @@ const VideosSlice = createSlice({
       videosAdapter.upsertMany(state, action.payload);
     },
   },
-  extraReducers: {
-    [fetchVideos.pending]: (state, action) => {
+  extraReducers(builder) {
+    builder.addCase(fetchVideos.pending, (state) => {
       state.status = 'loading';
-    },
+    });
 
-    [fetchVideos.fulfilled]: (state, action) => {
+    builder.addCase(fetchVideos.fulfilled, (state, action) => {
       state.status = 'succeeded';
       videosAdapter.upsertMany(state, action.payload);
-    },
+    });
 
-    [fetchVideos.rejected]: (state, action) => {
+    builder.addCase(fetchVideos.rejected, (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
-    },
+    });
 
-    [fetchVideo.fulfilled]: (state, action) => {
+    builder.addCase(fetchVideo.fulfilled, (state, action) => {
       state.status = 'succeeded';
       videosAdapter.upsertOne(state, action.payload);
-    },
+    });
 
-    [registerVideo.fulfilled]: (state, action) => {
+    builder.addCase(registerVideo.fulfilled, (state, action) => {
       videosAdapter.upsertOne(state, action.payload);
-    },
+    });
   },
 });
 
 export const {
   selectAll: selectAllVideos,
   selectById: selectVideoById,
-} = videosAdapter.getSelectors((state) => state.videos);
+} = videosAdapter.getSelectors((state: RootState) => state.videos);
 
 export const selectVideosByChannel = createSelector(
-  [selectAllVideos, (state, channelId: string) => channelId],
+  [selectAllVideos, (state: RootState, channelId: string) => channelId],
   (videos, channelId) => videos.filter((video) => video.channelId === channelId)
 );
 
 export const selectVideosByPlaylist = createSelector(
-  [selectAllVideos, (state, playlistId: string) => playlistId],
+  [selectAllVideos, (state: RootState, playlistId: string) => playlistId],
   (videos, playlistId) => videos.filter((video) => video.playlistId === playlistId)
 );
 

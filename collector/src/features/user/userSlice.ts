@@ -1,10 +1,5 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  createEntityAdapter,
-  createSelector,
-  createAction,
-} from '@reduxjs/toolkit';
+import { createSlice, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
+import { RootState } from '../../store';
 
 interface IUser {
   email: string;
@@ -39,10 +34,12 @@ const userSlice = createSlice({
 
 export const { signIn, signOut } = userSlice.actions;
 
-export const { selectById: selectUserById } = userAdapter.getSelectors((state) => state.user);
+export const { selectById: selectUserById } = userAdapter.getSelectors(
+  (state: RootState) => state.user
+);
 
 export const selectCurrentUser = createSelector(
-  (state) => state,
+  (state: RootState) => state,
   () => null,
   (state, _) => {
     return selectUserById(state, state.user.ids[0]);

@@ -1,10 +1,15 @@
 import React from 'react';
 
-import LogoImage from '../../components/LogoImage';
-import GoogleSignInButton from '../../components/GoogleSignInButton';
 import { UserSignInWrapper } from './UserSignIn.style';
 
-export default function UserSignIn({ onClick }) {
+import LogoImage from '../../components/LogoImage';
+import GoogleSignInButton from '../../components/GoogleSignInButton';
+
+interface UserSignInProps {
+  onClick: () => void;
+}
+
+export default function UserSignIn({ onClick }: UserSignInProps) {
   return (
     <UserSignInWrapper>
       <LogoImage />

@@ -2,7 +2,7 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
 import { SceneTimecodeInterface } from '../../types';
 
@@ -11,7 +11,6 @@ import { selectAllScenesForVideo, uploadSceneThumbnail } from '../scenes/scenesS
 import { VideoWrapper } from './VideoDetails.style';
 
 import Header from '../../components/Header';
-import VideoForWonwoo from './VideoForWonwoo';
 import Scenes from '../scenes/Scenes';
 import SceneAddForm from '../scenes/SceneAddForm';
 import VideoPlayer from './VideoPlayer';
@@ -23,14 +22,19 @@ interface VideoRouterParams {
   videoId: string;
 }
 
+interface VideoLocationStates {
+  title: string;
+  playlistId?: string;
+}
+
 function VideoDetails(): ReactElement {
   const { videoId }: VideoRouterParams = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   let title, playlistId;
 
   if (typeof useLocation().state !== 'undefined') {
-    const locationState = useLocation().state;
+    const locationState = useLocation().state as VideoLocationStates;
     title = locationState.title;
     playlistId = locationState.playlistId;
   }
@@ -43,7 +47,7 @@ function VideoDetails(): ReactElement {
   const [sceneAddFormVisible, setSceneAddFormVisible] = useState(false);
   const [enableSceneAddButton, setEnableSceneAddButton] = useState(false);
 
-  const scenes = useSelector((state) => selectAllScenesForVideo(state, videoId));
+  const scenes = useAppSelector((state) => selectAllScenesForVideo(state, videoId));
 
   const onVideoDownloaded = (event: IpcRendererEvent, message: any) => {
     if (message.videoId !== videoId) return;
@@ -55,7 +59,7 @@ function VideoDetails(): ReactElement {
     const { videoId, start, thumbnail } = message;
     dispatch(uploadSceneThumbnail({ videoId, start, imageUrl: thumbnail }));
 
-    Object.entries(message.results).forEach(([memberName, recognitions]) => {
+    Object.entries(message.results).forEach(([_, recognitions]) => {
       recognitions.forEach((recognition: IFaceRecognitionResult) => {
         const { name, videoId, timestamp, url } = recognition;
         const key = `recognized/${name}/${videoId}--${timestamp}.jpg`;
@@ -76,7 +80,7 @@ function VideoDetails(): ReactElement {
     };
   }, [videoId]);
 
-  const getSceneIndex = ({ start, end }) => {
+  const getSceneIndex = ({ start, end }: SceneTimecodeInterface) => {
     return scenes.findIndex((scene) => scene.start === start && scene.end === end);
   };
 
@@ -149,6 +153,7 @@ function VideoDetails(): ReactElement {
       <VideoWrapper>
         <div style={{ position: 'relative' }}>
           <VideoPlayer videoId={videoId} timecode={time} onPaused={onPlayerPaused} ref={player} />
+
           <SceneAddForm
             visible={sceneAddFormVisible}
             videoId={videoId}

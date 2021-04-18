@@ -1,24 +1,24 @@
 import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppSelector, useAppDispatch } from '../../hooks';
 
 import { fetchVideos, selectAllVideos, selectVideosByChannel } from './videosSlice';
 
-import VideoItem from './VideoItem';
-import { VideoItemsWrapper } from './VideoList.style';
-
 import LoadingAnimation from '../../components/LoadingAnimation';
+import Header from '../../components/Header';
+import VideoItems from './VideoItems';
 
 interface VideoRouterParams {
-  channelId: string;
+  channelId?: string;
+  playlistId?: string;
 }
 
 export default function VideoList() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const { channelId }: VideoRouterParams = useParams();
 
-  const videoItems = useSelector((state) => {
+  const videoItems = useAppSelector((state) => {
     if (typeof channelId !== 'undefined') {
       return selectVideosByChannel(state, channelId);
     } else {
@@ -26,10 +26,7 @@ export default function VideoList() {
     }
   });
 
-  const videoStatus = useSelector((state) => {
-    return state.videos.status;
-  });
-  const error = useSelector((state) => state.videos.error);
+  const videoStatus = useAppSelector((state) => state.videos.status);
 
   useEffect(() => {
     if (videoStatus === 'idle') {
@@ -37,33 +34,17 @@ export default function VideoList() {
     }
   }, [videoStatus]);
 
-  const onClick = (selectedVideoId: string) => {
+  const onVideoItemClick = (selectedVideoId: string) => {
     history.push(`/video/${selectedVideoId}`);
   };
 
   return (
     <>
+      <Header title={''} />
+
       {videoStatus !== 'succeeded' && <LoadingAnimation />}
 
-      {videoStatus === 'succeeded' && (
-        <VideoItemsWrapper>
-          {videoItems.map((video) => {
-            const { videoId, title, thumbnail, publishedAt, channel } = video;
-
-            return (
-              <VideoItem
-                key={videoId}
-                videoId={videoId}
-                title={title}
-                thumbnail={thumbnail}
-                publishedAt={publishedAt}
-                channel={channel}
-                onClick={onClick}
-              />
-            );
-          })}
-        </VideoItemsWrapper>
-      )}
+      {videoStatus === 'succeeded' && <VideoItems items={videoItems} onClick={onVideoItemClick} />}
     </>
   );
 }

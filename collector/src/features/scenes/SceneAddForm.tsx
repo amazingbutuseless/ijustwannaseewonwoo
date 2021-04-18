@@ -1,8 +1,8 @@
 import { ipcRenderer } from 'electron';
-import React, { FormEvent, RefObject, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { ChangeEvent, FormEvent } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
-import { ISceneAddFormProps, SceneTimecodeInterface } from '../../types';
+import { SceneTimecodeInterface, Video } from '../../types';
 
 import { selectVideoById, registerVideo } from '../videos/videosSlice';
 import { addScene } from './scenesSlice';
@@ -16,6 +16,14 @@ interface rangeInputSets {
   [name: string]: RefObject<HTMLInputElement>;
 }
 
+interface SceneAddFormProps extends Video {
+  visible: boolean;
+  onTimecodeSet: ({ start, end }: SceneTimecodeInterface) => void;
+  onSceneAdded: () => void;
+  onCloseButtonClick: () => void;
+  playlistId?: string;
+}
+
 export default function SceneAddForm({
   visible,
   videoId,
@@ -23,10 +31,10 @@ export default function SceneAddForm({
   onSceneAdded,
   onCloseButtonClick,
   playlistId,
-}: ISceneAddFormProps) {
-  const dispatch = useDispatch();
+}: SceneAddFormProps) {
+  const dispatch = useAppDispatch();
 
-  const video = useSelector((state) => selectVideoById(state, videoId));
+  const video = useAppSelector((state) => selectVideoById(state, videoId));
 
   const rangeInput: rangeInputSets = {};
   const createRangeInput = (input: RefObject<HTMLInputElement>) => {

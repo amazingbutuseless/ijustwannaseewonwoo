@@ -8,11 +8,15 @@ import VideoItem from './VideoItem';
 
 interface VideoItemsProps {
   items: Array<IVideoItemWithChannel>;
-  sceneRegisteredVideos: Array<RegisteredVideo>;
   onClick: (videoId: string, title: string) => void;
+  sceneRegisteredVideos?: Array<RegisteredVideo>;
 }
 
-export default function VideoItems({ items, sceneRegisteredVideos, onClick }: VideoItemsProps) {
+export default function VideoItems({
+  items,
+  onClick,
+  sceneRegisteredVideos = [],
+}: VideoItemsProps) {
   const findRegisteredVideo = (videoId: string): RegisteredVideo => {
     return sceneRegisteredVideos.find((video) => video.videoId === videoId);
   };

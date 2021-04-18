@@ -1,12 +1,16 @@
 import React, { ReactElement, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+
+import { RootState } from '../../store';
 
 import {
   fetchPlaylist,
   updateMetadata,
   selectPlaylistById,
   fetchPlaylistVideos,
+  PlaylistVideos,
+  FetchPlaylistVideosParams,
 } from '../playlists/playlistsSlice';
 
 import Header from '../../components/Header';
@@ -19,11 +23,11 @@ interface VideoListForPlaylistUrlParams {
 }
 
 export default function VideoListForPlaylist(): ReactElement {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const { playlistId }: VideoListForPlaylistUrlParams = useParams();
 
-  const playlist = useSelector((state) => selectPlaylistById(state, playlistId));
+  const playlist = useAppSelector((state: RootState) => selectPlaylistById(state, playlistId));
 
   useEffect(() => {
     if (!playlist || typeof playlist.ytVideos === 'undefined') {
@@ -46,7 +50,7 @@ export default function VideoListForPlaylist(): ReactElement {
   };
 
   const updateList = async () => {
-    const params = {
+    const params: FetchPlaylistVideosParams = {
       playlistId,
       pageToken: playlist.pageToken,
     };
@@ -57,7 +61,7 @@ export default function VideoListForPlaylist(): ReactElement {
 
     const { ytVideos, videos, pageToken, numOfVideos } = await fetchPlaylistVideos(params);
 
-    const metadata = {
+    const metadata: PlaylistVideos = {
       id: playlistId,
       pageToken,
       numOfVideos,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Amplify, { Auth, Hub } from 'aws-amplify';
-import { useDispatch } from 'react-redux';
+
+import { useAppDispatch } from '../../hooks';
 
 import configure from '../../configure';
 
@@ -14,7 +15,7 @@ export default function useAuthentication() {
   const [userId, setUserId] = useState('');
   const [googleAPIReady, setGoogleAPIReady] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const getUser = () => {
     return new Promise((resolve, reject) => {

@@ -34,8 +34,14 @@ export default function VideoList() {
     }
   }, [videoStatus]);
 
-  const onVideoItemClick = (selectedVideoId: string) => {
-    history.push(`/video/${selectedVideoId}`);
+  const onVideoItemClick = (selectedVideoId: string, videoTitle: string) => {
+    history.push({
+      pathname: `/video/${selectedVideoId}`,
+      state: {
+        title: videoTitle,
+        playlistId: '',
+      },
+    });
   };
 
   return (

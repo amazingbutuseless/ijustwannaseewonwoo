@@ -3,7 +3,7 @@ type ChannelId = string;
 type PlaylistId = string;
 type VideoId = string;
 type VideoPublishedAt = string;
-type ThumbnailImageUrl = string;
+export type ThumbnailImageUrl = string;
 
 export interface APIClientRequestParameters {
   body?: {
@@ -58,7 +58,7 @@ export interface RegisteredVideo extends Video, WithPublishedAt {
 export interface IVideoItem extends Video, WithPublishedAt, WithChannelId, WithScenes {
   id: string;
   title: string;
-  thumbnail: ThumbnailImageUrl;
+  thumbnail: { url: ThumbnailImageUrl };
   playlistId?: PlaylistId;
 }
 

@@ -3,10 +3,13 @@ import React from 'react';
 import { Video, WithPublishedAt } from '../../types';
 import { VideoItemWrapper, VideoItemThumbnail, VideoItemInfo, ForWonwoo } from './VideoItem.style';
 
-interface VideoItemProps extends Video, WithPublishedAt {
+export interface WithOnClickEventHandler {
+  onClick: (videoId: string, title: string) => void;
+}
+
+interface VideoItemProps extends Video, WithPublishedAt, WithOnClickEventHandler {
   title: string;
   thumbnail: string;
-  onClick: (videoId: string, title: string) => void;
   forWonwoo: boolean;
 }
 
@@ -24,7 +27,7 @@ export default function VideoItem({
 
   return (
     <VideoItemWrapper onClick={handleClick}>
-      <VideoItemThumbnail src={thumbnail.url} alt={title} />
+      <VideoItemThumbnail src={thumbnail} alt={title} />
 
       {forWonwoo && <ForWonwoo />}
 

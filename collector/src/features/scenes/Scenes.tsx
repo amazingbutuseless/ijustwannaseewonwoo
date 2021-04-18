@@ -1,15 +1,14 @@
 import React, { ReactElement } from 'react';
 import { useLocation } from 'react-router';
 
-import { SceneTimecodeInterface } from '../../types';
+import { SceneTimecodeInterface, Video } from '../../types';
 
 import { SceneWrapper } from './Scenes.style';
 
 import AddSceneButton from '../../components/AddSceneButton';
 import SceneList from './SceneList';
 
-interface SceneProps {
-  videoId: string;
+interface SceneProps extends Video {
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
   onAddSceneButtonClick: () => void;
   onLoaded: () => void;

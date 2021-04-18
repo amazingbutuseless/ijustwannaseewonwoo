@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player/youtube';
 
-import { SceneTimecodeInterface } from '../../types';
+import { SceneTimecodeInterface, Video } from '../../types';
 
 import { VideoPlayerWrapper } from './VideoPlayer.style';
 
-interface VideoPlayerProps {
-  videoId: string;
+interface VideoPlayerProps extends Video {
   timecode: SceneTimecodeInterface;
   onPaused: () => void;
 }

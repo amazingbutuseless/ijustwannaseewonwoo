@@ -4,11 +4,10 @@ import { IVideoItemWithChannel, RegisteredVideo } from '../../types';
 
 import { VideoItemsWrapper } from './VideoList.style';
 
-import VideoItem from './VideoItem';
+import VideoItem, { WithOnClickEventHandler } from './VideoItem';
 
-interface VideoItemsProps {
+interface VideoItemsProps extends WithOnClickEventHandler {
   items: Array<IVideoItemWithChannel>;
-  onClick: (videoId: string, title: string) => void;
   sceneRegisteredVideos?: Array<RegisteredVideo>;
 }
 
@@ -41,7 +40,7 @@ export default function VideoItems({
             key={videoId}
             videoId={videoId}
             title={title}
-            thumbnail={thumbnail}
+            thumbnail={thumbnail.url}
             publishedAt={publishedAt}
             forWonwoo={haveScenesRegistered(registered) && !doesWonwooNotAppear(registered)}
             onClick={onClick}

@@ -3,7 +3,6 @@ import { useLocation } from 'react-router';
 
 import { HeaderWrapper } from './Header.style';
 
-import Logo from './Logo';
 import BackButton from './BackButton';
 
 interface HeaderProps {
@@ -18,8 +17,8 @@ export default function Header({ title = '' }: HeaderProps) {
   };
 
   return (
-    <HeaderWrapper>
-      {isIndex() ? <Logo /> : <BackButton />}
+    <HeaderWrapper style={{ marginTop: '30px' }}>
+      {isIndex() && <BackButton />}
 
       {title && <h2>{title}</h2>}
     </HeaderWrapper>

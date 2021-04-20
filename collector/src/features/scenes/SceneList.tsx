@@ -5,7 +5,7 @@ import { fetchScenes, selectAllScenesForVideo } from './scenesSlice';
 
 import { SceneTimecodeInterface, Video } from '../../types';
 
-import { Wrapper, List, LoadingAnimation } from './SceneList.style';
+import { List, LoadingAnimation } from './SceneList.style';
 
 import Item, { EmptyItem } from './SceneListItem';
 
@@ -33,6 +33,16 @@ export default function SceneList({
   const scenesStatus = useAppSelector((state) => state.scenes.status);
 
   useEffect(() => {
+    dispatch(fetchScenes(videoId));
+  }, [videoId]);
+
+  useEffect(() => {
+    if (scenesStatus === 'succeeded') {
+      onLoaded();
+    }
+  }, [scenesStatus]);
+
+  useEffect(() => {
     const scenes = list.current.querySelectorAll('li');
     if (scenes) {
       const scene = scenes.item(activeSceneIdx);
@@ -40,30 +50,20 @@ export default function SceneList({
     }
   }, [activeSceneIdx]);
 
-  useEffect(() => {
-    if (scenesStatus === 'idle') {
-      dispatch(fetchScenes(videoId));
-    } else if (scenesStatus === 'succeeded') {
-      onLoaded();
-    }
-  }, [videoId, scenesStatus]);
-
   return (
-    <Wrapper>
-      <List activeItemIdx={activeSceneIdx} ref={list}>
-        {scenesStatus === 'pending' && <LoadingAnimation>{videoTitle}</LoadingAnimation>}
-        {scenesStatus === 'succeeded' &&
-          ((scenes.length > 0 &&
-            scenes.map((scene, idx) => (
-              <Item
-                key={`scene-${idx + 1}`}
-                {...scene}
-                onSceneClick={onSceneClick}
-                active={activeSceneIdx === idx}
-              />
-            ))) ||
-            (scenes.length < 1 && <EmptyItem onClick={onEmptyListClick} />))}
-      </List>
-    </Wrapper>
+    <List activeItemIdx={activeSceneIdx} ref={list}>
+      {scenesStatus === 'pending' && <LoadingAnimation>{videoTitle}</LoadingAnimation>}
+      {scenesStatus === 'succeeded' &&
+        ((scenes.length > 0 &&
+          scenes.map((scene, idx) => (
+            <Item
+              key={`scene-${idx + 1}`}
+              {...scene}
+              onSceneClick={onSceneClick}
+              active={activeSceneIdx === idx}
+            />
+          ))) ||
+          (scenes.length < 1 && <EmptyItem onClick={onEmptyListClick} />))}
+    </List>
   );
 }

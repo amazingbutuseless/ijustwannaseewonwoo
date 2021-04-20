@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 
-interface ISceneListProps {
+interface SceneListProps {
   activeItemIdx: number;
 }
 
 export const Wrapper = styled.div``;
 
-export const List = styled.ul<ISceneListProps>`
+export const List = styled.ul<SceneListProps>`
   list-style: none;
   display: flex;
   margin: 0;

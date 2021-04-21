@@ -61,7 +61,7 @@
                 },
                 {
                   "html": "./src/worker.html",
-                  "js": "./src/worker.ts",
+                  "js": "./src/worker.tsx",
                   "name": "worker_window"
                 }
               ]
@@ -85,10 +85,14 @@
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@electron-forge/plugin-webpack": "^6.0.0-beta.54",
     "@emotion/babel-plugin": "^11.1.2",
+    "@emotion/jest": "^11.3.0",
     "@emotion/styled": "11.0.0-next.15",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/react": "^11.2.6",
     "@types/enzyme": "^3.10.8",
     "@types/enzyme-adapter-react-16": "^1.0.6",
+    "@types/gapi": "^0.0.39",
     "@types/jest": "^26.0.16",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
@@ -99,6 +103,7 @@
     "@typescript-eslint/parser": "^4.9.0",
     "babel-loader": "^8.2.2",
     "babel-plugin-emotion": "^11.0.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "canvas": "^2.6.1",
     "css-loader": "^4.3.0",
     "electron": "11.0.3",
@@ -133,7 +138,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-thunk": "^1.0.0",
-    "ytdl-core": "^4.4.5"
+    "ytdl-core": "^4.5.0"
   },
   "jest": {
     "setupFiles": [

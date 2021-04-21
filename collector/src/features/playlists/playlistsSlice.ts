@@ -9,7 +9,7 @@ import YoutubeAPI from '../../utils/youtube_api';
 const playlistAdapter = createEntityAdapter<IPlaylist>({});
 
 const initialState = playlistAdapter.getInitialState({
-  status: 'idle',
+  status: { playlists: 'idle', playlist: 'idle' },
   error: '',
 });
 
@@ -94,7 +94,7 @@ async function getVideosIds(playlistId: string, lastVideoPublishedAt: string) {
     query: `
 query playlist($playlistId: ID!, $lastVideoPublishedAt: String) {
   playlist(playlistId: $playlistId){
-    videos(limit: 21, lastId: $lastVideoPublishedAt) {
+    videos(limit: 28, lastId: $lastVideoPublishedAt) {
       ${playlistVideoEntities}
     }
   }
@@ -116,7 +116,7 @@ export const fetchPlaylist = createAsyncThunk(
 query playlist($playlistId: ID!) {
   playlist(playlistId: $playlistId) {
     ${playlistEntities}
-    videos(limit: 21) {
+    videos(limit: 28) {
       ${playlistVideoEntities}
     }
   }
@@ -165,20 +165,20 @@ const PlaylistsSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(fetchPlaylists.pending, (state) => {
-      state.status = 'loading';
+      state.status.playlists = 'loading';
     });
 
     builder.addCase(fetchPlaylists.fulfilled, (state, action) => {
-      state.status = 'succeeded';
+      state.status.playlists = 'succeeded';
       playlistAdapter.upsertMany(state, action.payload);
     });
 
     builder.addCase(fetchPlaylist.pending, (state) => {
-      state.status = 'loading';
+      state.status.playlist = 'loading';
     });
 
     builder.addCase(fetchPlaylist.fulfilled, (state, action) => {
-      state.status = 'succeeded';
+      state.status.playlist = 'succeeded';
       playlistAdapter.upsertOne(state, action.payload);
     });
   },

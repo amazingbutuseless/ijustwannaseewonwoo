@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Video, WithPublishedAt } from '../../types';
+import { Video, WithPublishedAt } from '../types';
 import { VideoItemWrapper, VideoItemThumbnail, VideoItemInfo, ForWonwoo } from './VideoItem.style';
 
 export interface WithOnClickEventHandler {

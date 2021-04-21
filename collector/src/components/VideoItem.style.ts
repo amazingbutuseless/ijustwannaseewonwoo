@@ -55,7 +55,6 @@ export const VideoItemInfo = styled.div`
 export const VideoItemWrapper = styled.div`
   position: relative;
   margin: 0 1.6rem 4rem;
-  width: calc(100% / 3 - 3.2rem);
   border-radius: var(--borderRadius);
   overflow: hidden;
   cursor: pointer;

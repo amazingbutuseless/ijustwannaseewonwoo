@@ -4,7 +4,9 @@ export interface MenuItemWrapperProps {
   active: boolean;
 }
 
-export const MenuWrapper = styled.nav``;
+export const MenuWrapper = styled.nav`
+  background-color: var(--eerie-black);
+`;
 
 export const MenuItemWrapper = styled.a<MenuItemWrapperProps>`
   display: block;

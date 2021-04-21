@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { BreadcrumbWrapper } from './Breadcrumb.style';
@@ -17,16 +17,16 @@ export interface BreadcrumbProps extends LocationDepths {
 }
 
 export default function Breadcrumb({ depths, onClick }: BreadcrumbProps) {
-  const history = useHistory();
-
   return (
     <BreadcrumbWrapper>
       {depths &&
         depths.map((depth) => {
-          const handleClick = () => {
-            if (depth.path === '#') return;
+          const handleClick = (e: MouseEvent) => {
+            e.preventDefault();
 
-            onClick(depth.path);
+            if (depth.path) {
+              onClick(depth.path);
+            }
           };
 
           return (

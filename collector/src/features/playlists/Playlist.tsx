@@ -46,7 +46,7 @@ export default function Playlist() {
       depths: [
         { title: 'Playlist', path: '/playlist' },
         { title: selectedPlaylist.title, path: `/playlist/${selectedPlaylistId}` },
-        { title: title, path: '#' },
+        { title: title, path: null },
       ],
     });
   };

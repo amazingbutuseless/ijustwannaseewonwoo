@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import { hot } from 'react-hot-loader';
 
@@ -11,9 +11,9 @@ import App from './App';
 
 ReactDOM.render(
   <Provider store={Store}>
-    <HashRouter>
+    <BrowserRouter basename="#">
       <App />
-    </HashRouter>
+    </BrowserRouter>
   </Provider>,
   document.querySelector('#root')
 );

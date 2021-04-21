@@ -1,53 +1,56 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useHistory } from 'react-router-dom';
+
 import { useAppDispatch, useAppSelector } from '../../hooks';
 
 import { SceneTimecodeInterface } from '../../types';
 
-import { selectAllScenesForVideo, uploadSceneThumbnail } from '../scenes/scenesSlice';
-
-import { VideoWrapper } from './VideoDetails.style';
-
-import Header from '../../components/Header';
-import Scenes from '../scenes/Scenes';
-import SceneAddForm from '../scenes/SceneAddForm';
-import VideoPlayer from './VideoPlayer';
-
 import { IFaceRecognitionResult } from '../../utils/face_recorgnizer';
 import { upload } from '../../utils/image_uploader';
+
+import {
+  selectAllScenesForVideo,
+  fetchScenes,
+  addScene,
+  uploadSceneThumbnail,
+} from '../scenes/scenesSlice';
+import { selectVideoById, registerVideo } from './videosSlice';
+
+import { VideoWrapper, VideoDownloadingMessage } from './VideoDetails.style';
+
+import Breadcrumb, { LocationDepths } from '../../components/Breadcrumb';
+import SceneAddForm from '../../components/SceneAddForm';
+import SceneList from '../../components/SceneList';
+import VideoPlayer from '../../components/VideoPlayer';
 
 interface VideoRouterParams {
   videoId: string;
 }
 
-interface VideoLocationStates {
+interface VideoLocationStates extends LocationDepths {
   title: string;
   playlistId?: string;
 }
 
 function VideoDetails(): ReactElement {
-  const { videoId }: VideoRouterParams = useParams();
+  const history = useHistory();
   const dispatch = useAppDispatch();
 
-  let title, playlistId;
-
-  if (typeof useLocation().state !== 'undefined') {
-    const locationState = useLocation().state as VideoLocationStates;
-    title = locationState.title;
-    playlistId = locationState.playlistId;
-  }
+  const { videoId }: VideoRouterParams = useParams();
+  const { title, playlistId, depths } = useLocation().state as VideoLocationStates;
 
   const player = useRef(null);
   const [time, updateTime] = useState({ start: -1, end: null });
   const [timeSource, setTimeSource] = useState('scene');
   const [activeSceneIdx, updateActiveSceneIdx] = useState(null);
 
-  const [sceneAddFormVisible, setSceneAddFormVisible] = useState(false);
   const [enableSceneAddButton, setEnableSceneAddButton] = useState(false);
 
+  const video = useAppSelector((state) => selectVideoById(state, videoId));
   const scenes = useAppSelector((state) => selectAllScenesForVideo(state, videoId));
+  const scenesStatus = useAppSelector((state) => state.scenes.status);
 
   const onVideoDownloaded = (event: IpcRendererEvent, message: any) => {
     if (message.videoId !== videoId) return;
@@ -69,6 +72,8 @@ function VideoDetails(): ReactElement {
   };
 
   useEffect(() => {
+    dispatch(fetchScenes(videoId));
+
     ipcRenderer.send('video/download', { videoId });
 
     ipcRenderer.on('video/download', onVideoDownloaded);
@@ -79,6 +84,22 @@ function VideoDetails(): ReactElement {
       ipcRenderer.off('video/detectFaces', onFaceDetected);
     };
   }, [videoId]);
+
+  useEffect(() => {
+    if (scenesStatus === 'succeeded') {
+      if (scenes.length > 0) {
+        setTimeSource('scene');
+        updateActiveSceneIdx(0);
+        const { start, end } = scenes[0];
+        updateTime({ start, end });
+      } else {
+        if (scenes.length < 1) {
+          updateTime({ start: 0, end: null });
+          return;
+        }
+      }
+    }
+  }, [scenesStatus]);
 
   const getSceneIndex = ({ start, end }: SceneTimecodeInterface) => {
     return scenes.findIndex((scene) => scene.start === start && scene.end === end);
@@ -110,68 +131,48 @@ function VideoDetails(): ReactElement {
     player.current.seekTo(timecode.start);
   };
 
-  const onAddSceneButtonClick = () => {
-    setSceneAddFormVisible(true);
-  };
-
-  const onSceneAdded = () => {
-    setSceneAddFormVisible(false);
-  };
-
   const onTimecodeSet = (timecode: SceneTimecodeInterface) => {
     setTimeSource('addScene');
     updateTime(timecode);
     player.current.seekTo(timecode.start);
   };
 
-  const onSceneAddFormCloseButtonClick = () => {
-    setSceneAddFormVisible(false);
+  const onBreadcrumbItemClick = (path: string) => {
+    history.push(path);
   };
 
-  const onScenesLoaded = () => {
-    const scenesLoadedTimer = window.setInterval(() => {
-      if (player) window.clearInterval(scenesLoadedTimer);
+  const onAddFormSumit = ({ start, end }, resetForm) => {
+    if (!video) {
+      dispatch(registerVideo({ videoId, playlistId }));
+    }
 
-      if (scenes.length > 0) {
-        setTimeSource('scene');
-        updateActiveSceneIdx(0);
-        const { start, end } = scenes[0];
-        updateTime({ start, end });
-      } else {
-        if (scenes.length < 1) {
-          updateTime({ start: 0, end: null });
-          return;
-        }
-      }
-    }, 500);
+    dispatch(addScene({ videoId, start, end }));
+    ipcRenderer.send('from-main-to-worker', { action: 'prepare', videoId, start, end });
+
+    resetForm();
   };
 
   return (
     <>
-      <Header title={title} />
+      <Breadcrumb depths={depths} onClick={onBreadcrumbItemClick} />
 
       <VideoWrapper>
-        <div style={{ position: 'relative' }}>
+        <div style={{ width: 'calc(100% - 18.4rem)' }}>
           <VideoPlayer videoId={videoId} timecode={time} onPaused={onPlayerPaused} ref={player} />
 
-          <SceneAddForm
-            visible={sceneAddFormVisible}
-            videoId={videoId}
-            playlistId={playlistId}
-            onTimecodeSet={onTimecodeSet}
-            onSceneAdded={onSceneAdded}
-            onCloseButtonClick={onSceneAddFormCloseButtonClick}
-          />
+          {!enableSceneAddButton && (
+            <VideoDownloadingMessage>
+              😼 장면 등록을 위해서 비디오를 다운로드 받고 있습니다.
+            </VideoDownloadingMessage>
+          )}
+          {enableSceneAddButton && (
+            <SceneAddForm onTimecodeSet={onTimecodeSet} onSubmit={onAddFormSumit} />
+          )}
         </div>
 
-        <Scenes
-          videoId={videoId}
-          onSceneClick={onSceneClick}
-          onAddSceneButtonClick={onAddSceneButtonClick}
-          activeSceneIdx={activeSceneIdx}
-          onLoaded={onScenesLoaded}
-          enableButton={enableSceneAddButton}
-        />
+        <div style={{ width: '18.4rem', overflow: 'auto' }}>
+          <SceneList scenes={scenes} activeSceneIdx={activeSceneIdx} onSceneClick={onSceneClick} />
+        </div>
       </VideoWrapper>
     </>
   );

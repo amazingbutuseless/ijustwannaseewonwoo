@@ -29,9 +29,8 @@ export const SceneDetails = styled.div`
 `;
 
 export const SceneListItemWrapper = styled.li<SceneListItemWrapperStyleProps>`
-  display: inline-block;
-
-  margin-right: 1.6rem;
+  margin: 0.8rem;
+  margin-top: 0;
   width: 16rem;
 
   box-sizing: border-box;
@@ -41,10 +40,6 @@ export const SceneListItemWrapper = styled.li<SceneListItemWrapperStyleProps>`
   background-color: #fff;
 
   cursor: pointer;
-
-  &:last-child {
-    margin-right: 0;
-  }
 
   &:hover {
     box-shadow: var(--boxShadow);

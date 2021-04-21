@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { SceneTimecodeInterface, SceneItemInterface } from '../../types';
+import { SceneTimecodeInterface, SceneItemInterface } from '../types';
 
-import { getUrl } from '../../utils/image_uploader';
+import { getUrl } from '../utils/image_uploader';
 
 import {
   SceneListItemWrapper,
@@ -16,13 +16,9 @@ interface SceneListItemProps extends SceneItemInterface {
   active?: boolean;
 }
 
-interface EmptyItemProps {
-  onClick: () => void;
-}
-
-export function EmptyItem({ onClick }: EmptyItemProps) {
+export function EmptyItem() {
   return (
-    <SceneListItemEmptyWrapper onClick={onClick}>
+    <SceneListItemEmptyWrapper>
       아직 등록된 장면이 없습니다.
       <br />
       장면을 추가해주세요.

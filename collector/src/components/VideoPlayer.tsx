@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player/youtube';
 
-import { SceneTimecodeInterface, Video } from '../../types';
+import { SceneTimecodeInterface, Video } from '../types';
 
 import { VideoPlayerWrapper } from './VideoPlayer.style';
 

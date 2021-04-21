@@ -1,9 +1,13 @@
 import styled from '@emotion/styled';
 
 export const VideoWrapper = styled.div`
-  h3 {
-    font-size: 1.4rem;
-    color: var(--silver-chalice);
-    font-weight: 400;
-  }
+  display: flex;
+  overflow: hidden;
+`;
+
+export const VideoDownloadingMessage = styled.p`
+  margin: 0;
+  padding: 0;
+  font-size: 1.4rem;
+  color: var(--silver-chalice);
 `;

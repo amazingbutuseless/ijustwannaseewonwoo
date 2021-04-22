@@ -52,6 +52,19 @@ function VideoDetails(): ReactElement {
   const scenes = useAppSelector((state) => selectAllScenesForVideo(state, videoId));
   const scenesStatus = useAppSelector((state) => state.scenes.status);
 
+  const sceneContainer = useRef(null);
+  const sceneRefs = useRef<Array<HTMLLIElement>>([]);
+
+  const registerSceneRef = (elm: HTMLLIElement) => {
+    sceneRefs.current.push(elm);
+  };
+
+  useEffect(() => {
+    if (sceneContainer.current && sceneRefs.current[activeSceneIdx]) {
+      sceneContainer.current.scrollTop = sceneRefs.current[activeSceneIdx].offsetTop - 62;
+    }
+  }, [activeSceneIdx]);
+
   const onVideoDownloaded = (event: IpcRendererEvent, message: any) => {
     if (message.videoId !== videoId) return;
 
@@ -176,8 +189,14 @@ function VideoDetails(): ReactElement {
             height: 'calc(100vh - var(--titleBarHeight))',
             overflow: 'auto',
           }}
+          ref={sceneContainer}
         >
-          <SceneList scenes={scenes} activeSceneIdx={activeSceneIdx} onSceneClick={onSceneClick} />
+          <SceneList
+            scenes={scenes}
+            activeSceneIdx={activeSceneIdx}
+            onSceneClick={onSceneClick}
+            registerRef={registerSceneRef}
+          />
         </div>
       </VideoWrapper>
     </>

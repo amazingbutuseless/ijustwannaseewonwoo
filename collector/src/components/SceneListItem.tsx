@@ -11,7 +11,11 @@ import {
   SceneDetails,
 } from './SceneListItem.style';
 
-interface SceneListItemProps extends SceneItemInterface {
+export interface WithRegisterRef {
+  registerRef: (elm: HTMLLIElement) => void;
+}
+
+interface SceneListItemProps extends SceneItemInterface, WithRegisterRef {
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
   active?: boolean;
 }
@@ -31,6 +35,7 @@ export default function SceneListItem({
   start,
   end,
   onSceneClick,
+  registerRef,
   active = false,
 }: SceneListItemProps) {
   const [thumbnailUrl, updateThumbnailUrl] = useState('');
@@ -48,7 +53,7 @@ export default function SceneListItem({
   getUrl(thumbnail).then(updateThumbnailUrl);
 
   return (
-    <SceneListItemWrapper onClick={onClick} active={active}>
+    <SceneListItemWrapper onClick={onClick} active={active} ref={registerRef}>
       <SceneThumbnail src={thumbnailUrl} alt="" />
       <SceneDetails>
         {startTimecode} ~ {endTimecode}

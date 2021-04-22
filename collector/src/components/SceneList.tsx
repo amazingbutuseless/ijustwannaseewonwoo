@@ -4,9 +4,9 @@ import { SceneItemInterface, SceneTimecodeInterface } from '../types';
 
 import { List } from './SceneList.style';
 
-import Item, { EmptyItem } from './SceneListItem';
+import Item, { EmptyItem, WithRegisterRef } from './SceneListItem';
 
-export interface SceneListProps {
+export interface SceneListProps extends WithRegisterRef {
   scenes: Array<SceneItemInterface>;
   activeSceneIdx: number;
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
@@ -16,6 +16,7 @@ export default function SceneList({
   scenes,
   activeSceneIdx,
   onSceneClick,
+  registerRef,
 }: SceneListProps): ReactElement {
   return (
     <List activeItemIdx={activeSceneIdx}>
@@ -26,6 +27,7 @@ export default function SceneList({
             {...scene}
             onSceneClick={onSceneClick}
             active={activeSceneIdx === idx}
+            registerRef={registerRef}
           />
         ))}
       {scenes.length < 1 && <EmptyItem />}

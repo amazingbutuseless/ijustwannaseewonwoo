@@ -3,6 +3,8 @@ import * as faceapi from 'face-api.js';
 
 import ImageCreator from './image_creator';
 
+import configure from '../configure';
+
 faceapi.env.monkeyPatch({
   Canvas: HTMLCanvasElement,
   Image: HTMLImageElement,
@@ -25,7 +27,7 @@ export interface IFaceRecognitionResultWithGroup {
 }
 
 export default {
-  faceMatcher: faceapi.FaceMatcher.fromJSON(require('../data/faceMatcher.json')),
+  faceMatcher: null,
 
   async loadNet(): Promise<faceapi.SsdMobilenetv1> {
     const detectionNet = faceapi.nets.ssdMobilenetv1;
@@ -33,6 +35,9 @@ export default {
     await faceapi.loadFaceLandmarkModel('/data/weights');
     await faceapi.loadFaceDetectionModel('/data/weights');
     await faceapi.loadFaceRecognitionModel('/data/weights');
+
+    const faceMatcherFile = await (await fetch(configure.FACE_MATCHER_FILE_URL)).json();
+    this.faceMatcher = faceapi.FaceMatcher.fromJSON(faceMatcherFile);
 
     return detectionNet;
   },

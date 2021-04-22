@@ -170,7 +170,13 @@ function VideoDetails(): ReactElement {
           )}
         </div>
 
-        <div style={{ width: '18.4rem', overflow: 'auto' }}>
+        <div
+          style={{
+            width: '18.4rem',
+            height: 'calc(100vh - var(--titleBarHeight))',
+            overflow: 'auto',
+          }}
+        >
           <SceneList scenes={scenes} activeSceneIdx={activeSceneIdx} onSceneClick={onSceneClick} />
         </div>
       </VideoWrapper>

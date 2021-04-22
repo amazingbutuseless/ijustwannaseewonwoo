@@ -12,5 +12,6 @@ export const List = styled.ul<SceneListProps>`
   flex-direction: column;
   justify-content: center;
   margin: 0;
+  margin-bottom: 4.8rem;
   padding: 0;
 `;

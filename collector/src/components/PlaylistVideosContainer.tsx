@@ -24,11 +24,12 @@ export default function PlaylistVideosContainer({
         onClick={onVideoClick}
       />
 
-      <MoreVideosButton
-        current={playlist.ytVideos.length || 0}
-        total={playlist.numOfVideos || 0}
-        onClick={onMoreVideosButtonClick}
-      />
+      <MoreVideosButton onClick={onMoreVideosButtonClick}>
+        <>
+          {playlist.numOfVideos > 0 && `${playlist.ytVideos.length} / ${playlist.numOfVideos}`}
+          {playlist.numOfVideos < 1 && 'Loading...'}
+        </>
+      </MoreVideosButton>
     </>
   );
 }

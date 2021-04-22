@@ -3,22 +3,17 @@ import React, { ReactElement } from 'react';
 import { MoreVideosButtonWrapper, MoreButtonContainer } from './MoreVideosButton.style';
 
 interface MoreVideosButtonProps {
-  current: number;
-  total: number;
+  children: ReactElement | string;
   onClick: () => void;
 }
 
 export default function MoreVideosButton({
-  current,
-  total,
+  children,
   onClick,
 }: MoreVideosButtonProps): ReactElement {
   return (
     <MoreButtonContainer>
-      <MoreVideosButtonWrapper onClick={onClick}>
-        {total > 0 && `${current} / ${total}`}
-        {total < 1 && 'Loading...'}
-      </MoreVideosButtonWrapper>
+      <MoreVideosButtonWrapper onClick={onClick}>{children}</MoreVideosButtonWrapper>
     </MoreButtonContainer>
   );
 }

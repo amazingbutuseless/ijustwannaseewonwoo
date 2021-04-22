@@ -8,6 +8,7 @@ import { fetchVideos, selectAllVideos } from './videosSlice';
 import { VideoListWrapper, VideoItemsContainer } from './VideoList.style';
 
 import VideoItem from '../../components/VideoItem';
+import MoreVideosButton from '../../components/MoreVideosButton';
 
 interface VideoRouterParams {
   channelId?: string;
@@ -18,14 +19,17 @@ export default function VideoList() {
   const dispatch = useAppDispatch();
   const history = useHistory();
 
-  const [lastVideoId, setLastVideoId] = useState('');
-
   const videoItems = useAppSelector(selectAllVideos);
   const videoStatus = useAppSelector((state) => state.videos.status);
 
+  const [lastVideoId, setLastVideoId] = useState('');
+
   useEffect(() => {
     if (videoStatus === 'idle') {
-      dispatch(fetchVideos({ lastId: lastVideoId }));
+      dispatch(fetchVideos({ lastId: '' }));
+    } else if (videoStatus === 'succeeded' && videoItems.length > 0) {
+      const lastId = videoItems.length % 30 === 0 ? videoItems[videoItems.length - 1].videoId : '';
+      setLastVideoId(lastId);
     }
   }, [videoStatus]);
 
@@ -45,6 +49,8 @@ export default function VideoList() {
     });
   };
 
+  const onMoreVideoButtonClick = () => {};
+
   return (
     <VideoListWrapper>
       <VideoItemsContainer>
@@ -52,6 +58,7 @@ export default function VideoList() {
           const { videoId, title, publishedAt, thumbnail } = video;
           return (
             <VideoItem
+              key={videoId}
               videoId={videoId}
               title={title}
               publishedAt={publishedAt}
@@ -62,6 +69,25 @@ export default function VideoList() {
           );
         })}
       </VideoItemsContainer>
+
+      {videoItems.length > 0 && lastVideoId && (
+        <MoreVideosButton onClick={onMoreVideoButtonClick}>
+          <>
+            Next{' '}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#9d4edd"
+              style={{ verticalAlign: 'middle' }}
+            >
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" />
+            </svg>
+          </>
+        </MoreVideosButton>
+      )}
     </VideoListWrapper>
   );
 }

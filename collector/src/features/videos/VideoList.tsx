@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
+
 import { useAppSelector, useAppDispatch } from '../../hooks';
 
-import { fetchVideos, selectAllVideos, selectVideosByChannel } from './videosSlice';
+import { fetchVideos, selectAllVideos } from './videosSlice';
 
-import LoadingAnimation from '../../components/LoadingAnimation';
-import Header from '../../components/Header';
-import VideoItems from './VideoItems';
+import { VideoListWrapper, VideoItemsContainer } from './VideoList.style';
+
+import VideoItem from '../../components/VideoItem';
 
 interface VideoRouterParams {
   channelId?: string;
@@ -16,41 +17,51 @@ interface VideoRouterParams {
 export default function VideoList() {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const { channelId }: VideoRouterParams = useParams();
 
-  const videoItems = useAppSelector((state) => {
-    if (typeof channelId !== 'undefined') {
-      return selectVideosByChannel(state, channelId);
-    } else {
-      return selectAllVideos(state);
-    }
-  });
+  const [lastVideoId, setLastVideoId] = useState('');
 
+  const videoItems = useAppSelector(selectAllVideos);
   const videoStatus = useAppSelector((state) => state.videos.status);
 
   useEffect(() => {
     if (videoStatus === 'idle') {
-      dispatch(fetchVideos({ channelId: channelId || '', lastId: '' }));
+      dispatch(fetchVideos({ lastId: lastVideoId }));
     }
   }, [videoStatus]);
 
-  const onVideoItemClick = (selectedVideoId: string, videoTitle: string) => {
-    history.push({
-      pathname: `/video/${selectedVideoId}`,
-      state: {
-        title: videoTitle,
-        playlistId: '',
-      },
+  const onVideoItemClick = (videoId: string, title: string) => {
+    history.push(`/video/${videoId}`, {
+      title,
+      depths: [
+        {
+          title: 'Video',
+          path: '/video',
+        },
+        {
+          title,
+          path: null,
+        },
+      ],
     });
   };
 
   return (
-    <>
-      <Header title={''} />
-
-      {videoStatus !== 'succeeded' && <LoadingAnimation />}
-
-      {videoStatus === 'succeeded' && <VideoItems items={videoItems} onClick={onVideoItemClick} />}
-    </>
+    <VideoListWrapper>
+      <VideoItemsContainer>
+        {videoItems.map((video) => {
+          const { videoId, title, publishedAt, thumbnail } = video;
+          return (
+            <VideoItem
+              videoId={videoId}
+              title={title}
+              publishedAt={publishedAt}
+              thumbnail={thumbnail.url}
+              onClick={onVideoItemClick}
+              forWonwoo={false}
+            />
+          );
+        })}
+      </VideoItemsContainer>
+    </VideoListWrapper>
   );
 }

@@ -49,7 +49,7 @@ query channel($channelId: ID!, $lastId: String) {
 
 const queryForAllVideos = `
 query videos($lastId: String) { 
-  videos(limit: 15, lastId: $lastId) {
+  videos(limit: 30, lastId: $lastId) {
     ${videoEntities}
   }
 }`;

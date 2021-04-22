@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { useAppSelector } from './hooks';
+import { useAppSelector } from './app/hooks';
 
 import { ContentsWrapper, Content } from './App.style';
 

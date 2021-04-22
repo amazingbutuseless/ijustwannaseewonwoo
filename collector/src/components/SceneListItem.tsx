@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { SceneTimecodeInterface, SceneItemInterface } from '../types';
 
-import { getUrl } from '../utils/image_uploader';
+import { getUrl } from '../app/image_uploader';
 
 import {
   SceneListItemWrapper,

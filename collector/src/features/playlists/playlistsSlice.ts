@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
-import type { RootState } from '../../store';
+import type { RootState } from '../../app/store';
 
 import { IPlaylist, IVideoItemWithChannel, RegisteredVideo } from '../../types';
 
-import APIClient from '../../utils/api_client';
-import YoutubeAPI from '../../utils/youtube_api';
+import APIClient from '../../app/api_client';
+import YoutubeAPI from '../../app/youtube_api';
 
 const playlistAdapter = createEntityAdapter<IPlaylist>({});
 

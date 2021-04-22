@@ -21,7 +21,7 @@ function dataURItoBlob(dataURI: string) {
   return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
 }
 
-export function upload(key, dataUrl: string) {
+export function upload(key: string, dataUrl: string) {
   return Storage.put(key, dataURItoBlob(dataUrl), {
     contentType: 'image/jpeg',
   });

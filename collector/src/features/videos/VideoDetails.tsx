@@ -3,12 +3,12 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
 
-import { useAppDispatch, useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 
 import { SceneTimecodeInterface } from '../../types';
 
-import { IFaceRecognitionResult } from '../../utils/face_recorgnizer';
-import { upload } from '../../utils/image_uploader';
+import { IFaceRecognitionResult } from '../../app/face_recorgnizer';
+import { upload } from '../../app/image_uploader';
 
 import {
   selectAllScenesForVideo,

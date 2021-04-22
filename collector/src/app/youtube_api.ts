@@ -3,6 +3,59 @@ interface ListPlaylistItemParams {
   pageToken?: string;
 }
 
+interface YoutubeVideoThumbnail {
+  url: string;
+  width: number;
+  height: number;
+}
+
+interface PlaylistItemResourceSnippet {
+  publishedAt: string;
+  channelId: string;
+  channelTitle: string;
+  playlistId: string;
+  title: string;
+  description: string;
+  thumbnails: {
+    [thumbnailType: string]: YoutubeVideoThumbnail;
+  };
+  videoOwnerChannelTitle: string;
+  videoOwnerChannelId: string;
+  position: number;
+  resourceId: {
+    kind: string;
+    videoId: string;
+  };
+}
+
+interface PlaylistItemResourceContentDetails {
+  videoId: string;
+  startAt: string;
+  endAt: string;
+  note: string;
+  videoPublishedAt: string;
+}
+
+interface PlaylistItemResource {
+  kind: 'youtube#playlistItem';
+  etag: string;
+  id: string;
+  snippet: PlaylistItemResourceSnippet;
+  contentDetails: PlaylistItemResourceContentDetails;
+}
+
+interface YoutubePlaylistItemsListResponse {
+  kind: string;
+  etag: string;
+  nextPageToken?: string;
+  prevPageToken?: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+  items: Array<PlaylistItemResource>;
+}
+
 export default (() => {
   return {
     listPlaylistItem({ playlistId, pageToken }: ListPlaylistItemParams) {
@@ -12,7 +65,7 @@ export default (() => {
         YoutubeClient.playlistItems
           .list({
             part: ['snippet,contentDetails'],
-            maxResults: 21,
+            maxResults: 28,
             playlistId,
             pageToken,
           })

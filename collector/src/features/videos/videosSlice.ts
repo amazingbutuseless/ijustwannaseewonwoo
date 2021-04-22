@@ -7,9 +7,9 @@ import {
 
 import { IVideoItemWithChannel, RegisteredVideo, Video } from '../../types';
 
-import APIClient from '../../utils/api_client';
-import YoutubeAPI from '../../utils/youtube_api';
-import { RootState } from '../../store';
+import APIClient from '../../app/api_client';
+import YoutubeAPI from '../../app/youtube_api';
+import { RootState } from '../../app/store';
 
 const videosAdapter = createEntityAdapter<IVideoItemWithChannel>({
   selectId: (video) => video.videoId,

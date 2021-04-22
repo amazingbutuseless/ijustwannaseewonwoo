@@ -3,8 +3,8 @@ import { ipcRenderer } from 'electron';
 import FaceRecognizer, {
   IFaceRecognitionResult,
   IFaceRecognitionResultWithGroup,
-} from './utils/face_recorgnizer';
-import ImageCreator from './utils/image_creator';
+} from './app/face_recorgnizer';
+import ImageCreator from './app/image_creator';
 
 let videoId = '';
 let start: number, end: number;

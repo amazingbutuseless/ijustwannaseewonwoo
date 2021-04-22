@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Amplify, { Auth, Hub } from 'aws-amplify';
 
-import { useAppDispatch } from '../../hooks';
+import { useAppDispatch } from '../../app/hooks';
 
 import configure from '../../configure';
 

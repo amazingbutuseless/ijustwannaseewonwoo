@@ -1,7 +1,7 @@
-import { ytVideos, registeredVideos } from './PlaylistVideoList';
+import { YtVideos, RegisteredVideos } from '../types';
 
 export class VideoHelper {
-  static getVideosForWonwoo(ytVideos: ytVideos, registeredVideos: registeredVideos): Array<string> {
+  static getVideosForWonwoo(ytVideos: YtVideos, registeredVideos: RegisteredVideos): Array<string> {
     const registeredVideoIds = registeredVideos.map((video) => video.videoId);
     const foundVideos = ytVideos.filter((video) => registeredVideoIds.includes(video.videoId));
 

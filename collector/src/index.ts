@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, protocol } from 'electron';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
-import YoutubeDownloader from './utils/youtube_downloader';
+import YoutubeDownloader from './app/youtube_downloader';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const WORKER_WINDOW_WEBPACK_ENTRY: any;

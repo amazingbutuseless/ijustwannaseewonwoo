@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
 
 import { Provider } from 'react-redux';
-import Store from './store';
+import Store from './app/store';
 
 import App from './App';
 

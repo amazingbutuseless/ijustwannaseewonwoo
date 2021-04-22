@@ -1,19 +1,15 @@
 import React from 'react';
 
-import { IVideoItem, RegisteredVideo } from '../types';
-import { VideoHelper } from '../VideoHelper';
+import { YtVideos, RegisteredVideos } from '../types';
+import { VideoHelper } from '../app/video_helper';
 
 import { PlaylistVideoListWrapper } from './PlaylistVideoList.style';
 
 import VideoItem, { WithOnClickEventHandler } from './VideoItem';
 
-export type ytVideos = Array<IVideoItem>;
-
-export type registeredVideos = Array<RegisteredVideo>;
-
 export interface PlaylistVideoListProps extends WithOnClickEventHandler {
-  ytVideos: ytVideos;
-  registeredVideos: registeredVideos;
+  ytVideos: YtVideos;
+  registeredVideos: RegisteredVideos;
 }
 
 export default function PlaylistVideoList({

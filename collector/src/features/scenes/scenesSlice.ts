@@ -4,12 +4,12 @@ import {
   createEntityAdapter,
   createSelector,
 } from '@reduxjs/toolkit';
-import type { RootState } from '../../store';
+import type { RootState } from '../../app/store';
 
 import { ThumbnailImageUrl, SceneItemInterface, SceneTimecodeInterface, Video } from '../../types';
 
-import APIClient from '../../utils/api_client';
-import { upload } from '../../utils/image_uploader';
+import APIClient from '../../app/api_client';
+import { upload } from '../../app/image_uploader';
 
 interface AddSceneReducerParams extends Video, SceneTimecodeInterface {
   thumbnail?: ThumbnailImageUrl;

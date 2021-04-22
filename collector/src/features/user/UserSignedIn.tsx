@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { useAppSelector } from '../../hooks';
+import { useAppSelector } from '../../app/hooks';
 
 import useAuthentication from './UseAuthentication';
 import { selectCurrentUser } from './userSlice';

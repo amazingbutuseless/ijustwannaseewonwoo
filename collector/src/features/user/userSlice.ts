@@ -1,5 +1,5 @@
 import { createSlice, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
+import { RootState } from '../../app/store';
 
 interface IUser {
   email: string;

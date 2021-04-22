@@ -4,6 +4,8 @@ type PlaylistId = string;
 type VideoId = string;
 type VideoPublishedAt = string;
 export type ThumbnailImageUrl = string;
+export type YtVideos = Array<IVideoItem>;
+export type RegisteredVideos = Array<RegisteredVideo>;
 
 export interface APIClientRequestParameters {
   body?: {

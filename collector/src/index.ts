@@ -26,8 +26,10 @@ let workerWindow: BrowserWindow = null;
 
 const createWindow = (): void => {
   mainWindow = new BrowserWindow({
-    height: 800,
-    width: 1080,
+    height: 720,
+    width: 1280,
+    frame: false,
+    titleBarStyle: 'hiddenInset',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -38,7 +40,7 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   workerWindow = new BrowserWindow({
-    // show: false,
+    show: false,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
@@ -48,7 +50,6 @@ const createWindow = (): void => {
   workerWindow.loadURL(WORKER_WINDOW_WEBPACK_ENTRY);
 
   mainWindow.webContents.openDevTools();
-  workerWindow.webContents.openDevTools();
 };
 
 app.on('ready', createWindow);
@@ -66,6 +67,7 @@ app.on('activate', () => {
 });
 
 ipcMain.on('video/download', async (event, message) => {
+  console.log(`download ${message.videoId}`);
   const downloader = new YoutubeDownloader(message.videoId);
   await downloader.run(event);
 });

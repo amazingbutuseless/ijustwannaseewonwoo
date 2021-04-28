@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 export const TitleBarWrapper = styled.header`
+  -webkit-user-select: none;
   -webkit-app-region: drag;
 
   display: flex;

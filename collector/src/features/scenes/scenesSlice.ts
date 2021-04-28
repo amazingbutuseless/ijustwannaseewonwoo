@@ -9,7 +9,7 @@ import type { RootState } from '../../app/store';
 import { ThumbnailImageUrl, SceneItemInterface, SceneTimecodeInterface, Video } from '../../types';
 
 import APIClient from '../../app/api_client';
-import { upload } from '../../app/image_uploader';
+import { getUrl, upload } from '../../app/image_uploader';
 
 interface AddSceneReducerParams extends Video, SceneTimecodeInterface {
   thumbnail?: ThumbnailImageUrl;
@@ -103,6 +103,23 @@ export const uploadSceneThumbnail = createAsyncThunk(
   }
 );
 
+async function replaceScenesThumbnailWithActualUrl(scenes) {
+  const thumbnails = {};
+  const tasks = scenes.map((scene) =>
+    getUrl(scene.thumbnail).then((thumbnail) => {
+      thumbnails[scene.thumbnail] = thumbnail;
+    })
+  );
+
+  await Promise.all(tasks);
+
+  for (let idx = 0; idx < scenes.length; idx++) {
+    scenes[idx].thumbnail = thumbnails[scenes[idx].thumbnail];
+  }
+
+  return scenes;
+}
+
 export const fetchScenes = createAsyncThunk('scenes/fetch', async (videoId: string) => {
   const response = await APIClient.graphql({
     query: getScenesQuery,
@@ -111,7 +128,7 @@ export const fetchScenes = createAsyncThunk('scenes/fetch', async (videoId: stri
     },
   });
 
-  return response.data.scenes;
+  return replaceScenesThumbnailWithActualUrl(response.data.scenes);
 });
 
 const ScenesSlice = createSlice({

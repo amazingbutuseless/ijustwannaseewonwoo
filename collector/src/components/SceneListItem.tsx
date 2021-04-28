@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { SceneTimecodeInterface, SceneItemInterface } from '../types';
-
-import { getUrl } from '../app/image_uploader';
 
 import {
   SceneListItemWrapper,
@@ -38,8 +36,6 @@ export default function SceneListItem({
   registerRef,
   active = false,
 }: SceneListItemProps) {
-  const [thumbnailUrl, updateThumbnailUrl] = useState('');
-
   const onClick = () => {
     onSceneClick({ start, end });
   };
@@ -50,11 +46,9 @@ export default function SceneListItem({
   const durationSec = (end - start) % 60;
   const duration = `${durationMin > 0 ? durationMin + 'm ' : ''}${durationSec}s`;
 
-  getUrl(thumbnail).then(updateThumbnailUrl);
-
   return (
     <SceneListItemWrapper onClick={onClick} active={active} ref={registerRef}>
-      <SceneThumbnail src={thumbnailUrl} alt="" />
+      <SceneThumbnail src={thumbnail} alt="" />
       <SceneDetails>
         {startTimecode} ~ {endTimecode}
         <span>{duration}</span>

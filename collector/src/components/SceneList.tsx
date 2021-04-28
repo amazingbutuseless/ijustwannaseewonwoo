@@ -8,25 +8,25 @@ import Item, { EmptyItem, WithRegisterRef } from './SceneListItem';
 
 export interface SceneListProps extends WithRegisterRef {
   scenes: Array<SceneItemInterface>;
-  activeSceneIdx: number;
   onSceneClick: ({ start, end }: SceneTimecodeInterface) => void;
+  activeIdx: number;
 }
 
 export default function SceneList({
   scenes,
-  activeSceneIdx,
   onSceneClick,
   registerRef,
+  activeIdx,
 }: SceneListProps): ReactElement {
   return (
-    <List activeItemIdx={activeSceneIdx}>
+    <List>
       {scenes.length > 0 &&
         scenes.map((scene, idx) => (
           <Item
             key={scene.id}
             {...scene}
             onSceneClick={onSceneClick}
-            active={activeSceneIdx === idx}
+            active={activeIdx === idx}
             registerRef={registerRef}
           />
         ))}

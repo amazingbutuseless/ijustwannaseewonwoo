@@ -28,5 +28,5 @@ export function upload(key: string, dataUrl: string) {
 }
 
 export function getUrl(key: string): Promise<string> {
-  return Storage.get(key);
+  return Storage.get(key).then((imgUrl) => imgUrl);
 }

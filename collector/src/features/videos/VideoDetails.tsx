@@ -193,9 +193,9 @@ function VideoDetails(): ReactElement {
         >
           <SceneList
             scenes={scenes}
-            activeSceneIdx={activeSceneIdx}
             onSceneClick={onSceneClick}
             registerRef={registerSceneRef}
+            activeIdx={activeSceneIdx}
           />
         </div>
       </VideoWrapper>

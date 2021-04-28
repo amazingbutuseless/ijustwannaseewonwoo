@@ -6,7 +6,7 @@ interface SceneListProps {
 
 export const Wrapper = styled.div``;
 
-export const List = styled.ul<SceneListProps>`
+export const List = styled.ul`
   list-style: none;
   display: flex;
   flex-direction: column;

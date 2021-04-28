@@ -18,7 +18,7 @@ import {
 } from '../scenes/scenesSlice';
 import { selectVideoById, registerVideo } from './videosSlice';
 
-import { VideoWrapper, VideoDownloadingMessage } from './VideoDetails.style';
+import { VideoWrapper, VideoDownloadingMessage, ScenesWrapper } from './VideoDetails.style';
 
 import Breadcrumb, { LocationDepths } from '../../components/Breadcrumb';
 import SceneAddForm from '../../components/SceneAddForm';
@@ -175,7 +175,7 @@ function VideoDetails(): ReactElement {
 
           {!enableSceneAddButton && (
             <VideoDownloadingMessage>
-              😼 장면 등록을 위해서 비디오를 다운로드 받고 있습니다.
+              장면 등록을 위해서 비디오를 다운로드 받고 있습니다.
             </VideoDownloadingMessage>
           )}
           {enableSceneAddButton && (
@@ -183,21 +183,14 @@ function VideoDetails(): ReactElement {
           )}
         </div>
 
-        <div
-          style={{
-            width: '18.4rem',
-            height: 'calc(100vh - var(--titleBarHeight))',
-            overflow: 'auto',
-          }}
-          ref={sceneContainer}
-        >
+        <ScenesWrapper ref={sceneContainer}>
           <SceneList
             scenes={scenes}
             onSceneClick={onSceneClick}
             registerRef={registerSceneRef}
             activeIdx={activeSceneIdx}
           />
-        </div>
+        </ScenesWrapper>
       </VideoWrapper>
     </>
   );

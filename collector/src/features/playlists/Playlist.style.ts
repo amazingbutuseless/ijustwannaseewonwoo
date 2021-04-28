@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import { Scrollbar } from '../../App.style';
+
 export const PlaylistContainer = styled.div`
   display: flex;
   align-content: flex-start;
@@ -25,4 +27,6 @@ export const PlaylistVideosWrapper = styled.div`
   width: calc(100% - 16rem);
 
   overflow: auto;
+
+  ${Scrollbar}
 `;

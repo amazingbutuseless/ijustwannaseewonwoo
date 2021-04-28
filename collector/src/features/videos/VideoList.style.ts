@@ -1,10 +1,14 @@
 import styled from '@emotion/styled';
 
+import { Scrollbar } from '../../App.style';
+
 import { VideoItemWrapper } from '../../components/VideoItem.style';
 
 export const VideoListWrapper = styled.div`
   padding: 2.4rem 0;
   overflow: auto;
+
+  ${Scrollbar}
 `;
 
 export const VideoItemsContainer = styled.div`

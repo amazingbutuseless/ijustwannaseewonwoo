@@ -21,7 +21,7 @@ interface SceneListItemProps extends SceneItemInterface, WithRegisterRef {
 export function EmptyItem() {
   return (
     <SceneListItemEmptyWrapper>
-      아직 등록된 장면이 없습니다.
+      😿 아직 등록된 장면이 없습니다.
       <br />
       장면을 추가해주세요.
     </SceneListItemEmptyWrapper>

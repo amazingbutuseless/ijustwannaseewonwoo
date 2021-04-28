@@ -5,9 +5,10 @@ interface SceneListItemWrapperStyleProps {
 }
 
 export const SceneListItemEmptyWrapper = styled.li`
+  padding: 0.8rem;
   font-size: 1.4rem;
   color: var(--silver-chalice);
-  cursor: pointer;
+  word-break: keep-all;
 `;
 
 export const SceneThumbnail = styled.img`

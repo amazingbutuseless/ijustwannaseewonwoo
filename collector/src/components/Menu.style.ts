@@ -5,6 +5,9 @@ export interface MenuItemWrapperProps {
 }
 
 export const MenuWrapper = styled.nav`
+  display: flex;
+  flex-direction: column;
+
   background-color: var(--eerie-black);
 `;
 
@@ -13,6 +16,7 @@ export const MenuItemWrapper = styled.a<MenuItemWrapperProps>`
   padding: 1.2rem;
   border-left: 4px solid ${({ active }) => (active ? 'var(--dark-orchid)' : 'transparent')};
   box-sizing: border-box;
+  cursor: pointer;
 
   svg {
     width: 3.6rem;

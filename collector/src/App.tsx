@@ -1,5 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
+
 import { useAppSelector } from './app/hooks';
 
 import { ContentsWrapper, Content } from './App.style';
@@ -16,7 +17,7 @@ import Playlist from './features/playlists/Playlist';
 
 export default function App(): ReactElement {
   const [activeMenuItem, setActiveMenuItem] = useState('Playlist');
-  const { googleSignIn } = useAuthentication();
+  const { googleSignIn, googleSignOut } = useAuthentication();
 
   const userStatus = useAppSelector((state) => state.user.status);
 
@@ -28,7 +29,11 @@ export default function App(): ReactElement {
 
         {userStatus === 'signedIn' && (
           <>
-            <Menu activeItem={activeMenuItem} onItemClick={setActiveMenuItem} />
+            <Menu
+              activeItem={activeMenuItem}
+              onItemClick={setActiveMenuItem}
+              onSignOutButtonClick={googleSignOut}
+            />
 
             <Content>
               <Switch>

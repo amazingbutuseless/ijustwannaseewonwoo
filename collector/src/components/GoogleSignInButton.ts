@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 
 const GoogleSignInButton = styled.button`
+  align-self: center;
+
+  margin-top: 0.8rem;
   width: 191px;
   height: 46px;
   border: 0;

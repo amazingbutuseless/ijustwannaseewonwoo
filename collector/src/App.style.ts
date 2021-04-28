@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 export const ContentsWrapper = styled.div`
   display: flex;
   align-items: stretch;
+  position: relative;
   margin-top: var(--titleBarHeight);
   height: calc(100vh - var(--titleBarHeight));
   overflow: hidden;

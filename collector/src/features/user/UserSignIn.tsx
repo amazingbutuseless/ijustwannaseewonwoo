@@ -11,11 +11,12 @@ interface UserSignInProps {
 
 export default function UserSignIn({ onClick }: UserSignInProps) {
   return (
-    <UserSignInWrapper>
-      <LogoImage />
-      <div>
+    <>
+      <video muted autoPlay style={{ objectFit: 'cover' }}></video>
+      <UserSignInWrapper>
+        <LogoImage />
         <GoogleSignInButton type="button" onClick={onClick} aria-label="Sign in with Google" />
-      </div>
-    </UserSignInWrapper>
+      </UserSignInWrapper>
+    </>
   );
 }

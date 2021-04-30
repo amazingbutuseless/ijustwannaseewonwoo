@@ -2,8 +2,8 @@ import React from 'react';
 
 import { UserSignInWrapper } from './UserSignIn.style';
 
-import LogoImage from '../../components/LogoImage';
-import GoogleSignInButton from '../../components/GoogleSignInButton';
+import LogoImage from './LogoImage';
+import GoogleSignInButton from './GoogleSignInButton';
 
 interface UserSignInProps {
   onClick: () => void;

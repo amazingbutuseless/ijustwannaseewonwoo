@@ -7,7 +7,7 @@ export default {
   DATASET_IMAGE: 160,
 
   saveFile(memberName: string, fileName: string, buf: Buffer): void {
-    const baseDir = `./src/data/references/${memberName}`;
+    const baseDir = `./tmp/data/references/${memberName}`;
 
     if (!fs.existsSync(baseDir)) {
       fs.mkdirSync(baseDir, { recursive: true });

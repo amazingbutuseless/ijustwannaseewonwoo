@@ -60,6 +60,8 @@ const onVideoTimeUpdate = () => {
       video.removeEventListener('timeupdate', onVideoTimeUpdate);
       video.pause();
 
+      if (detections.length < 1) return;
+
       const results = FaceRecognizer.groupByMemberName(detections);
       const mainResult = determineRecognitionResultForThumbnail(results);
       createThumbnailImage(mainResult, (thumbnail: string) => {
@@ -76,13 +78,19 @@ const onVideoTimeUpdate = () => {
 };
 
 const onVideoMetadataLoaded = () => {
-  const loadedTimer = window.setInterval(() => {
+  const timer = setInterval(() => {
     if (video.readyState >= 3 && video.paused) {
-      window.clearInterval(loadedTimer);
+      clearInterval(timer);
 
       video.removeEventListener('loadedmetadata', onVideoMetadataLoaded);
+      video.addEventListener('timeupdate', onVideoTimeUpdate);
 
       detections = [];
+
+      if (video.currentTime !== start) {
+        video.currentTime = start;
+      }
+
       video.play();
     }
   }, 200);
@@ -98,6 +106,5 @@ ipcRenderer.on('worker/prepare', (event, message) => {
   end = message.end;
 
   video.src = `video://${videoId}#t=${start}`;
-  video.addEventListener('timeupdate', onVideoTimeUpdate);
   video.addEventListener('loadedmetadata', onVideoMetadataLoaded);
 });

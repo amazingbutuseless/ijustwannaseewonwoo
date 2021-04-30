@@ -79,8 +79,8 @@ function VideoDetails(): ReactElement {
 
     Object.entries(message.results).forEach(([_, recognitions]) => {
       recognitions.forEach((recognition: IFaceRecognitionResult) => {
-        const { name, videoId, timestamp, url } = recognition;
-        const key = `recognized/${name}/${videoId}--${timestamp}.jpg`;
+        const { name, videoId, distance, url } = recognition;
+        const key = `recognized/${name}/${videoId}-${distance.toFixed(2)}.jpg`;
         upload(key, url);
       });
     });

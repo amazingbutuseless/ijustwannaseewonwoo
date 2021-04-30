@@ -82,6 +82,10 @@ export default {
       results[memberName].push(detection);
     });
 
+    Object.values(results).forEach((resultByMember) => {
+      this.sortByDistance(resultByMember);
+    });
+
     return results;
   },
 

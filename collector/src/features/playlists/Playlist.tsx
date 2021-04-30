@@ -17,6 +17,7 @@ import PlaylistList from '../../components/PlaylistList';
 import PlaylistVideosContainer from '../../components/PlaylistVideosContainer';
 
 import { PlaylistContainer, PlaylistListWrapper, PlaylistVideosWrapper } from './Playlist.style';
+import LoadingAnimation from '../../components/LoadingAnimation';
 
 interface PlaylistUrlParams {
   playlistId?: string;
@@ -30,6 +31,7 @@ export default function Playlist() {
 
   const [lastPlaylistId, setLastPlaylistId] = useState('');
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('');
+  const [isLoading, updateLoading] = useState(true);
 
   const playlists = useAppSelector(selectAllPlaylists);
   const playlistStatus = useAppSelector((state) => state.playlists.status);
@@ -103,6 +105,12 @@ export default function Playlist() {
   }, [playlistStatus.playlists]);
 
   useEffect(() => {
+    if (playlistStatus.playlists === 'succeeded' && playlistStatus.playlist === 'succeeded') {
+      updateLoading(false);
+    }
+  }, [playlistStatus]);
+
+  useEffect(() => {
     if (selectedPlaylistId.length < 1) return;
 
     if (!selectedPlaylist || !hasSelectedPlaylistFetched()) {
@@ -111,25 +119,28 @@ export default function Playlist() {
   }, [selectedPlaylistId]);
 
   return (
-    <PlaylistContainer>
-      <PlaylistListWrapper>
-        {playlistStatus.playlists === 'succeeded' && (
-          <PlaylistList
-            playlists={playlists}
-            activeId={selectedPlaylistId}
-            onClick={setSelectedPlaylistId}
-          />
-        )}
-      </PlaylistListWrapper>
-      <PlaylistVideosWrapper>
-        {hasSelectedPlaylistFetched() && (
-          <PlaylistVideosContainer
-            playlist={selectedPlaylist}
-            onVideoClick={onVideoClick}
-            onMoreVideosButtonClick={onMoreVideosButtonClick}
-          />
-        )}
-      </PlaylistVideosWrapper>
-    </PlaylistContainer>
+    <>
+      <PlaylistContainer>
+        <PlaylistListWrapper>
+          {playlistStatus.playlists === 'succeeded' && (
+            <PlaylistList
+              playlists={playlists}
+              activeId={selectedPlaylistId}
+              onClick={setSelectedPlaylistId}
+            />
+          )}
+        </PlaylistListWrapper>
+        <PlaylistVideosWrapper>
+          {hasSelectedPlaylistFetched() && (
+            <PlaylistVideosContainer
+              playlist={selectedPlaylist}
+              onVideoClick={onVideoClick}
+              onMoreVideosButtonClick={onMoreVideosButtonClick}
+            />
+          )}
+        </PlaylistVideosWrapper>
+      </PlaylistContainer>
+      {isLoading && <LoadingAnimation />}
+    </>
   );
 }

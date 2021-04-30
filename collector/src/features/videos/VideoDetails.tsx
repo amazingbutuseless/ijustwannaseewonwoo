@@ -24,6 +24,7 @@ import Breadcrumb, { LocationDepths } from '../../components/Breadcrumb';
 import SceneAddForm from '../../components/SceneAddForm';
 import SceneList from '../../components/SceneList';
 import VideoPlayer from '../../components/VideoPlayer';
+import LoadingAnimation from '../../components/LoadingAnimation';
 
 interface VideoRouterParams {
   videoId: string;
@@ -39,12 +40,13 @@ function VideoDetails(): ReactElement {
   const dispatch = useAppDispatch();
 
   const { videoId }: VideoRouterParams = useParams();
-  const { title, playlistId, depths } = useLocation().state as VideoLocationStates;
+  const { playlistId, depths } = useLocation().state as VideoLocationStates;
 
   const player = useRef(null);
   const [time, updateTime] = useState({ start: -1, end: null });
   const [timeSource, setTimeSource] = useState('scene');
   const [activeSceneIdx, updateActiveSceneIdx] = useState(null);
+  const [isLoading, updateLoading] = useState(true);
 
   const [enableSceneAddButton, setEnableSceneAddButton] = useState(false);
 
@@ -100,6 +102,8 @@ function VideoDetails(): ReactElement {
 
   useEffect(() => {
     if (scenesStatus === 'succeeded') {
+      updateLoading(false);
+
       if (scenes.length > 0) {
         setTimeSource('scene');
         updateActiveSceneIdx(0);
@@ -192,6 +196,8 @@ function VideoDetails(): ReactElement {
           />
         </ScenesWrapper>
       </VideoWrapper>
+
+      {isLoading && <LoadingAnimation />}
     </>
   );
 }

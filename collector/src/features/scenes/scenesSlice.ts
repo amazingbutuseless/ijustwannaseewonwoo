@@ -99,7 +99,9 @@ export const uploadSceneThumbnail = createAsyncThunk(
       },
     });
 
-    return response.data.updateScene;
+    const updatedScene = await replaceScenesThumbnailWithActualUrl([response.data.updateScene]);
+
+    return updatedScene[0];
   }
 );
 

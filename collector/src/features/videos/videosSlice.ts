@@ -13,6 +13,11 @@ import { RootState } from '../../app/store';
 
 const videosAdapter = createEntityAdapter<IVideoItemWithChannel>({
   selectId: (video) => video.videoId,
+  sortComparer: (prev, next) => {
+    if (prev.publishedAt < next.publishedAt) return 1;
+    if (prev.publishedAt > next.publishedAt) return -1;
+    return 0;
+  },
 });
 
 const initialState = videosAdapter.getInitialState({
@@ -115,7 +120,7 @@ mutation registerVideo($data: registerVideoData) {
       },
     });
 
-    return response.data.video;
+    return response.data.registerVideo;
   }
 );
 

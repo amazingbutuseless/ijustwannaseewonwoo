@@ -4,12 +4,19 @@ import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent } from '@testing-library/react';
 import { matchers } from '@emotion/jest';
 
-import Menu, { MenuProps, MenuItemProps, isActive, MenuItem } from '../Menu';
+import Menu, { MenuProps, isActive } from '../Menu';
+import MenuItem, { MenuItemProps } from '../MenuItem';
 
 expect.extend(matchers);
 
-function renderMenuComponent({ activeItem, onItemClick }: MenuProps) {
-  return render(<Menu activeItem={activeItem} onItemClick={onItemClick} />);
+function renderMenuComponent({ activeItem, onItemClick, onSignOutButtonClick }: MenuProps) {
+  return render(
+    <Menu
+      activeItem={activeItem}
+      onItemClick={onItemClick}
+      onSignOutButtonClick={onSignOutButtonClick}
+    />
+  );
 }
 
 function renderMenuItemComponent({ title, active, onClick, children }: MenuItemProps) {
@@ -28,6 +35,7 @@ describe('Menu', () => {
       const container = renderMenuComponent({
         activeItem,
         onItemClick: (menuTitle: string) => {},
+        onSignOutButtonClick: () => {},
       }).container;
 
       expect(container.querySelector('nav')).toBeInTheDocument();

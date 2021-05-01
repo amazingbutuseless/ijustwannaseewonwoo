@@ -5,10 +5,10 @@ import { useAppSelector } from './app/hooks';
 
 import { ContentsWrapper, Content } from './App.style';
 
+import Introduce from './pages/Introduce';
 import VideoList from './features/videos/VideoList';
 import VideoDetails from './features/videos/VideoDetails';
-import UserSignIn from './features/user/UserSignIn';
-import UserSignedIn from './features/user/UserSignedIn';
+import UserSignIn from './components/UserSignIn';
 import useAuthentication from './features/user/UseAuthentication';
 
 import TitleBar from './components/TitleBar';
@@ -39,6 +39,9 @@ export default function App(): ReactElement {
               <Switch>
                 <Route exact path={['/', '/main_window']}>
                   <Playlist />
+                </Route>
+                <Route exact path="/introduce">
+                  <Introduce />
                 </Route>
                 <Route exact path="/playlist">
                   <Playlist />

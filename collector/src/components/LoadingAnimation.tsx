@@ -7,7 +7,7 @@ export default function LoadingAnimation() {
 
   return (
     <LoadingAnimationWrapper autoPlay loop muted width="160" height="160">
-      <source src={`/assets/images/loading.mp4#t=${start}`} />
+      <source src={`static:///assets/images/loading.mp4#t=${start}`} />
     </LoadingAnimationWrapper>
   );
 }

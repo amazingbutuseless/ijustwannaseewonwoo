@@ -5,7 +5,7 @@ export default function LandingVideo() {
 
   return (
     <video muted autoPlay loop style={{ objectFit: 'cover' }}>
-      <source src={`/assets/images/landing.mp4#t=${start}`} />
+      <source src={`static:///assets/images/landing.mp4#t=${start}`} />
     </video>
   );
 }

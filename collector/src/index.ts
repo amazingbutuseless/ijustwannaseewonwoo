@@ -2,6 +2,8 @@ import { app, BrowserWindow, ipcMain, protocol } from 'electron';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import YoutubeDownloader from './app/youtube_downloader';
 
+import path from 'path';
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
 
@@ -14,6 +16,12 @@ app.whenReady().then(() => {
     const url = /video:\/\/([^#]+)(#t=.+)?/.exec(request.url);
     const videoPath = `${app.getPath('temp')}${url[1]}.mp4`;
     callback({ path: videoPath });
+  });
+
+  protocol.registerFileProtocol('static', (request, callback) => {
+    const url = /static:\/\/([^#]+)(#t=.+)?/.exec(request.url);
+    const filePath = path.join(app.getAppPath(), '.webpack/renderer', url[1]);
+    callback(filePath);
   });
 
   installExtension(REDUX_DEVTOOLS)

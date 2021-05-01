@@ -1,25 +1,54 @@
-import React, { ReactElement, useState } from 'react';
+import { ipcRenderer, IpcRendererEvent } from 'electron';
+
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { useAppSelector } from './app/hooks';
+import { useAppDispatch, useAppSelector } from './app/hooks';
 
 import { ContentsWrapper, Content } from './App.style';
 
+import { IFaceRecognitionResult } from './app/face_recorgnizer';
+import { upload } from './app/image_uploader';
+import { uploadSceneThumbnail } from './features/scenes/scenesSlice';
+
 import Introduce from './pages/Introduce';
+import Playlist from './features/playlists/Playlist';
 import VideoList from './features/videos/VideoList';
 import VideoDetails from './features/videos/VideoDetails';
-import UserSignIn from './components/UserSignIn';
 import useAuthentication from './features/user/UseAuthentication';
 
 import TitleBar from './components/TitleBar';
 import Menu from './components/Menu';
-import Playlist from './features/playlists/Playlist';
+import UserSignIn from './components/UserSignIn';
 
 export default function App(): ReactElement {
+  const dispatch = useAppDispatch();
+
   const [activeMenuItem, setActiveMenuItem] = useState('Playlist');
   const { googleSignIn, googleSignOut } = useAuthentication();
 
   const userStatus = useAppSelector((state) => state.user.status);
+
+  const onFaceDetected = (event: IpcRendererEvent, message: any) => {
+    const { videoId, start, thumbnail } = message;
+    dispatch(uploadSceneThumbnail({ videoId, start, imageUrl: thumbnail }));
+
+    Object.entries(message.results).forEach(([_, recognitions]) => {
+      recognitions.forEach((recognition: IFaceRecognitionResult) => {
+        const { name, videoId, distance, url } = recognition;
+        const key = `recognized/${name}/${videoId}-${distance.toFixed(2)}.jpg`;
+        upload(key, url);
+      });
+    });
+  };
+
+  useEffect(() => {
+    ipcRenderer.on('video/detectFaces', onFaceDetected);
+
+    return () => {
+      ipcRenderer.off('video/detectFaces', onFaceDetected);
+    };
+  }, []);
 
   return (
     <>

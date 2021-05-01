@@ -7,15 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 
 import { SceneTimecodeInterface } from '../../types';
 
-import { IFaceRecognitionResult } from '../../app/face_recorgnizer';
-import { upload } from '../../app/image_uploader';
-
-import {
-  selectAllScenesForVideo,
-  fetchScenes,
-  addScene,
-  uploadSceneThumbnail,
-} from '../scenes/scenesSlice';
+import { selectAllScenesForVideo, fetchScenes, addScene } from '../scenes/scenesSlice';
 import { selectVideoById, registerVideo } from './videosSlice';
 
 import { VideoWrapper, VideoDownloadingMessage, ScenesWrapper } from './VideoDetails.style';
@@ -58,7 +50,7 @@ function VideoDetails(): ReactElement {
   const sceneRefs = useRef<Array<HTMLLIElement>>([]);
 
   const registerSceneRef = (elm: HTMLLIElement) => {
-    sceneRefs.current.push(elm);
+    // sceneRefs.current.push(elm);
   };
 
   useEffect(() => {
@@ -73,30 +65,14 @@ function VideoDetails(): ReactElement {
     setEnableSceneAddButton(message.rates >= 1);
   };
 
-  const onFaceDetected = (event: IpcRendererEvent, message: any) => {
-    const { videoId, start, thumbnail } = message;
-    dispatch(uploadSceneThumbnail({ videoId, start, imageUrl: thumbnail }));
-
-    Object.entries(message.results).forEach(([_, recognitions]) => {
-      recognitions.forEach((recognition: IFaceRecognitionResult) => {
-        const { name, videoId, distance, url } = recognition;
-        const key = `recognized/${name}/${videoId}-${distance.toFixed(2)}.jpg`;
-        upload(key, url);
-      });
-    });
-  };
-
   useEffect(() => {
     dispatch(fetchScenes(videoId));
 
     ipcRenderer.send('video/download', { videoId });
-
     ipcRenderer.on('video/download', onVideoDownloaded);
-    ipcRenderer.on('video/detectFaces', onFaceDetected);
 
     return () => {
       ipcRenderer.off('video/download', onVideoDownloaded);
-      ipcRenderer.off('video/detectFaces', onFaceDetected);
     };
   }, [videoId]);
 
@@ -158,7 +134,7 @@ function VideoDetails(): ReactElement {
     history.push(path);
   };
 
-  const onAddFormSumit = ({ start, end }, resetForm) => {
+  const onAddFormSumit = ({ start, end }: SceneTimecodeInterface, resetForm: () => void) => {
     if (!video) {
       dispatch(registerVideo({ videoId, playlistId }));
     }
@@ -179,7 +155,7 @@ function VideoDetails(): ReactElement {
 
           {!enableSceneAddButton && (
             <VideoDownloadingMessage>
-              장면 등록을 위해서 비디오를 다운로드 받고 있습니다.
+              장면 등록을 할 수 있도록 준비중입니다.
             </VideoDownloadingMessage>
           )}
           {enableSceneAddButton && (
@@ -188,12 +164,14 @@ function VideoDetails(): ReactElement {
         </div>
 
         <ScenesWrapper ref={sceneContainer}>
-          <SceneList
-            scenes={scenes}
-            onSceneClick={onSceneClick}
-            registerRef={registerSceneRef}
-            activeIdx={activeSceneIdx}
-          />
+          {scenesStatus === 'succeeded' && (
+            <SceneList
+              scenes={scenes}
+              onSceneClick={onSceneClick}
+              registerRef={registerSceneRef}
+              activeIdx={activeSceneIdx}
+            />
+          )}
         </ScenesWrapper>
       </VideoWrapper>
 

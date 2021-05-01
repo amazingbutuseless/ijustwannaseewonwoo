@@ -6,31 +6,9 @@ import FaceRecognizer, {
 } from './app/face_recorgnizer';
 import ImageCreator from './app/image_creator';
 
-let videoId = '';
-let start: number, end: number;
-
-const video = document.querySelector('video');
-
-let detections: Array<IFaceRecognitionResult> = [];
-
-const createThumbnailImage = (
-  targetRecognition: IFaceRecognitionResult,
-  callback: (thumbnail: string) => void
-): void => {
-  video.addEventListener(
-    'seeked',
-    () => {
-      const thumbnail = ImageCreator.createThumbnailImage(video);
-      callback(thumbnail);
-    },
-    { once: true }
-  );
-
-  video.currentTime = Math.floor(targetRecognition.timestamp);
-};
-
 const determineRecognitionResultForThumbnail = (
-  results: IFaceRecognitionResultWithGroup
+  results: IFaceRecognitionResultWithGroup,
+  detections: Array<IFaceRecognitionResult>
 ): IFaceRecognitionResult => {
   if (typeof results.wonwoo !== 'undefined') {
     return results.wonwoo[0];
@@ -41,70 +19,106 @@ const determineRecognitionResultForThumbnail = (
 };
 
 const sendFaceDetectionResultsToMain = (
+  videoId: string,
+  start: number,
   thumbnail: string,
   results: IFaceRecognitionResultWithGroup
 ) => {
   ipcRenderer.send('from-worker-to-main', {
     channel: 'video',
     action: 'detectFaces',
-    videoId: videoId,
+    videoId,
     start,
     results,
     thumbnail,
   });
 };
 
-const onVideoTimeUpdate = () => {
-  if (Math.floor(video.currentTime) >= end) {
-    if (!video.paused) {
-      video.removeEventListener('timeupdate', onVideoTimeUpdate);
-      video.pause();
+class FaceRecognizeWorker {
+  private video;
+  private detections: Array<IFaceRecognitionResult> = [];
 
-      if (detections.length < 1) return;
+  constructor(private videoId: string, private start: number, private end: number) {
+    const video = document.createElement('video');
+    video.src = `video://${videoId}#t=${start}`;
 
-      const results = FaceRecognizer.groupByMemberName(detections);
-      const mainResult = determineRecognitionResultForThumbnail(results);
-      createThumbnailImage(mainResult, (thumbnail: string) => {
-        sendFaceDetectionResultsToMain(thumbnail, results);
-      });
-    }
+    this.onVideoMetadataLoaded = this.onVideoMetadataLoaded.bind(this);
+    this.onVideoTimeUpdate = this.onVideoTimeUpdate.bind(this);
 
-    return;
+    video.addEventListener('loadedmetadata', this.onVideoMetadataLoaded);
+
+    document.body.appendChild(video);
+    this.video = video;
   }
 
-  FaceRecognizer.detectFaces(video, videoId).then((faces) => {
-    detections = detections.concat(faces);
-  });
-};
+  onVideoMetadataLoaded() {
+    const timer = setInterval(() => {
+      if (this.video.readyState >= 3 && this.video.paused) {
+        clearInterval(timer);
 
-const onVideoMetadataLoaded = () => {
-  const timer = setInterval(() => {
-    if (video.readyState >= 3 && video.paused) {
-      clearInterval(timer);
+        this.video.removeEventListener('loadedmetadata', this.onVideoMetadataLoaded);
+        this.video.addEventListener('timeupdate', this.onVideoTimeUpdate);
 
-      video.removeEventListener('loadedmetadata', onVideoMetadataLoaded);
-      video.addEventListener('timeupdate', onVideoTimeUpdate);
+        if (this.video.currentTime !== this.start) {
+          this.video.currentTime = this.start;
+        }
 
-      detections = [];
+        this.video.play();
+      }
+    }, 200);
+  }
 
-      if (video.currentTime !== start) {
-        video.currentTime = start;
+  onVideoTimeUpdate() {
+    if (Math.floor(this.video.currentTime) >= this.end) {
+      if (!this.video.paused) {
+        this.video.removeEventListener('timeupdate', this.onVideoTimeUpdate);
+        this.video.pause();
+
+        if (this.detections.length < 1) {
+          console.log(`cannot find any face detections on ${this.start}~${this.end}`);
+          this.video.remove();
+          return;
+        }
+
+        const results = FaceRecognizer.groupByMemberName(this.detections);
+        const mainResult = determineRecognitionResultForThumbnail(results, this.detections);
+
+        this.createThumbnailImage(mainResult, (thumbnail: string) => {
+          sendFaceDetectionResultsToMain(this.videoId, this.start, thumbnail, results);
+          this.video.remove();
+        });
       }
 
-      video.play();
+      return;
     }
-  }, 200);
-};
+
+    FaceRecognizer.detectFaces(this.video, this.videoId).then((faces) => {
+
+      this.detections = this.detections.concat(faces);
+    });
+  }
+
+  createThumbnailImage(
+    targetRecognition: IFaceRecognitionResult,
+    callback: (thumbnail: string) => void
+  ): void {
+    this.video.addEventListener(
+      'seeked',
+      () => {
+        const thumbnail = ImageCreator.createThumbnailImage(this.video);
+        callback(thumbnail);
+      },
+      { once: true }
+    );
+
+    this.video.currentTime = Math.floor(targetRecognition.timestamp);
+  }
+}
 
 FaceRecognizer.loadNet().then((net) => {
   ipcRenderer.send('worker', { action: 'ready' });
 });
 
 ipcRenderer.on('worker/prepare', (event, message) => {
-  videoId = message.videoId;
-  start = message.start;
-  end = message.end;
-
-  video.src = `video://${videoId}#t=${start}`;
-  video.addEventListener('loadedmetadata', onVideoMetadataLoaded);
+  new FaceRecognizeWorker(message.videoId, message.start, message.end);
 });

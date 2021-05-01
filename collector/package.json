@@ -90,8 +90,6 @@
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
-    "@types/enzyme": "^3.10.8",
-    "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/gapi": "^0.0.39",
     "@types/jest": "^26.0.16",
     "@types/react": "^17.0.0",
@@ -108,9 +106,6 @@
     "css-loader": "^4.3.0",
     "electron": "11.0.3",
     "electron-devtools-installer": "^3.1.1",
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.5",
-    "enzyme-to-json": "^3.6.1",
     "eslint": "^7.14.0",
     "eslint-plugin-import": "^2.22.1",
     "fork-ts-checker-webpack-plugin": "^5.2.1",
@@ -141,9 +136,6 @@
     "ytdl-core": "^4.5.0"
   },
   "jest": {
-    "setupFiles": [
-      "<rootDir>/test-setup.js"
-    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",

@@ -108,3 +108,4 @@ amplifytools.xcconfig
 .secret-*
 
 temp
+tmp

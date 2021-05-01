@@ -28,6 +28,7 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     height: 720,
     width: 1280,
+    resizable: false,
     frame: false,
     titleBarStyle: 'hiddenInset',
     webPreferences: {

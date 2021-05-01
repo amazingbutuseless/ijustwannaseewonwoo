@@ -21,6 +21,15 @@ import TitleBar from './components/TitleBar';
 import Menu from './components/Menu';
 import UserSignIn from './components/UserSignIn';
 
+interface FaceDetectedMessage {
+  videoId: string;
+  start: number;
+  thumbnail: string;
+  results: {
+    [memberName: string]: Array<IFaceRecognitionResult>;
+  };
+}
+
 export default function App(): ReactElement {
   const dispatch = useAppDispatch();
 
@@ -29,7 +38,7 @@ export default function App(): ReactElement {
 
   const userStatus = useAppSelector((state) => state.user.status);
 
-  const onFaceDetected = (event: IpcRendererEvent, message: any) => {
+  const onFaceDetected = (event: IpcRendererEvent, message: FaceDetectedMessage) => {
     const { videoId, start, thumbnail } = message;
     dispatch(uploadSceneThumbnail({ videoId, start, imageUrl: thumbnail }));
 

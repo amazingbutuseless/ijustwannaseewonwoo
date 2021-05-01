@@ -67,11 +67,13 @@ export default function useAuthentication() {
       }
     }
 
+    // @ts-ignore
     Hub.listen('auth', handleAuthEvent);
 
     signInWithCurrentUser();
 
     return () => {
+      // @ts-ignore
       Hub.remove('auth', handleAuthEvent);
     };
   }, [googleAPIReady]);
@@ -131,6 +133,7 @@ export default function useAuthentication() {
 
     g.load('client:auth2', () => {
       g.client.setApiKey(configure.YOUTUBE_API_KEY);
+      // @ts-ignore
       g.client.load('https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest').then(() => {
         setGoogleAPIReady(true);
       });

@@ -61,6 +61,7 @@ export async function fetchPlaylistVideos({
 }: FetchPlaylistVideosParams): Promise<PlaylistVideos> {
   const response = await YoutubeAPI.listPlaylistItem({ playlistId, pageToken });
 
+  // @ts-ignore
   const videos = response.result.items.map((item) => {
     const { channelId, playlistId, title, publishedAt } = item.snippet;
 
@@ -78,7 +79,9 @@ export async function fetchPlaylistVideos({
   const data: PlaylistVideos = {
     id: playlistId,
     ytVideos: videos,
+    // @ts-ignore
     pageToken: response.result.nextPageToken,
+    // @ts-ignore
     numOfVideos: response.result.pageInfo.totalResults,
   };
 

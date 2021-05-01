@@ -30,7 +30,9 @@ const VideoPlayer = React.forwardRef(
     };
 
     useEffect(() => {
+      // @ts-ignore
       if (player.current && timecode.start > -1) {
+        // @ts-ignore
         player.current.seekTo(timecode.start);
         setPlaying(true);
       }
@@ -39,6 +41,7 @@ const VideoPlayer = React.forwardRef(
     return (
       <VideoPlayerWrapper>
         <ReactPlayer
+          // @ts-ignore
           ref={player}
           url={`https://www.youtube.com/watch?v=${videoId}`}
           playing={playing}

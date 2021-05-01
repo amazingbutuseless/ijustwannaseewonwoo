@@ -1,5 +1,4 @@
 import Amplify, { Storage } from 'aws-amplify';
-
 import configure from '../configure';
 
 Amplify.configure({
@@ -28,5 +27,5 @@ export function upload(key: string, dataUrl: string) {
 }
 
 export function getUrl(key: string): Promise<string> {
-  return Storage.get(key).then((imgUrl) => imgUrl);
+  return Storage.get(key).then((imgUrl) => imgUrl) as Promise<string>;
 }

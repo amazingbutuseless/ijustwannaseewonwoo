@@ -31,10 +31,10 @@ export default {
 
   async loadNet(): Promise<faceapi.SsdMobilenetv1> {
     const detectionNet = faceapi.nets.ssdMobilenetv1;
-    await detectionNet.load('../data/weights');
-    await faceapi.loadFaceLandmarkModel('../data/weights');
-    await faceapi.loadFaceDetectionModel('../data/weights');
-    await faceapi.loadFaceRecognitionModel('../data/weights');
+    await detectionNet.load(configure.FACE_API_WEIGHTS);
+    await faceapi.loadFaceLandmarkModel(configure.FACE_API_WEIGHTS);
+    await faceapi.loadFaceDetectionModel(configure.FACE_API_WEIGHTS);
+    await faceapi.loadFaceRecognitionModel(configure.FACE_API_WEIGHTS);
 
     const faceMatcherFile = await (await fetch(configure.FACE_MATCHER_FILE_URL)).json();
     this.faceMatcher = faceapi.FaceMatcher.fromJSON(faceMatcherFile);

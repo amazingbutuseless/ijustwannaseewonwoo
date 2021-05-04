@@ -37,21 +37,6 @@ export default class CognitoStack extends sst.Stack {
       },
     });
 
-    const googleProvider = new cognito.UserPoolIdentityProviderGoogle(
-      this,
-      'UserPoolIdentityProvider',
-      {
-        userPool,
-        clientId: process.env.GOOGLE_SIGNIN_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_SIGNIN_CLIENT_SECRET,
-        scopes: ['profile', 'email', 'openid'],
-        attributeMapping: {
-          email: cognito.ProviderAttribute.GOOGLE_EMAIL,
-          nickname: cognito.ProviderAttribute.GOOGLE_NAME,
-        },
-      }
-    );
-
     const userPoolClient = new cognito.UserPoolClient(this, 'UserPoolClient', {
       userPool,
       userPoolClientName: `${process.env.APP_NAME}-${process.env.ENV}-authclient`,
@@ -66,7 +51,6 @@ export default class CognitoStack extends sst.Stack {
         ],
         logoutUrls: [],
       },
-      supportedIdentityProviders: [googleProvider.providerName],
     });
 
     const identityPool = new cognito.CfnIdentityPool(this, 'IdentityPool', {
@@ -78,9 +62,7 @@ export default class CognitoStack extends sst.Stack {
           providerName: userPool.userPoolProviderName,
         },
       ],
-      supportedLoginProviders: {
-        'accounts.google.com': process.env.GOOGLE_SIGNIN_CLIENT_ID,
-      },
+      OpenIdConnectProviderARNs: process.env.OPEN_ID_CONNECT_ARN,
     });
 
     const authenticatedRole = new CognitoAuthRole(this, 'CognitoAuthRole', {
@@ -98,7 +80,7 @@ export default class CognitoStack extends sst.Stack {
           'dynamodb:Scan',
         ],
         effect: iam.Effect.ALLOW,
-        resources: [tableArn],
+        resources: [tableArn, `${tableArn}/*`],
       })
     );
 

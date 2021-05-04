@@ -134,9 +134,9 @@ function VideoDetails(): ReactElement {
     history.push(path);
   };
 
-  const onAddFormSumit = ({ start, end }: SceneTimecodeInterface, resetForm: () => void) => {
-    if (!video) {
-      dispatch(registerVideo({ videoId, playlistId }));
+  const onAddFormSumit = async ({ start, end }: SceneTimecodeInterface, resetForm: () => void) => {
+    if (typeof video === 'undefined') {
+      await dispatch(registerVideo({ videoId, playlistId }));
     }
 
     dispatch(addScene({ videoId, start, end }));

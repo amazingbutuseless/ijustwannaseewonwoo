@@ -1,3 +1,7 @@
+import { parse } from 'url';
+
+import { remote } from 'electron';
+
 import React, { useEffect, useState } from 'react';
 import Amplify, { Auth, Hub } from 'aws-amplify';
 
@@ -11,16 +15,95 @@ Amplify.configure({
   Auth: configure.AUTH,
 });
 
+const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
+const GOOGLE_PROFILE_URL = 'https://www.googleapis.com/userinfo/v2/me';
+const GOOGLE_REVOKE_TOKEN = 'https://oauth2.googleapis.com/revoke';
+
+function signInWithPopup(): Promise<string | string[] | Error> {
+  return new Promise((resolve, reject) => {
+    const authWindow = new remote.BrowserWindow({
+      show: true,
+      width: 500,
+      height: 600,
+    });
+
+    function handleNavigation(url) {
+      const query = parse(url, true).query;
+
+      if (query) {
+        if (query.error) {
+          reject(new Error(`There was an error: ${query.error}`));
+        } else if (query.code) {
+          authWindow.removeAllListeners('closed');
+          setImmediate(() => authWindow.close());
+          resolve(query.code);
+        }
+      }
+    }
+
+    const urlParams = {
+      response_type: 'code',
+      redirect_uri: configure.GOOGLE_REDIRECT_URL,
+      client_id: configure.GOOGLE_CLIENT_ID,
+      scope: 'profile email openid',
+    };
+    const authUrl = `${GOOGLE_AUTHORIZATION_URL}?${new URLSearchParams(urlParams).toString()}`;
+
+    authWindow.on('close', () => {
+      reject(new Error('Auth window was closed by user'));
+    });
+
+    authWindow.webContents.on('will-redirect', (event, url) => {
+      handleNavigation(url);
+    });
+
+    authWindow.webContents.on('will-navigate', (event, url) => {
+      handleNavigation(url);
+    });
+
+    authWindow.loadURL(authUrl);
+  });
+}
+
+async function fetchAccessTokens(code: string) {
+  const data = {
+    code,
+    client_id: configure.GOOGLE_CLIENT_ID,
+    redirect_uri: configure.GOOGLE_REDIRECT_URL,
+    grant_type: 'authorization_code',
+  };
+
+  const response = await fetch(GOOGLE_TOKEN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(data),
+  });
+
+  return response.json();
+}
+
+async function fetchGoogleProfile(accessToken: string) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const response = await fetch(GOOGLE_PROFILE_URL, {
+    headers,
+  });
+
+  return response.json();
+}
+
 export default function useAuthentication() {
   const [userId, setUserId] = useState('');
-  const [googleAPIReady, setGoogleAPIReady] = useState(false);
+  const [refreshToken, setRefreshToken] = useState('');
 
   const dispatch = useAppDispatch();
 
   const getUser = () => {
     return new Promise((resolve, reject) => {
-      if (!googleAPIReady) return reject('Google API Not ready');
-
       Auth.currentAuthenticatedUser()
         .then((userData) => {
           setUserId(userData.id);
@@ -36,7 +119,7 @@ export default function useAuthentication() {
         dispatch(signIn(userData));
       })
       .catch((err) => {
-        console.log(err.message);
+        console.log(err);
       });
   };
 
@@ -57,16 +140,6 @@ export default function useAuthentication() {
   };
 
   useEffect(() => {
-    if (!googleAPIReady) {
-      const ga = window.gapi && window.gapi.auth2 ? window.gapi.auth2.getAuthInstance() : null;
-
-      if (!ga) {
-        createScript();
-      } else {
-        setGoogleAPIReady(true);
-      }
-    }
-
     // @ts-ignore
     Hub.listen('auth', handleAuthEvent);
 
@@ -76,21 +149,27 @@ export default function useAuthentication() {
       // @ts-ignore
       Hub.remove('auth', handleAuthEvent);
     };
-  }, [googleAPIReady]);
+  }, []);
 
-  const googleSignIn = () => {
-    const ga = window.gapi.auth2.getAuthInstance();
+  const googleSignIn = async () => {
+    try {
+      const code = await signInWithPopup();
+      const tokens = await fetchAccessTokens(code as string);
+      const { email, name } = await fetchGoogleProfile(tokens.access_token);
+      setRefreshToken(tokens.refresh_token);
 
-    ga.signIn({ scope: 'https://www.googleapis.com/auth/youtube.readonly' })
-      .then((googleUser) => getAWSCredentials(googleUser))
-      .catch((err) => {
-        console.log(err);
-      });
+      getAWSCredentials({ tokens, email, name });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const googleSignOut = () => {
-    const ga = window.gapi.auth2.getAuthInstance();
-    ga.signOut()
+    fetch(GOOGLE_REVOKE_TOKEN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ token: refreshToken }),
+    })
       .then((response) => {
         Auth.signOut();
       })
@@ -99,45 +178,15 @@ export default function useAuthentication() {
       });
   };
 
-  const getAWSCredentials = (googleUser) => {
-    const { id_token, expires_at } = googleUser.getAuthResponse();
-    const profile = googleUser.getBasicProfile();
-
+  const getAWSCredentials = ({ tokens: { id_token, expires_at }, email, name }) => {
     return Auth.federatedSignIn(
       'google',
       { token: id_token, expires_at },
       {
-        email: profile.getEmail(),
-        name: profile.getName(),
+        email,
+        name,
       }
     );
-  };
-
-  const createScript = () => {
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/platform.js';
-    script.async = true;
-    script.onload = initGapi;
-    document.body.appendChild(script);
-  };
-
-  const initGapi = () => {
-    const g = window.gapi;
-
-    g.load('auth2', () => {
-      g.auth2.init({
-        client_id: configure.GOOGLE_CLIENT_ID,
-        scope: 'profile email openid',
-      });
-    });
-
-    g.load('client:auth2', () => {
-      g.client.setApiKey(configure.YOUTUBE_API_KEY);
-      // @ts-ignore
-      g.client.load('https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest').then(() => {
-        setGoogleAPIReady(true);
-      });
-    });
   };
 
   return {

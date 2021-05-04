@@ -94,14 +94,17 @@ export const registerVideo = createAsyncThunk(
   'videos/register',
   async ({ videoId, playlistId = '' }: registerVideoParams) => {
     // @ts-ignore;
-    const { snippet: rawSnippet } = await YoutubeAPI.getVideo(videoId);
-    const { publishedAt, channelId, title, thumbnails } = rawSnippet;
+    const {
+      snippet: { publishedAt, channelId, title, thumbnails },
+    } = await YoutubeAPI.getVideo(videoId);
+
     const snippet: VideoSnippetForRegister = {
       publishedAt,
       channelId,
       title,
       thumbnails,
     };
+
     if (playlistId.length > 0) {
       snippet.playlistId = playlistId;
     }

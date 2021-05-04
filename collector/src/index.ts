@@ -43,6 +43,7 @@ const createWindow = (): void => {
       nodeIntegration: true,
       contextIsolation: false,
       nativeWindowOpen: true,
+      enableRemoteModule: true,
     },
   });
 

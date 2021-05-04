@@ -1,7 +1,7 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from './app/hooks';
 
@@ -32,6 +32,7 @@ interface FaceDetectedMessage {
 
 export default function App(): ReactElement {
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const [activeMenuItem, setActiveMenuItem] = useState('Playlist');
   const { googleSignIn, googleSignOut } = useAuthentication();
@@ -75,6 +76,7 @@ export default function App(): ReactElement {
 
             <Content>
               <Switch>
+                {window.location.pathname.endsWith('index.html') && history.push('/playlist')}
                 <Route exact path={['/', '/main_window']}>
                   <Playlist />
                 </Route>

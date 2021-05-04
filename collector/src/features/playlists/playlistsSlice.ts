@@ -62,7 +62,7 @@ export async function fetchPlaylistVideos({
   const response = await YoutubeAPI.listPlaylistItem({ playlistId, pageToken });
 
   // @ts-ignore
-  const videos = response.result.items.map((item) => {
+  const videos = response.items.map((item) => {
     const { channelId, playlistId, title, publishedAt } = item.snippet;
 
     return {
@@ -80,9 +80,9 @@ export async function fetchPlaylistVideos({
     id: playlistId,
     ytVideos: videos,
     // @ts-ignore
-    pageToken: response.result.nextPageToken,
+    pageToken: response.nextPageToken,
     // @ts-ignore
-    numOfVideos: response.result.pageInfo.totalResults,
+    numOfVideos: response.pageInfo.totalResults,
   };
 
   if (lastVideoPublishedAt.length > 0) {

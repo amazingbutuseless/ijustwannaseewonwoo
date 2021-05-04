@@ -1,6 +1,3 @@
-const dotenv = require('dotenv');
-dotenv.config();
-
 import { CfnOutput } from '@aws-cdk/core';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as sst from '@serverless-stack/resources';

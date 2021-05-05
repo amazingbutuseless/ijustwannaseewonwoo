@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: process.env.GOOGLE_API_AUTH,
+  keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
   scopes: ['https://www.googleapis.com/auth/youtube.readonly'],
 });
 

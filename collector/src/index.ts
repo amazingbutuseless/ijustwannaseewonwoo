@@ -3,6 +3,7 @@ import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import YoutubeDownloader from './app/youtube_downloader';
 
 import path from 'path';
+import fs from 'fs';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
@@ -80,6 +81,18 @@ ipcMain.on('video/download', async (event, message) => {
   console.log(`download ${message.videoId}`);
   const downloader = new YoutubeDownloader(message.videoId);
   await downloader.run(event);
+});
+
+ipcMain.on('auth/storeToken', (event, message) => {
+  fs.writeFileSync(`${app.getPath('temp')}/tokens.json`, JSON.stringify(message), {
+    encoding: 'utf8',
+    flag: 'w',
+  });
+});
+
+ipcMain.on('auth/fetchToken', (event, message) => {
+  const tokens = fs.readFileSync(`${app.getPath('temp')}/tokens.json`, { encoding: 'utf8' });
+  event.returnValue = JSON.parse(tokens);
 });
 
 ipcMain.on('from-main-to-worker', (event, message) => {

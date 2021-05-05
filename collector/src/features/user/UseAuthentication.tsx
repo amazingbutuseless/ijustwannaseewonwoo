@@ -1,6 +1,6 @@
 import { parse } from 'url';
 
-import { remote } from 'electron';
+import { remote, ipcRenderer, IpcRendererEvent } from 'electron';
 
 import React, { useEffect, useState } from 'react';
 import { Auth, Hub } from 'aws-amplify';
@@ -15,6 +15,13 @@ const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';
 const GOOGLE_PROFILE_URL = 'https://www.googleapis.com/userinfo/v2/me';
 const GOOGLE_REVOKE_TOKEN = 'https://oauth2.googleapis.com/revoke';
+const GOOGLE_REFRESH_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+
+Auth.configure({
+  refreshHandlers: {
+    google: renewToken,
+  },
+});
 
 function signInWithPopup(): Promise<string | string[] | Error> {
   return new Promise((resolve, reject) => {
@@ -92,21 +99,45 @@ async function fetchGoogleProfile(accessToken: string) {
   return response.json();
 }
 
-export default function useAuthentication() {
-  const [userId, setUserId] = useState('');
-  const [refreshToken, setRefreshToken] = useState('');
+function storeToken(tokens) {
+  if (typeof tokens.refresh_token !== 'undefined') {
+    ipcRenderer.send('auth/storeToken', tokens);
+  }
+}
 
+function getRefreshToken() {
+  return ipcRenderer.sendSync('auth/fetchToken').refresh_token;
+}
+
+async function renewToken() {
+  const refreshToken = getRefreshToken();
+
+  const data = {
+    refresh_token: refreshToken,
+    client_id: configure.GOOGLE_CLIENT_ID,
+    redirect_uri: configure.GOOGLE_REDIRECT_URL,
+    grant_type: 'refresh_token',
+  };
+
+  const response = await fetch(GOOGLE_REFRESH_TOKEN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(data),
+  });
+
+  const token = await response.json();
+  storeToken(token);
+
+  const { id_token, expires_at } = token;
+
+  return { token: id_token, expires_at };
+}
+
+export default function useAuthentication() {
   const dispatch = useAppDispatch();
 
   const getUser = () => {
-    return new Promise((resolve, reject) => {
-      Auth.currentAuthenticatedUser()
-        .then((userData) => {
-          setUserId(userData.id);
-          resolve(userData);
-        })
-        .catch((err) => reject(err));
-    });
+    return Auth.currentAuthenticatedUser().then((userData) => userData);
   };
 
   const signInWithCurrentUser = () => {
@@ -150,17 +181,30 @@ export default function useAuthentication() {
   const googleSignIn = async () => {
     try {
       const code = await signInWithPopup();
-      const tokens = await fetchAccessTokens(code as string);
-      const { email, name } = await fetchGoogleProfile(tokens.access_token);
-      setRefreshToken(tokens.refresh_token);
 
-      getAWSCredentials({ tokens, email, name });
+      const tokens = await fetchAccessTokens(code as string);
+      storeToken(tokens);
+
+      const { access_token, id_token, expires_at } = tokens;
+
+      const { email, name } = await fetchGoogleProfile(access_token);
+
+      Auth.federatedSignIn(
+        'google',
+        { token: id_token, expires_at },
+        {
+          email,
+          name,
+        }
+      );
     } catch (err) {
       console.log(err);
     }
   };
 
   const googleSignOut = () => {
+    const refreshToken = getRefreshToken();
+
     fetch(GOOGLE_REVOKE_TOKEN, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -174,20 +218,8 @@ export default function useAuthentication() {
       });
   };
 
-  const getAWSCredentials = ({ tokens: { id_token, expires_at }, email, name }) => {
-    return Auth.federatedSignIn(
-      'google',
-      { token: id_token, expires_at },
-      {
-        email,
-        name,
-      }
-    );
-  };
-
   return {
     googleSignIn,
     googleSignOut,
-    userId,
   };
 }

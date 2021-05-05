@@ -3,17 +3,13 @@ import { parse } from 'url';
 import { remote } from 'electron';
 
 import React, { useEffect, useState } from 'react';
-import Amplify, { Auth, Hub } from 'aws-amplify';
+import { Auth, Hub } from 'aws-amplify';
 
 import { useAppDispatch } from '../../app/hooks';
 
 import configure from '../../configure';
 
 import { signIn, signOut } from './userSlice';
-
-Amplify.configure({
-  Auth: configure.AUTH,
-});
 
 const GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://www.googleapis.com/oauth2/v4/token';

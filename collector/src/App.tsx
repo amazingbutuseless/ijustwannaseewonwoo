@@ -2,7 +2,9 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 import React, { ReactElement, useEffect, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
+import Amplify, { Auth } from 'aws-amplify';
 
+import configure from './configure';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 
 import { ContentsWrapper, Content } from './App.style';
@@ -29,6 +31,10 @@ interface FaceDetectedMessage {
     [memberName: string]: Array<IFaceRecognitionResult>;
   };
 }
+
+Amplify.configure({
+  Auth: configure.AUTH,
+});
 
 export default function App(): ReactElement {
   const dispatch = useAppDispatch();

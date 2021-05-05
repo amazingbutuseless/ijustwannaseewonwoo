@@ -10,7 +10,7 @@ export default class CognitoStack extends sst.Stack {
     super(scope, id, props);
 
     const app = this.node.root;
-    const { tableArn, bucketArn } = props;
+    const { bucketArn } = props;
 
     const userPool = new cognito.UserPool(this, 'UserPool', {
       userPoolName: `${process.env.APP_NAME}-${process.env.ENV}-userpool`,
@@ -71,16 +71,9 @@ export default class CognitoStack extends sst.Stack {
 
     authenticatedRole.role.addToPolicy(
       new iam.PolicyStatement({
-        actions: [
-          'dynamodb:GetItem',
-          'dynamodb:PutItem',
-          'dynamodb:UpdateItem',
-          'dynamodb:DeleteItem',
-          'dynamodb:Query',
-          'dynamodb:Scan',
-        ],
+        actions: ['execute-api:Invoke'],
         effect: iam.Effect.ALLOW,
-        resources: [tableArn, `${tableArn}/*`],
+        resources: [process.env.API_ARN],
       })
     );
 

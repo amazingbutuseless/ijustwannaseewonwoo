@@ -1,3 +1,5 @@
+import { Auth, Signer } from 'aws-amplify';
+
 import { APIClientRequestParameters, APIClientRequestConfig } from '../types';
 
 import Configure from '../configure';
@@ -42,11 +44,21 @@ APIClient.post = function (endpoint: string, body = {}, customConfig = {}) {
   return APIClient(endpoint, { ...customConfig, body });
 };
 
-APIClient.graphql = function (body = {}) {
-  return APIClient(`${Configure.GRAPHQL_SERVER}/graphql`, {
-    headers: {
-      Accept: 'application/json',
+APIClient.graphql = async (body = {}) => {
+  const credentials = await Auth.currentCredentials();
+
+  const { headers } = Signer.sign(
+    {
+      url: Configure.GRAPHQL_SERVER,
+      method: 'POST',
+      data: JSON.stringify(body),
     },
-    body,
-  });
+    {
+      access_key: credentials.accessKeyId,
+      secret_key: credentials.secretAccessKey,
+      session_token: credentials.sessionToken,
+    }
+  );
+
+  return APIClient(Configure.GRAPHQL_SERVER, { headers, body });
 };

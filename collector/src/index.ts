@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, protocol } from 'electron';
+import { app, BrowserWindow, ipcMain, protocol, Menu } from 'electron';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import YoutubeDownloader from './app/youtube_downloader';
 
@@ -11,6 +11,8 @@ declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+Menu.setApplicationMenu(null);
 
 app.whenReady().then(() => {
   protocol.registerFileProtocol('video', (request, callback) => {
@@ -25,9 +27,11 @@ app.whenReady().then(() => {
     callback(filePath);
   });
 
-  installExtension(REDUX_DEVTOOLS)
-    .then((name) => console.log({ name }))
-    .catch((err) => console.log({ err }));
+  if (!app.isPackaged) {
+    installExtension(REDUX_DEVTOOLS)
+      .then((name) => console.log({ name }))
+      .catch((err) => console.log({ err }));
+  }
 });
 
 let mainWindow: BrowserWindow = null;
@@ -60,7 +64,7 @@ const createWindow = (): void => {
 
   workerWindow.loadURL(WORKER_WINDOW_WEBPACK_ENTRY);
 
-  mainWindow.webContents.openDevTools();
+  if (!app.isPackaged) mainWindow.webContents.openDevTools();
 };
 
 app.on('ready', createWindow);

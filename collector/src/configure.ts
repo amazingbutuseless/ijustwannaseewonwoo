@@ -1,11 +1,20 @@
 export default {
-  GRAPHQL_SERVER: 'http://localhost:3000/dev',
-  TRAINING_SET_STORAGE: {
-    bucket: 'ijustwannaseewonwoo-training-set',
-    region: 'ap-northeast-2',
+  GRAPHQL_SERVER: '',
+  GOOGLE_CLIENT_ID: '',
+  GOOGLE_REDIRECT_URL: '',
+  AUTH: {
+    identityPoolId: '',
+    region: '',
+    identityPoolRegion: '',
+    userPoolId: '',
+    userPoolWebClientId: '',
+    mandatorySignIn: true,
   },
-  FACE_API_WEIGHTS:
-    'https://ijustwannaseewonwoo-training-set.s3.ap-northeast-2.amazonaws.com/weight',
-  FACE_MATCHER_FILE_URL:
-    'https://ijustwannaseewonwoo-training-set.s3.ap-northeast-2.amazonaws.com/faceMatcher.json',
+  TRAINING_SET_STORAGE: {
+    bucket: '',
+    region: '',
+  },
+  YOUTUBE_API_KEY: '',
+  FACE_API_WEIGHTS: '',
+  FACE_MATCHER_FILE_URL: '',
 };

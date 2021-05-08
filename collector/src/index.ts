@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain, protocol } from 'electron';
+import { app, BrowserWindow, ipcMain, protocol, Menu } from 'electron';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import YoutubeDownloader from './app/youtube_downloader';
 
 import path from 'path';
+import fs from 'fs';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
@@ -10,6 +11,8 @@ declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+Menu.setApplicationMenu(null);
 
 app.whenReady().then(() => {
   protocol.registerFileProtocol('video', (request, callback) => {
@@ -24,9 +27,11 @@ app.whenReady().then(() => {
     callback(filePath);
   });
 
-  installExtension(REDUX_DEVTOOLS)
-    .then((name) => console.log({ name }))
-    .catch((err) => console.log({ err }));
+  if (!app.isPackaged) {
+    installExtension(REDUX_DEVTOOLS)
+      .then((name) => console.log({ name }))
+      .catch((err) => console.log({ err }));
+  }
 });
 
 let mainWindow: BrowserWindow = null;
@@ -59,7 +64,7 @@ const createWindow = (): void => {
 
   workerWindow.loadURL(WORKER_WINDOW_WEBPACK_ENTRY);
 
-  mainWindow.webContents.openDevTools();
+  if (!app.isPackaged) mainWindow.webContents.openDevTools();
 };
 
 app.on('ready', createWindow);
@@ -80,6 +85,18 @@ ipcMain.on('video/download', async (event, message) => {
   console.log(`download ${message.videoId}`);
   const downloader = new YoutubeDownloader(message.videoId);
   await downloader.run(event);
+});
+
+ipcMain.on('auth/storeToken', (event, message) => {
+  fs.writeFileSync(`${app.getPath('temp')}/tokens.json`, JSON.stringify(message), {
+    encoding: 'utf8',
+    flag: 'w',
+  });
+});
+
+ipcMain.on('auth/fetchToken', (event, message) => {
+  const tokens = fs.readFileSync(`${app.getPath('temp')}/tokens.json`, { encoding: 'utf8' });
+  event.returnValue = JSON.parse(tokens);
 });
 
 ipcMain.on('from-main-to-worker', (event, message) => {

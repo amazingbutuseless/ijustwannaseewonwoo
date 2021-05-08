@@ -22,28 +22,38 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "ijustwannasee😺"
+        "name": "ijustwannaseewonwoo",
+        "icon": "./cat_icon.png",
+        "platform": [
+          "darwin",
+          "win32"
+        ]
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "collector"
+            "name": "ijustwannaseewonwoo"
           }
         },
         {
           "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
+          "platform": [
+            "darwin",
+            "win32"
           ]
-        },
+        }
+      ],
+      "publisher": [
         {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "amazingbutuseless",
+              "name": "ijustwannaseewonwoo"
+            },
+            "prerelease": true
+          }
         }
       ],
       "plugins": [
@@ -80,10 +90,12 @@
     "@babel/preset-typescript": "^7.12.7",
     "@electron-forge/cli": "^6.0.0-beta.54",
     "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-pkg": "^6.0.0-beta.54",
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@electron-forge/plugin-webpack": "^6.0.0-beta.54",
+    "@electron-forge/publisher-github": "^6.0.0-beta.54",
     "@emotion/babel-plugin": "^11.1.2",
     "@emotion/jest": "^11.3.0",
     "@emotion/styled": "11.0.0-next.15",

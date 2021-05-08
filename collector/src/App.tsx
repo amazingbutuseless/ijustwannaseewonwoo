@@ -39,9 +39,9 @@ Amplify.configure({
 export default function App(): ReactElement {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const { googleSignIn, googleSignOut } = useAuthentication();
 
   const [activeMenuItem, setActiveMenuItem] = useState('Playlist');
-  const { googleSignIn, googleSignOut } = useAuthentication();
 
   const userStatus = useAppSelector((state) => state.user.status);
 
@@ -70,7 +70,7 @@ export default function App(): ReactElement {
     <>
       <TitleBar />
       <ContentsWrapper>
-        {userStatus === 'signedOut' && <UserSignIn onClick={googleSignIn} />}
+        {userStatus !== 'signedIn' && <UserSignIn onClick={googleSignIn} />}
 
         {userStatus === 'signedIn' && (
           <>

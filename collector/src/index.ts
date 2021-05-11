@@ -8,6 +8,8 @@ import fs from 'fs';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
 
+const REFRESH_TOKEN_PATH = path.resolve(app.getPath('appData'), 'tokens.json');
+
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -64,7 +66,10 @@ const createWindow = (): void => {
 
   workerWindow.loadURL(WORKER_WINDOW_WEBPACK_ENTRY);
 
-  if (!app.isPackaged) mainWindow.webContents.openDevTools();
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+    workerWindow.webContents.openDevTools();
+  }
 };
 
 app.on('ready', createWindow);
@@ -88,14 +93,19 @@ ipcMain.on('video/download', async (event, message) => {
 });
 
 ipcMain.on('auth/storeToken', (event, message) => {
-  fs.writeFileSync(`${app.getPath('temp')}/tokens.json`, JSON.stringify(message), {
+  fs.writeFileSync(REFRESH_TOKEN_PATH, JSON.stringify(message), {
     encoding: 'utf8',
     flag: 'w',
   });
 });
 
 ipcMain.on('auth/fetchToken', (event, message) => {
-  const tokens = fs.readFileSync(`${app.getPath('temp')}/tokens.json`, { encoding: 'utf8' });
+  if (!fs.existsSync(REFRESH_TOKEN_PATH)) {
+    event.returnValue = {};
+    return;
+  }
+
+  const tokens = fs.readFileSync(REFRESH_TOKEN_PATH, { encoding: 'utf8' });
   event.returnValue = JSON.parse(tokens);
 });
 

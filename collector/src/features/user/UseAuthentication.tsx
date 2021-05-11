@@ -112,6 +112,11 @@ function getRefreshToken() {
 async function renewToken() {
   const refreshToken = getRefreshToken();
 
+  if (typeof refreshToken === 'undefined') {
+    googleSignOut();
+    return;
+  }
+
   const data = {
     refresh_token: refreshToken,
     client_id: configure.GOOGLE_CLIENT_ID,
@@ -131,6 +136,22 @@ async function renewToken() {
   const { id_token, expires_at } = token;
 
   return { token: id_token, expires_at };
+}
+
+function googleSignOut() {
+  const refreshToken = getRefreshToken();
+
+  fetch(GOOGLE_REVOKE_TOKEN, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ token: refreshToken }),
+  })
+    .then((response) => {
+      Auth.signOut();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 export default function useAuthentication() {
@@ -200,22 +221,6 @@ export default function useAuthentication() {
     } catch (err) {
       console.log(err);
     }
-  };
-
-  const googleSignOut = () => {
-    const refreshToken = getRefreshToken();
-
-    fetch(GOOGLE_REVOKE_TOKEN, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ token: refreshToken }),
-    })
-      .then((response) => {
-        Auth.signOut();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   return {

@@ -14,6 +14,8 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+require('update-electron-app')();
+
 Menu.setApplicationMenu(null);
 
 app.whenReady().then(() => {

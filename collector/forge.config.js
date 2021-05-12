@@ -35,7 +35,9 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       platforms: ['win32'],
       config: {
-        description: '원우가 나온 유튜브 비디오 장면 모아보기',
+        exe: 'ijustwannaseewonwoo.exe',
+        description: '원우가 나오는 유튜브 비디오 장면 모아보기',
+        setupIcon: './cat_icon.ico',
       },
     },
   ],

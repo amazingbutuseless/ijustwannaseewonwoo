@@ -1,8 +1,8 @@
 {
   "name": "ijustwannaseewonwoo-collector",
   "productName": "ijustwannaseewonwoo",
-  "version": "1.0.0",
-  "description": "원우가 나온 유튜브 비디오 장면 모아보기",
+  "version": "1.0.1",
+  "description": "원우가 나오는 유튜브 비디오 장면 모아보기",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",

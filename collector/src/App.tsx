@@ -68,7 +68,7 @@ export default function App(): ReactElement {
 
   return (
     <>
-      <TitleBar />
+      {process.platform !== 'win32' && <TitleBar />}
       <ContentsWrapper>
         {userStatus !== 'signedIn' && <UserSignIn onClick={googleSignIn} />}
 

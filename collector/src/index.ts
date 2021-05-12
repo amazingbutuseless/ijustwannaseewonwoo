@@ -46,7 +46,7 @@ const createWindow = (): void => {
     height: 720,
     width: 1280,
     resizable: false,
-    frame: false,
+    frame: process.platform === 'win32',
     titleBarStyle: 'hiddenInset',
     webPreferences: {
       nodeIntegration: true,

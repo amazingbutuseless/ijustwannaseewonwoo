@@ -20,6 +20,9 @@ export const Button = styled.button`
 `;
 
 export const SceneAddFormContainer = styled.form`
+  display: flex;
+  align-items: center;
+
   padding: 1.6rem;
 
   border-radius: var(--borderRadius);

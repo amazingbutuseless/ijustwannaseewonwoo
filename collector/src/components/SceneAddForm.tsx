@@ -1,6 +1,8 @@
-import React, { ChangeEvent, FormEvent } from 'react';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 
 import { SceneTimecodeInterface } from '../types';
+import AddSceneGuideButton from './AddSceneGuideButton';
+import AddSceneGuideModalDialog from './AddSceneGuideModalDialog';
 
 import { SceneAddFormContainer, Button } from './SceneAddForm.style';
 
@@ -16,6 +18,8 @@ interface SceneAddFormProps {
 }
 
 export default function SceneAddForm({ onTimecodeSet, onSubmit }: SceneAddFormProps) {
+  const [showGuideModalDialog, switchShowGuideModalDialog] = useState(false);
+
   const rangeInput: rangeInputSets = {};
   const createRangeInput = (input: HTMLInputElement) => {
     if (input) {
@@ -63,15 +67,29 @@ export default function SceneAddForm({ onTimecodeSet, onSubmit }: SceneAddFormPr
     onSubmit({ ...getTimecode() }, resetTimeInput);
   };
 
+  const onGuideButtonClick = () => {
+    switchShowGuideModalDialog(true);
+  };
+
   return (
-    <SceneAddFormContainer action="#" onSubmit={onAddButtonClick}>
-      <SceneRange createRangeRef={createRangeInput} onTimeUpdate={onTimeUpdate} />
-      <Button type="button" onClick={onPlayButtonClick}>
-        재생
-      </Button>
-      <Button type="submit" onClick={onAddButtonClick}>
-        추가
-      </Button>
-    </SceneAddFormContainer>
+    <>
+      <SceneAddFormContainer action="#" onSubmit={onAddButtonClick}>
+        <SceneRange createRangeRef={createRangeInput} onTimeUpdate={onTimeUpdate} />
+        <Button type="button" onClick={onPlayButtonClick}>
+          재생
+        </Button>
+        <Button type="submit" onClick={onAddButtonClick}>
+          추가
+        </Button>
+        <AddSceneGuideButton onClick={onGuideButtonClick} />
+      </SceneAddFormContainer>
+      {showGuideModalDialog && (
+        <AddSceneGuideModalDialog
+          onConfirm={() => {
+            switchShowGuideModalDialog(false);
+          }}
+        />
+      )}
+    </>
   );
 }

@@ -68,6 +68,10 @@ const createWindow = (): void => {
 
   workerWindow.loadURL(WORKER_WINDOW_WEBPACK_ENTRY);
 
+  mainWindow.on('closed', () => {
+    workerWindow.close();
+  });
+
   if (!app.isPackaged) {
     mainWindow.webContents.openDevTools();
     workerWindow.webContents.openDevTools();
@@ -77,9 +81,7 @@ const createWindow = (): void => {
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
     app.quit();
-  }
 });
 
 app.on('activate', () => {

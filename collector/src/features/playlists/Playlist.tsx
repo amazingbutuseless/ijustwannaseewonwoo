@@ -8,6 +8,7 @@ import {
   fetchPlaylists,
   fetchPlaylist,
   fetchPlaylistVideos,
+  getVideosIds,
   updateMetadata,
   PlaylistVideos,
   FetchPlaylistVideosParams,
@@ -41,6 +42,16 @@ export default function Playlist() {
     return typeof selectedPlaylist?.ytVideos !== 'undefined';
   };
 
+  const havePlaylistLoadedButNoPlaylistSelected = () => {
+    return (
+      playlistStatus.playlists === 'succeeded' && playlists.length > 0 && selectedPlaylistId === ''
+    );
+  };
+
+  const doesSelectedPlaylistHaveMoreYtVideos = () => {
+    return selectedPlaylist && selectedPlaylist.pageToken?.length > 0;
+  };
+
   const onVideoClick = (videoId: string, title: string) => {
     history.push(`/video/${videoId}`, {
       title,
@@ -57,10 +68,6 @@ export default function Playlist() {
     if (doesSelectedPlaylistHaveMoreYtVideos()) {
       updateVideoList();
     }
-  };
-
-  const doesSelectedPlaylistHaveMoreYtVideos = () => {
-    return selectedPlaylist && selectedPlaylist.pageToken?.length > 0;
   };
 
   const updateVideoList = async () => {
@@ -95,11 +102,7 @@ export default function Playlist() {
       dispatch(fetchPlaylists({ lastId: lastPlaylistId }));
     } else if (playlistId) {
       setSelectedPlaylistId(playlistId);
-    } else if (
-      playlistStatus.playlists === 'succeeded' &&
-      playlists.length > 0 &&
-      selectedPlaylistId === ''
-    ) {
+    } else if (havePlaylistLoadedButNoPlaylistSelected()) {
       setSelectedPlaylistId(playlists[0].id);
     }
   }, [playlistStatus.playlists]);
@@ -115,7 +118,21 @@ export default function Playlist() {
 
     if (!selectedPlaylist || !hasSelectedPlaylistFetched()) {
       dispatch(fetchPlaylist({ playlistId: selectedPlaylistId }));
+      return;
     }
+
+    const lastRegisteredVideo =
+      selectedPlaylist.videos.length > 0
+        ? selectedPlaylist.videos[selectedPlaylist.videos.length - 1].publishedAt
+        : '';
+    getVideosIds(selectedPlaylistId, lastRegisteredVideo).then((updatedRegisteredVideos) => {
+      dispatch(
+        updateMetadata({
+          ...selectedPlaylist,
+          videos: selectedPlaylist.videos.concat(updatedRegisteredVideos),
+        })
+      );
+    });
   }, [selectedPlaylistId]);
 
   return (

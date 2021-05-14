@@ -92,7 +92,7 @@ export async function fetchPlaylistVideos({
   return data;
 }
 
-async function getVideosIds(playlistId: string, lastVideoPublishedAt: string) {
+export async function getVideosIds(playlistId: string, lastVideoPublishedAt: string) {
   const response = await APIClient.graphql({
     query: `
 query playlist($playlistId: ID!, $lastVideoPublishedAt: String) {
@@ -108,7 +108,7 @@ query playlist($playlistId: ID!, $lastVideoPublishedAt: String) {
     },
   });
 
-  return response.data.videos;
+  return response.data.playlist.videos;
 }
 
 export const fetchPlaylist = createAsyncThunk(

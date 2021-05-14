@@ -19,6 +19,7 @@ import VideoList from './features/videos/VideoList';
 import VideoDetails from './features/videos/VideoDetails';
 import useAuthentication from './features/user/UseAuthentication';
 
+import { PlayTypeContext } from './components/PlayTypeSwitcher';
 import TitleBar from './components/TitleBar';
 import Menu from './components/Menu';
 import UserSignIn from './components/UserSignIn';
@@ -42,6 +43,7 @@ export default function App(): ReactElement {
   const { googleSignIn, googleSignOut } = useAuthentication();
 
   const [activeMenuItem, setActiveMenuItem] = useState('Playlist');
+  const [playScenes, switchPlayScenes] = useState(true);
 
   const userStatus = useAppSelector((state) => state.user.status);
 
@@ -81,27 +83,29 @@ export default function App(): ReactElement {
             />
 
             <Content>
-              <Switch>
-                {window.location.pathname.endsWith('index.html') && history.push('/playlist')}
-                <Route exact path={['/', '/main_window']}>
-                  <Playlist />
-                </Route>
-                <Route exact path="/introduce">
-                  <Introduce />
-                </Route>
-                <Route exact path="/playlist">
-                  <Playlist />
-                </Route>
-                <Route path="/playlist/:playlistId">
-                  <Playlist />
-                </Route>
-                <Route exact path="/video">
-                  <VideoList />
-                </Route>
-                <Route path="/video/:videoId">
-                  <VideoDetails />
-                </Route>
-              </Switch>
+              <PlayTypeContext.Provider value={{ playScenes, onChange: switchPlayScenes }}>
+                <Switch>
+                  {window.location.pathname.endsWith('index.html') && history.push('/playlist')}
+                  <Route exact path={['/', '/main_window']}>
+                    <Playlist />
+                  </Route>
+                  <Route exact path="/introduce">
+                    <Introduce />
+                  </Route>
+                  <Route exact path="/playlist">
+                    <Playlist />
+                  </Route>
+                  <Route path="/playlist/:playlistId">
+                    <Playlist />
+                  </Route>
+                  <Route exact path="/video">
+                    <VideoList />
+                  </Route>
+                  <Route path="/video/:videoId">
+                    <VideoDetails />
+                  </Route>
+                </Switch>
+              </PlayTypeContext.Provider>
             </Content>
           </>
         )}

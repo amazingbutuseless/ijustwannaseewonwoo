@@ -1,6 +1,6 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -12,6 +12,7 @@ import { selectVideoById, registerVideo } from './videosSlice';
 
 import { VideoWrapper, VideoDownloadingMessage, ScenesWrapper } from './VideoDetails.style';
 
+import { PlayTypeContext } from '../../components/PlayTypeSwitcher';
 import Breadcrumb, { LocationDepths } from '../../components/Breadcrumb';
 import SceneAddForm from '../../components/SceneAddForm';
 import SceneList from '../../components/SceneList';
@@ -41,6 +42,8 @@ function VideoDetails(): ReactElement {
   const [isLoading, updateLoading] = useState(true);
 
   const [enableSceneAddButton, setEnableSceneAddButton] = useState(false);
+
+  const playType = useContext(PlayTypeContext);
 
   const video = useAppSelector((state) => selectVideoById(state, videoId));
   const scenes = useAppSelector((state) => selectAllScenesForVideo(state, videoId));
@@ -80,17 +83,15 @@ function VideoDetails(): ReactElement {
     if (scenesStatus === 'succeeded') {
       updateLoading(false);
 
-      if (scenes.length > 0) {
+      if (playType.playScenes && scenes.length > 0) {
         setTimeSource('scene');
         updateActiveSceneIdx(0);
         const { start, end } = scenes[0];
         updateTime({ start, end });
-      } else {
-        if (scenes.length < 1) {
-          updateTime({ start: 0, end: null });
-          return;
-        }
+        return;
       }
+
+      updateTime({ start: 0, end: null });
     }
   }, [scenesStatus]);
 
@@ -110,7 +111,7 @@ function VideoDetails(): ReactElement {
   };
 
   const onPlayerPaused = () => {
-    if (timeSource === 'scene') {
+    if (playType.playScenes && timeSource === 'scene') {
       playNextScene();
     }
   };

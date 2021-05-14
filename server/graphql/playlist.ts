@@ -19,12 +19,14 @@ export const PlaylistTypeDefs = gql`
     title: String
     channel: Channel
     videos(lastId: String = "", limit: Int = 21): [Video]
+    sequence: Int
   }
 
   input registerPlaylistData {
     playlistId: String!
     channelId: String!
     title: String
+    sequence: Int
   }
 `;
 

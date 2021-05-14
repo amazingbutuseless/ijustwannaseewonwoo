@@ -15,6 +15,12 @@ export const ChannelTypesDef = gql`
     title: String
     thumbnails: ImageResource
     videos(lastId: String = "", limit: Int = 20): [Video]
+    sequence: String
+  }
+
+  input registerChannelData {
+    channelUrl: String
+    sequence: String
   }
 
   extend type Query {
@@ -23,35 +29,39 @@ export const ChannelTypesDef = gql`
   }
 
   extend type Mutation {
-    registerChannel(channelUrl: String): Channel
+    registerChannel(data: registerChannelData): Channel
   }
 `;
 
 export const ChannelResolvers = {
   Query: {
-    channel(root, { id }) {
+    channel(_, { id }) {
       return Channel.get(id);
     },
 
-    channels(root, _, ctx) {
+    channels() {
       return Channel.getList();
     },
   },
 
   Mutation: {
-    registerChannel(root, { channelUrl }, ctx) {
-      return Channel.register({ channelUrl });
+    registerChannel(_, { data: { channelUrl, sequence } }) {
+      return Channel.register({ channelUrl, sequence });
     },
   },
 
   Channel: {
     id(channel) {
-      return channel.relId;
+      return channel.channelId;
     },
 
-    videos(channel, { lastId = '', limit }, ctx) {
-      const resolver = new ChannelVideosResolver(channel.relId);
+    videos(channel, { lastId = '', limit }) {
+      const resolver = new ChannelVideosResolver(channel.channelId);
       return resolver.get(lastId, limit);
+    },
+
+    sequence(channel) {
+      return channel.relId;
     },
   },
 };

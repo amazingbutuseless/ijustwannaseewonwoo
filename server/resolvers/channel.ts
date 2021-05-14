@@ -5,19 +5,27 @@ import { IChannelRegisterParams } from '../types';
 
 export default {
   get(id) {
-    const Key = {
-      id: {
+    const ExpressionAttributeValues = {
+      ':channel': {
         S: 'channel',
       },
-      relId: {
+      ':channelId': {
         S: id,
       },
     };
+    const KeyConditionExpression = 'id = :channel AND channelId = :channelId';
 
-    return DB.getItem(Key).then((response) => {
-      if (!response.hasOwnProperty('Item')) return null;
+    const params = {
+      IndexName: 'channelIdIndex',
+      ExpressionAttributeValues,
+      KeyConditionExpression,
+      Limit: 1,
+    };
 
-      return DB.parse(response.Item);
+    return DB.query(params).then((response) => {
+      if (response.Items.length < 1) return {};
+
+      return DB.parse(response.Items[0]);
     });
   },
 
@@ -36,7 +44,7 @@ export default {
     });
   },
 
-  async register({ channelUrl, channelId }: IChannelRegisterParams) {
+  async register({ channelUrl, channelId, sequence }: IChannelRegisterParams) {
     let channelData = {};
 
     if (typeof channelUrl !== 'undefined') {
@@ -56,6 +64,9 @@ export default {
         S: 'channel',
       },
       relId: {
+        S: sequence,
+      },
+      channelId: {
         S: channelData.id,
       },
       title: {

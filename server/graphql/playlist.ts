@@ -57,7 +57,7 @@ export const PlaylistRevolvers = {
     },
 
     videos(playlist, { lastId, limit }) {
-      const resolver = new PlaylistVideosResolver(playlist.relId);
+      const resolver = new PlaylistVideosResolver(playlist.playlistId);
       return resolver.get(lastId, limit);
     },
 

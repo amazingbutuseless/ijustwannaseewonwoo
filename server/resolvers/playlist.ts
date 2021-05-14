@@ -94,7 +94,7 @@ export default {
 
     return DB.putItem(Item)
       .then(async (response) => {
-        await Channel.register({ channelId });
+        await Channel.register({ channelId, sequence: '999' });
 
         const playlist = DB.parse(Item);
 

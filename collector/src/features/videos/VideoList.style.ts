@@ -6,6 +6,8 @@ import { VideoItemWrapper } from '../../components/VideoItem.style';
 
 export const VideoListWrapper = styled.div`
   padding: 2.4rem 0;
+  height: calc(100vh - var(--titleBarHeight));
+  box-sizing: border-box;
   overflow: auto;
 
   ${Scrollbar}

@@ -6,7 +6,13 @@ import { IPlaylist, IVideoItemWithChannel, RegisteredVideo } from '../../types';
 import APIClient from '../../app/api_client';
 import YoutubeAPI from '../../app/youtube_api';
 
-const playlistAdapter = createEntityAdapter<IPlaylist>({});
+const playlistAdapter = createEntityAdapter<IPlaylist>({
+  sortComparer: (prev, next) => {
+    if (prev.sequence < next.sequence) return -1;
+    if (prev.sequence > next.sequence) return 1;
+    return 0;
+  },
+});
 
 const initialState = playlistAdapter.getInitialState({
   status: { playlists: 'idle', playlist: 'idle' },
@@ -23,6 +29,7 @@ channel {
     medium
   }
 }
+sequence
 `;
 
 const playlistVideoEntities = `

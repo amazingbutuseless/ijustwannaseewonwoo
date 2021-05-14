@@ -91,6 +91,7 @@ export interface IPlaylist {
   };
   pageToken?: string;
   numOfVideos?: number;
+  sequence?: string;
   videos?: Array<RegisteredVideo>;
   ytVideos?: Array<IVideoItemWithChannel>;
 }

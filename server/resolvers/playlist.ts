@@ -1,25 +1,32 @@
 import DB from './dynamodb_helper';
-import YoutubeHelper from './youtube_helper';
 import Channel from './channel';
 
 import { IPlaylistListParams } from '../types';
 
 export default {
   get(playlistId: string) {
-    const Key = {
-      id: {
+    const ExpressionAttributeValues = {
+      ':playlist': {
         S: 'playlist',
       },
-      relId: {
+      ':playlistId': {
         S: playlistId,
       },
     };
+    const KeyConditionExpression = 'id = :playlist AND playlistId = :playlistId';
 
-    return DB.getItem(Key)
+    const params = {
+      IndexName: 'playlistIdIndex',
+      ExpressionAttributeValues,
+      KeyConditionExpression,
+      Limit: 1,
+    };
+
+    return DB.query(params)
       .then((response) => {
-        if (!response.hasOwnProperty('Item')) return null;
+        if (response.Items.length < 1) return {};
 
-        return DB.parse(response.Item);
+        return DB.parse(response.Items[0]);
       })
       .catch((err) => {
         console.log(err);
@@ -28,34 +35,34 @@ export default {
   },
 
   getList({ channelId, lastId, limit }: IPlaylistListParams) {
-    const ExpressionAttributeValues = {
-      ':playlist': {
-        S: 'playlist',
-      },
-    };
-
-    let KeyConditionExpression = 'id = :playlist';
-
-    if (channelId) {
-      ExpressionAttributeValues[':channelId'] = {
-        S: channelId,
-      };
-
-      KeyConditionExpression += ' AND relId = :channelId';
-    }
-
     const params = {
-      ExpressionAttributeValues,
-      KeyConditionExpression,
+      ExpressionAttributeValues: {
+        ':playlist': {
+          S: 'playlist',
+        },
+      },
+      KeyConditionExpression: 'id = :playlist',
       Limit: limit,
     };
 
+    if (channelId) {
+      params['IndexName'] = 'channelIdIndex';
+
+      params.ExpressionAttributeValues[':channelId'] = {
+        S: channelId,
+      };
+
+      params.KeyConditionExpression += ' AND channelId = :channelId';
+    }
+
     if (lastId) {
-      params.ExclusiveStartKey = {
+      params['IndexName'] = 'playlistIdIndex';
+
+      params['ExclusiveStartKey'] = {
         id: {
           S: 'playlist',
         },
-        relId: {
+        playlistId: {
           S: lastId,
         },
       };
@@ -72,16 +79,16 @@ export default {
         S: 'playlist',
       },
       relId: {
-        S: playlistId,
+        S: sequence,
       },
       channelId: {
         S: channelId,
       },
+      playlistId: {
+        S: playlistId,
+      },
       title: {
         S: title,
-      },
-      sequence: {
-        N: sequence.toString(),
       },
     };
 

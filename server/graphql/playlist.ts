@@ -19,14 +19,14 @@ export const PlaylistTypeDefs = gql`
     title: String
     channel: Channel
     videos(lastId: String = "", limit: Int = 21): [Video]
-    sequence: Int
+    sequence: String
   }
 
   input registerPlaylistData {
     playlistId: String!
     channelId: String!
     title: String
-    sequence: Int
+    sequence: String
   }
 `;
 
@@ -49,7 +49,7 @@ export const PlaylistRevolvers = {
 
   Playlist: {
     id(playlist) {
-      return playlist.relId;
+      return playlist.playlistId;
     },
 
     channel(playlist) {
@@ -59,6 +59,10 @@ export const PlaylistRevolvers = {
     videos(playlist, { lastId, limit }) {
       const resolver = new PlaylistVideosResolver(playlist.relId);
       return resolver.get(lastId, limit);
+    },
+
+    sequence(playlist) {
+      return playlist.relId;
     },
   },
 };

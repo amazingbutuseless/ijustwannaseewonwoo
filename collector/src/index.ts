@@ -16,7 +16,14 @@ if (require('electron-squirrel-startup')) {
 
 require('update-electron-app')();
 
-Menu.setApplicationMenu(null);
+let appMenuTemplate = [];
+if (process.platform === 'darwin') {
+  appMenuTemplate.push({ label: app.name, submenu: [{ role: 'about' }, { role: 'quit' }] });
+} else {
+  appMenuTemplate.push({ label: 'File', submenu: [{ role: 'quit' }] });
+}
+
+Menu.setApplicationMenu(Menu.buildFromTemplate(appMenuTemplate));
 
 app.whenReady().then(() => {
   protocol.registerFileProtocol('video', (request, callback) => {

@@ -20,7 +20,7 @@ let appMenuTemplate = [];
 if (process.platform === 'darwin') {
   appMenuTemplate.push({ label: app.name, submenu: [{ role: 'about' }, { role: 'quit' }] });
 } else {
-  appMenuTemplate.push({ label: 'File', submenu: [{ role: 'quit' }] });
+  appMenuTemplate.push({ label: 'Help', submenu: [{role: 'about'}] });
 }
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(appMenuTemplate));

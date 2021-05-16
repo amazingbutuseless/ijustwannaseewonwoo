@@ -8,7 +8,7 @@ import fs from 'fs';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const WORKER_WINDOW_WEBPACK_ENTRY: any;
 
-const REFRESH_TOKEN_PATH = path.resolve(app.getPath('appData'), 'tokens.json');
+const REFRESH_TOKEN_PATH = path.resolve(app.getPath('userData'), 'tokens.json');
 
 if (require('electron-squirrel-startup')) {
   app.quit();

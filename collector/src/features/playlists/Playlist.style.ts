@@ -10,7 +10,7 @@ export const PlaylistContainer = styled.div`
   overflow: hidden;
 
   & > * {
-    height: calc(100vh - 38px);
+    height: calc(100vh - var(--titleBarHeight));
     box-sizing: border-box;
   }
 `;

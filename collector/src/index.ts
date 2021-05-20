@@ -20,7 +20,7 @@ let appMenuTemplate = [];
 if (process.platform === 'darwin') {
   appMenuTemplate.push({ label: app.name, submenu: [{ role: 'about' }, { role: 'quit' }] });
 } else {
-  appMenuTemplate.push({ label: 'Help', submenu: [{role: 'about'}] });
+  appMenuTemplate.push({ label: 'Help', submenu: [{ role: 'about' }] });
 }
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(appMenuTemplate));
@@ -76,7 +76,11 @@ const createWindow = (): void => {
   workerWindow.loadURL(WORKER_WINDOW_WEBPACK_ENTRY);
 
   mainWindow.on('closed', () => {
-    workerWindow.close();
+    try {
+      workerWindow.close();
+    } catch (err) {
+      console.log('worker window has already closed');
+    }
   });
 
   if (!app.isPackaged) {
@@ -88,7 +92,7 @@ const createWindow = (): void => {
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
-    app.quit();
+  app.quit();
 });
 
 app.on('activate', () => {

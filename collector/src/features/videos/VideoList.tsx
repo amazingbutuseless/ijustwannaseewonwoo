@@ -34,7 +34,7 @@ export default function VideoList() {
 
       if (videoItems.length > 0) {
         const lastId =
-          videoItems.length % 30 === 0 ? videoItems[videoItems.length - 1].videoId : '';
+          videoItems.length % 30 === 0 ? videoItems[videoItems.length - 1].publishedAt : '';
         setLastVideoId(lastId);
       }
     }

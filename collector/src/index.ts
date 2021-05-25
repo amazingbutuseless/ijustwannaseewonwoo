@@ -17,13 +17,27 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-require('update-electron-app')();
+const onCheckForUpdatesMenuClick = () => {
+  autoUpdaterHelper.checkForUpdates();
+};
 
 let appMenuTemplate = [];
+
 if (process.platform === 'darwin') {
-  appMenuTemplate.push({ label: app.name, submenu: [{ role: 'about' }, { role: 'quit' }] });
+  appMenuTemplate.push({
+    label: app.name,
+    submenu: [
+      { role: 'about' },
+      { label: 'Check for Updates', click: onCheckForUpdatesMenuClick },
+      { type: 'separator' },
+      { role: 'quit' },
+    ],
+  });
 } else {
-  appMenuTemplate.push({ label: 'Help', submenu: [{ role: 'about' }] });
+  appMenuTemplate.push({
+    label: 'Help',
+    submenu: [{ role: 'about' }, { label: 'Check for Updates', click: onCheckForUpdatesMenuClick }],
+  });
 }
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(appMenuTemplate));

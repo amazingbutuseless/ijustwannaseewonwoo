@@ -24,9 +24,9 @@ const userSlice = createSlice({
       userAdapter.upsertOne(state, action.payload);
     },
 
-    signOut(state, action) {
+    signOut(state) {
       state.status = 'signedOut';
-      userAdapter.removeOne(state, action.payload);
+      userAdapter.removeAll(state);
     },
   },
   extraReducers: {},

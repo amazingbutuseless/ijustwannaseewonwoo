@@ -172,6 +172,7 @@ export default function useAuthentication() {
       })
       .catch((err) => {
         console.log(err);
+        dispatch(signOut());
       });
   };
 
@@ -182,7 +183,7 @@ export default function useAuthentication() {
         break;
 
       case 'signOut':
-        dispatch(signOut(data));
+        dispatch(signOut());
         break;
 
       case 'customOAuthState':

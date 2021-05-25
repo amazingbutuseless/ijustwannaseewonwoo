@@ -1,5 +1,8 @@
 import { app, BrowserWindow, ipcMain, protocol, Menu } from 'electron';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
+
+import autoUpdaterHelper from './update_helper';
+
 import YoutubeDownloader from './app/youtube_downloader';
 
 import path from 'path';

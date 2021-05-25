@@ -90,7 +90,6 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-thunk": "^1.0.0",
-    "update-electron-app": "^2.0.1",
     "ytdl-core": "^4.8.0"
   },
   "jest": {

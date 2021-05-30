@@ -65,7 +65,7 @@ function signInWithPopup(): Promise<string | string[] | Error> {
       handleNavigation(url);
     });
 
-    authWindow.loadURL(authUrl);
+    authWindow.loadURL(authUrl, { userAgent: 'Chrome' });
   });
 }
 

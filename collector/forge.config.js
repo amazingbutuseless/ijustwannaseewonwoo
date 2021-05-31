@@ -57,6 +57,7 @@ module.exports = {
         },
         prerelease: true,
       },
+      draft: true,
     },
   ],
   plugins: [

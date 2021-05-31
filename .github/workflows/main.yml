@@ -6,9 +6,14 @@ on:
       - created
   push:
     tags:
-      - 'v*'
-      
+      - 'v*'    
   workflow_dispatch:
+
+
+defaults:
+  run:
+    working-directory: collector
+
 
 jobs:
   publish_on_mac:

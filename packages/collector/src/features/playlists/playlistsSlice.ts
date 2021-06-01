@@ -6,7 +6,13 @@ import { IPlaylist, IVideoItemWithChannel, RegisteredVideo } from '../../types';
 import APIClient from '../../app/api_client';
 import YoutubeAPI from '../../app/youtube_api';
 
-const playlistAdapter = createEntityAdapter<IPlaylist>({});
+const playlistAdapter = createEntityAdapter<IPlaylist>({
+  sortComparer: (prev, next) => {
+    if (prev.sequence < next.sequence) return -1;
+    if (prev.sequence > next.sequence) return 1;
+    return 0;
+  },
+});
 
 const initialState = playlistAdapter.getInitialState({
   status: { playlists: 'idle', playlist: 'idle' },
@@ -23,6 +29,7 @@ channel {
     medium
   }
 }
+sequence
 `;
 
 const playlistVideoEntities = `
@@ -92,7 +99,7 @@ export async function fetchPlaylistVideos({
   return data;
 }
 
-async function getVideosIds(playlistId: string, lastVideoPublishedAt: string) {
+export async function getVideosIds(playlistId: string, lastVideoPublishedAt: string) {
   const response = await APIClient.graphql({
     query: `
 query playlist($playlistId: ID!, $lastVideoPublishedAt: String) {
@@ -108,7 +115,7 @@ query playlist($playlistId: ID!, $lastVideoPublishedAt: String) {
     },
   });
 
-  return response.data.videos;
+  return response.data.playlist.videos;
 }
 
 export const fetchPlaylist = createAsyncThunk(

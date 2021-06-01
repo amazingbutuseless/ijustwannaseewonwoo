@@ -1,7 +1,7 @@
 {
   "name": "ijustwannaseewonwoo-collector",
   "productName": "ijustwannaseewonwoo",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "원우가 나오는 유튜브 비디오 장면 모아보기",
   "main": ".webpack/main",
   "scripts": {
@@ -20,8 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/amazingbutuseless/ijustwannaseewonwoo.git",
-    "directory": "collector"
+    "url": "https://github.com/amazingbutuseless/ijustwannaseewonwoo-collector.git"
   },
   "license": "MIT",
   "config": {
@@ -36,6 +35,7 @@
     "@electron-forge/cli": "^6.0.0-beta.54",
     "@electron-forge/maker-dmg": "^6.0.0-beta.54",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@electron-forge/plugin-webpack": "^6.0.0-beta.54",
     "@electron-forge/publisher-github": "^6.0.0-beta.54",
     "@emotion/babel-plugin": "^11.1.2",
@@ -58,7 +58,7 @@
     "babel-loader": "^8.2.2",
     "babel-plugin-emotion": "^11.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "canvas": "^2.7.0",
+    "canvas": "^2.6.1",
     "copy-webpack-plugin": "6.3.2",
     "css-loader": "^4.3.0",
     "electron": "11.0.3",
@@ -89,8 +89,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-thunk": "^1.0.0",
-    "update-electron-app": "^2.0.1",
-    "ytdl-core": "^4.5.0"
+    "ytdl-core": "^4.8.0"
   },
   "jest": {
     "moduleFileExtensions": [

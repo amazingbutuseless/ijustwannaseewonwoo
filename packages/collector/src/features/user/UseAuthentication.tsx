@@ -65,7 +65,7 @@ function signInWithPopup(): Promise<string | string[] | Error> {
       handleNavigation(url);
     });
 
-    authWindow.loadURL(authUrl);
+    authWindow.loadURL(authUrl, { userAgent: 'Chrome' });
   });
 }
 
@@ -124,18 +124,22 @@ async function renewToken() {
     grant_type: 'refresh_token',
   };
 
-  const response = await fetch(GOOGLE_REFRESH_TOKEN_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(data),
-  });
+  try {
+    const response = await fetch(GOOGLE_REFRESH_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(data),
+    });
 
-  const token = await response.json();
-  storeToken(token);
+    const token = await response.json();
+    storeToken(token);
 
-  const { id_token, expires_at } = token;
+    const { id_token, expires_at } = token;
 
-  return { token: id_token, expires_at };
+    return { token: id_token, expires_at };
+  } catch (err) {
+    googleSignOut();
+  }
 }
 
 function googleSignOut() {
@@ -168,6 +172,7 @@ export default function useAuthentication() {
       })
       .catch((err) => {
         console.log(err);
+        dispatch(signOut());
       });
   };
 
@@ -178,7 +183,7 @@ export default function useAuthentication() {
         break;
 
       case 'signOut':
-        dispatch(signOut(data));
+        dispatch(signOut());
         break;
 
       case 'customOAuthState':

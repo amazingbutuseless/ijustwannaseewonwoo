@@ -1,3 +1,5 @@
+import { shell } from 'electron';
+
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -20,6 +22,10 @@ export default function Menu({ activeItem, onItemClick, onSignOutButtonClick }: 
   const onClick = (title: string) => {
     history.push(`/${title.toLowerCase()}`);
     onItemClick(title);
+  };
+
+  const onIntroductionClick = () => {
+    shell.openExternal(`https://amazingbutuseless.github.io`);
   };
 
   return (
@@ -54,7 +60,7 @@ export default function Menu({ activeItem, onItemClick, onSignOutButtonClick }: 
 
       <MenuItem
         title="Introduce"
-        onClick={onClick}
+        onClick={onIntroductionClick}
         active={false}
         forSubMenu={true}
         style={{ marginTop: 'auto' }}

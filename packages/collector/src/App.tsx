@@ -2,7 +2,7 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 import React, { ReactElement, useEffect, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import Amplify, { Auth } from 'aws-amplify';
+import Amplify from 'aws-amplify';
 
 import configure from './configure';
 import { useAppDispatch, useAppSelector } from './app/hooks';

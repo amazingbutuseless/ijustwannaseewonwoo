@@ -1,3 +1,4 @@
+import { ipcRenderer } from 'electron';
 import configure from '../configure';
 
 interface ListPlaylistItemParams {
@@ -68,6 +69,7 @@ export default (() => {
       {
         headers: {
           Accept: 'application/json',
+          Authorization: `Bearer ${ipcRenderer.sendSync('auth/fetchToken').access_token}`,
         },
       }
     );

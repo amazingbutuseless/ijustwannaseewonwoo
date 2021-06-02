@@ -49,7 +49,7 @@ function signInWithPopup(): Promise<string | string[] | Error> {
       response_type: 'code',
       redirect_uri: configure.GOOGLE_REDIRECT_URL,
       client_id: configure.GOOGLE_CLIENT_ID,
-      scope: 'profile email openid',
+      scope: 'profile email openid https://www.googleapis.com/auth/youtube.readonly',
     };
     const authUrl = `${GOOGLE_AUTHORIZATION_URL}?${new URLSearchParams(urlParams).toString()}`;
 

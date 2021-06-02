@@ -30,6 +30,9 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-dmg',
+      config: {
+        background: './background.png',
+      },
     },
     {
       name: '@electron-forge/maker-zip',

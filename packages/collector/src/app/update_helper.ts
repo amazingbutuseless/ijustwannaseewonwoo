@@ -21,15 +21,6 @@ export default (() => {
     new Notification(notification).show();
   });
 
-  autoUpdater.on('update-not-available', () => {
-    const notification = {
-      title: 'Check for Updates',
-      body: '최신 버전을 사용중입니다.',
-    };
-
-    new Notification(notification).show();
-  });
-
   autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
     const dialogOpts = {
       type: 'info',
@@ -51,6 +42,15 @@ export default (() => {
 
   return {
     checkForUpdates() {
+      autoUpdater.once('update-not-available', () => {
+        const notification = {
+          title: 'Check for Updates',
+          body: '최신 버전을 사용중입니다.',
+        };
+
+        new Notification(notification).show();
+      });
+
       autoUpdater.checkForUpdates();
     },
   };

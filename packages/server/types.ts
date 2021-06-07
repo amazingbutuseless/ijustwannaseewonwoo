@@ -23,8 +23,3 @@ export interface IPlaylistListParams {
   lastId?: string;
   limit?: number;
 }
-
-export interface IChannelRegisterParams {
-  channelUrl?: string;
-  channelId?: string;
-}

@@ -1,7 +1,11 @@
 import DB from './dynamodb_helper';
 import YoutubeHelper from './youtube_helper';
 
-import { IChannelRegisterParams } from '../types';
+interface RegisterChannelParams {
+  sequence: string;
+  channelUrl?: string;
+  channelId?: string;
+}
 
 export default {
   get(id) {
@@ -44,7 +48,7 @@ export default {
     });
   },
 
-  async register({ channelUrl, channelId, sequence }: IChannelRegisterParams) {
+  async register({ channelUrl, channelId, sequence }: RegisterChannelParams) {
     let channelData = {};
 
     if (typeof channelUrl !== 'undefined') {
@@ -64,7 +68,7 @@ export default {
         S: 'channel',
       },
       relId: {
-        S: sequence,
+        S: `${sequence.padStart(3, '0')}/${channelData.id}`,
       },
       channelId: {
         S: channelData.id,

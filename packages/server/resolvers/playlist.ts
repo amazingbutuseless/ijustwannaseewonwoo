@@ -3,6 +3,13 @@ import Channel from './channel';
 
 import { IPlaylistListParams } from '../types';
 
+interface RegisterPlaylistParams {
+  channelId: string;
+  playlistId: string;
+  title: string;
+  sequence: string;
+}
+
 export default {
   get(playlistId: string) {
     const ExpressionAttributeValues = {
@@ -73,13 +80,13 @@ export default {
     });
   },
 
-  async register({ channelId, playlistId, title, sequence }) {
+  async register({ channelId, playlistId, title, sequence }: RegisterPlaylistParams) {
     const Item = {
       id: {
         S: 'playlist',
       },
       relId: {
-        S: sequence,
+        S: `${sequence.padStart(3, '0')}/${playlistId}`,
       },
       channelId: {
         S: channelId,

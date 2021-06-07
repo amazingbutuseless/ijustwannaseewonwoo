@@ -1,4 +1,10 @@
-#ijustwannasee😽
+# ijustwannasee😽
+
+> 프로젝트를 구성 요소(컴포넌트) 단위로 저장소를 분리하고 있습니다. 저장소 분리가 완료되면 이 저장소는 archive 상태로 전환됩니다.
+> 
+> active 상태의 코드 확인은 이 저장소가 아닌 각각의 컴포넌트 저장소에서 확인해주세요.
+> * collector: https://github.com/amazingbutuseless/ijustwannaseewonwoo-collector
+> * api: https://github.com/amazingbutuseless/ijustwannaseewonwoo-server
 
 ## TMI; 프로젝트의 시작
 (여러분이 그동안 Github에서 본 적 없을 TMI로 README를 시작하자면,) 저는 2020년 6월, 데뷔 6년차인 아이돌 그룹 멤버에 갑작스레 입덕을 하게 되었어요. 데뷔 6년차쯤 되면 공식, 비공식적으로 만들어진 동영상이 엄청 많습디다. 그러다보니 덕질에 입문한 여름부터 내내 "한두어달 휴직하고 우리애 동영상이나 실컷 봤으면 좋겠다"를 중얼거리면서 새벽 두세시까지 유튜브와 트위터를 방황하다 여덜시에 일어나 출근을 하는 생활을 계속 하게 됐습니다. 

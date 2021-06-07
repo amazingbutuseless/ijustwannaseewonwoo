@@ -20,7 +20,7 @@ const serverlessConfiguration: Serverless = {
 
   provider: {
     name: 'aws',
-    runtime: 'nodejs14.x',
+    runtime: 'nodejs12.x',
     region: 'ap-northeast-2',
     stage: '${env:ENV, opt:stage}',
     apiGateway: {
@@ -32,21 +32,20 @@ const serverlessConfiguration: Serverless = {
     deploymentBucket: {
       name: 'amazingbutuseless-serverless-deploy',
     },
-    iamRoleStatements: [{
-      Effect: 'Allow',
-      Action: [
-        "dynamodb:GetItem",
-        "dynamodb:PutItem",
-        "dynamodb:UpdateItem",
-        "dynamodb:DeleteItem",
-        "dynamodb:Query",
-        "dynamodb:Scan"
-      ],
-      Resource: [
-        '${env:DB_ARN}',
-        '${env:DB_ARN}/*'
-      ],
-    }]
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: [
+          'dynamodb:GetItem',
+          'dynamodb:PutItem',
+          'dynamodb:UpdateItem',
+          'dynamodb:DeleteItem',
+          'dynamodb:Query',
+          'dynamodb:Scan',
+        ],
+        Resource: ['${env:DB_ARN}', '${env:DB_ARN}/*'],
+      },
+    ],
   },
 
   functions: {
@@ -59,7 +58,7 @@ const serverlessConfiguration: Serverless = {
             path: 'graphql',
             cors: true,
             authorizer: {
-              type: 'aws_iam'
+              type: 'aws_iam',
             },
           },
         },

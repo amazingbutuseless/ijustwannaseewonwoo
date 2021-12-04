@@ -9,7 +9,6 @@
     "test": "IS_OFFLINE=true jest"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^7.9.1",
     "apollo-server-lambda": "^2.18.2",
     "aws-sdk": "^2.802.0",
     "googleapis": "^65.0.0",

@@ -2,9 +2,34 @@
   "name": "ijustwannaseewonwoo",
   "private": true,
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "eslint": "^8.6.0",
+    "eslint-plugin-import": "^2.25.4",
+    "husky": "^7.0.4",
+    "lerna": "^4.0.0",
+    "prettier": "^2.5.1"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "electron",
+      "electron/**",
+      "electron-squirrel-startup",
+      "electron-squirrel-startup/**",
+      "@electron-forge",
+      "@electron-forge/**"
+    ]
+  },
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "packages/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --quiet"
+    ]
+  }
 }

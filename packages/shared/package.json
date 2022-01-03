@@ -1,0 +1,19 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "description": "ijustwannaseewonwoo 공통 모듈",
+  "author": "amazingbutuseless <cindian@amazingbutuseless.net>",
+  "homepage": "https://github.com/amazingbutuseless/ijustwannaseewonwoo#readme",
+  "license": "ISC",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amazingbutuseless/ijustwannaseewonwoo.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/amazingbutuseless/ijustwannaseewonwoo/issues"
+  }
+}

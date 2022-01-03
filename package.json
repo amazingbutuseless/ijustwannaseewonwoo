@@ -2,6 +2,9 @@
   "name": "ijustwannaseewonwoo",
   "private": true,
   "devDependencies": {
+    "@storybook/addon-essentials": "^6.4.9",
+    "@storybook/addon-links": "^6.4.9",
+    "@storybook/react": "^6.4.9",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
     "eslint": "^8.6.0",
@@ -24,7 +27,8 @@
     ]
   },
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "storybook": "start-storybook -p 6006"
   },
   "lint-staged": {
     "packages/**/*.{ts,tsx}": [

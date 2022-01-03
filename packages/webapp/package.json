@@ -20,9 +20,12 @@
     "url": "https://github.com/amazingbutuseless/ijustwannaseewonwoo/issues"
   },
   "dependencies": {
+    "i18next": "^21.6.4",
     "next": "^12.0.7",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-i18next": "^11.15.3",
+    "shared": "^1.0.0"
   },
   "devDependencies": {
     "@types/next": "^9.0.0",

@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { ThemeProvider } from '@mui/material';
+import { SWRConfig } from 'swr';
 
 import i18n from 'config/i18n';
 import theme from './theme';
@@ -16,7 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <Layout>
-        <Component {...pageProps} />
+        <SWRConfig value={{ errorRetryCount: 0 }}>
+          <Component {...pageProps} />
+        </SWRConfig>
       </Layout>
     </ThemeProvider>
   );

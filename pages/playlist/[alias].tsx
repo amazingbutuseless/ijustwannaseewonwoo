@@ -3,10 +3,11 @@ import { GetStaticProps, GetStaticPaths } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Container, Typography } from '@mui/material';
+import useSWR from 'swr';
+import styled from '@emotion/styled';
 
 import API, { ENDPOINT } from 'config/amplify';
 import VideoSection from 'components/VideoSection';
-import useSWR from 'swr';
 
 interface Props {
   playlist: Playlist.Entities;
@@ -16,6 +17,30 @@ async function fetchVideos(resourceId: string) {
   const playlistVideos = await API.get(ENDPOINT.YOUTUBE, resourceId, {});
   return playlistVideos?.items || [];
 }
+
+const PlaylistCover = styled.header`
+  display: flex;
+  align-items: center;
+  min-height: 600px;
+  background-image: url(attr(data-cover));
+  background-size: cover;
+
+  h2 {
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  h2 + p {
+    font-size: 1.6rem;
+  }
+
+  @media (min-width: 768px) {
+  }
+
+  @media (min-width: 1024px) {
+    min-height: 400px;
+  }
+`;
 
 export default function Playlist({ playlist }: Props) {
   const router = useRouter();
@@ -33,8 +58,7 @@ export default function Playlist({ playlist }: Props) {
       </Head>
 
       <main>
-        <header>
-          background img
+        <PlaylistCover data-cover={playlist.coverImg}>
           <Container>
             <Typography variant="h2">{playlist.title}</Typography>
             {playlist.description && (
@@ -43,7 +67,7 @@ export default function Playlist({ playlist }: Props) {
               </Typography>
             )}
           </Container>
-        </header>
+        </PlaylistCover>
 
         <VideoSection isLoading={!data && !error} videos={data} onClick={handleVideoClick} />
       </main>

@@ -1,8 +1,25 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import type { AppProps } from 'next/app';
+import { useRouter } from 'next/router';
+import { ThemeProvider } from '@mui/material';
+
+import i18n from 'config/i18n';
+import theme from './theme';
+import Layout from 'components/Layout';
+
+import 'styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  const { locale } = useRouter();
+
+  i18n.changeLanguage(locale);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </ThemeProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;

@@ -6,6 +6,7 @@ import { SWRConfig } from 'swr';
 import i18n from 'config/i18n';
 import theme from './theme';
 import Layout from 'components/Layout';
+import PlayerPreference from 'contexts/PlayerPreference';
 
 import 'styles/globals.css';
 
@@ -16,11 +17,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Layout>
-        <SWRConfig value={{ errorRetryCount: 0 }}>
-          <Component {...pageProps} />
-        </SWRConfig>
-      </Layout>
+      <SWRConfig value={{ errorRetryCount: 0 }}>
+        <Layout>
+          <PlayerPreference>
+            <Component {...pageProps} />
+          </PlayerPreference>
+        </Layout>
+      </SWRConfig>
     </ThemeProvider>
   );
 }

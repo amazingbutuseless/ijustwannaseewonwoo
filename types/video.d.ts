@@ -20,6 +20,13 @@ declare namespace Video {
   interface RegisteredVideo extends Video, WithPublishedAt {
     noAppears: number;
   }
+
+  interface Scene {
+    id: string;
+    startTime: number;
+    endTime: number;
+    thumbnailUrl: string;
+  }
 }
 
 export = Video;

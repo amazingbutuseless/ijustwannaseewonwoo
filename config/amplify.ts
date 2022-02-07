@@ -16,7 +16,7 @@ Amplify.configure({
   API: {
     graphql_endpoint: 'https://d1dvaqberyhra5.cloudfront.net/cms/read/ko-KR',
     graphql_headers: async () => ({
-      Authorization: `Bearer ${process.env.CMS_API_PUBLIC_KEY}`,
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_CMS_API_KEY}`,
     }),
     endpoints: [
       {

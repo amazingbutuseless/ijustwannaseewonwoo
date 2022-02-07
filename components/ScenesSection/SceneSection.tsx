@@ -1,23 +1,22 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { Divider, FormControlLabel, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-interface Props {
-  autoPlay: boolean;
-  onAutoPlayChange: (autoPlay: boolean) => void;
-}
+import { PlayerPreferenceContext } from 'contexts/PlayerPreference';
 
-export default function ScenesSection({ autoPlay, onAutoPlayChange, children }: React.PropsWithChildren<Props>) {
+export default function ScenesSection({ children }: React.PropsWithChildren<{}>) {
+  const playerPreference = useContext(PlayerPreferenceContext);
+
   const { t } = useTranslation('common');
 
   const handleAutoPlayChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onAutoPlayChange(e.target.checked);
+    playerPreference.setAutoplay(e.target.checked);
   }, []);
 
   return (
     <>
       <FormControlLabel
-        control={<Switch defaultChecked={autoPlay} onChange={handleAutoPlayChange} />}
+        control={<Switch checked={playerPreference.autoplay} onChange={handleAutoPlayChange} />}
         label={t('autoplay')}
       />
       <Divider sx={{ marginBottom: 1 }} />

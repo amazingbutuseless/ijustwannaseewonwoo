@@ -1,4 +1,5 @@
 import { useCallback, useContext, useRef, useState } from 'react';
+import YouTube, { YouTubeProps } from 'react-youtube';
 
 import { PlayerPreferenceContext } from 'contexts/PlayerPreference';
 
@@ -8,15 +9,26 @@ export default function useYoutubePlayer(
 ) {
   const { autoplay } = useContext(PlayerPreferenceContext);
 
-  const playerInstance = useRef();
+  const playerInstance = useRef<ReturnType<YouTube['getInternalPlayer']>>();
   const videoTimer = useRef<number>();
+  const currentScene = useRef<number>();
 
-  const [currentScene, setCurrentScene] = useState<number>();
   const [stopTo, setStopTo] = useState<number>();
 
-  const onReady = ({ target }) => {
+  const onReady: YouTubeProps['onReady'] = ({ target }) => {
     playerInstance.current = target;
   };
+
+  const changeCurrentScene = useCallback((nextSceneIdx?: number) => {
+    if (typeof currentScene.current !== 'undefined') {
+      sceneRefs.current[currentScene.current].classList.remove('active');
+    }
+
+    if (typeof nextSceneIdx !== 'undefined') {
+      sceneRefs.current[nextSceneIdx].classList.add('active');
+      currentScene.current = nextSceneIdx;
+    }
+  }, []);
 
   const onPlay = useCallback(() => {
     if (videoTimer.current) {
@@ -24,6 +36,7 @@ export default function useYoutubePlayer(
     }
 
     if (!stopTo) {
+      changeCurrentScene();
       return;
     }
 
@@ -34,11 +47,10 @@ export default function useYoutubePlayer(
         window.clearInterval(videoTimer.current);
         setStopTo(undefined);
 
-        const hasNextScene = typeof currentScene !== 'undefined' && currentScene < scenes.length - 1;
+        const hasNextScene = typeof currentScene.current !== 'undefined' && currentScene.current < scenes.length - 1;
 
         if (autoplay && hasNextScene) {
-          sceneRefs.current[currentScene].classList.remove('active');
-          sceneRefs.current[currentScene + 1].click();
+          sceneRefs.current[(currentScene.current as number) + 1].click();
           return;
         }
 
@@ -49,22 +61,19 @@ export default function useYoutubePlayer(
     videoTimer.current = window.setInterval(stopCurrentScene, 200);
   }, [stopTo]);
 
-  const onSceneClick = (startTime, endTime) => {
+  const onSceneClick = (startTime: number, endTime: number) => {
     if (playerInstance.current) {
       setStopTo(endTime);
 
       const sceneIdx = scenes.findIndex((scene) => scene.startTime === startTime && scene.endTime === endTime);
-      if (currentScene) {
-        sceneRefs.current[currentScene].classList.remove('active');
-      }
-      sceneRefs.current[sceneIdx].classList.add('active');
-      setCurrentScene(sceneIdx);
+      changeCurrentScene(sceneIdx);
 
       playerInstance.current.seekTo(startTime, true);
-
-      if (playerInstance.current.getPlayerState() !== 1) {
-        playerInstance.current.playVideo();
-      }
+      window.setTimeout(() => {
+        if (playerInstance.current.getPlayerState() !== YouTube.PlayerState.PLAYING) {
+          playerInstance.current.playVideo();
+        }
+      }, 200);
     }
   };
 

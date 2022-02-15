@@ -3,14 +3,12 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import YouTube from 'react-youtube';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
 import { CircularProgress, Container, Grid } from '@mui/material';
-import useSWR from 'swr';
 
 import ScenesSection from 'components/ScenesSection/SceneSection';
 import Scene from 'components/Scene';
-import API from 'config/amplify';
 import useYoutubePlayer from 'helpers/useYoutubePlayer';
+import useVideoDetails from 'helpers/useVideoDetails';
 
 const VideoPlayerWrapper = styled.div`
   position: relative;
@@ -24,55 +22,6 @@ const VideoPlayerWrapper = styled.div`
     height: 100%;
   }
 `;
-
-async function fetchVideo(videoId: string) {
-  const video = await API.graphql({
-    query: `
-    query getVideo($videoId: String) {
-      getVideo(where: { videoId: $videoId }) {
-        data {
-          id
-          title
-          forWonwoo
-        }
-      }
-    }`,
-    variables: {
-      videoId,
-    },
-  });
-
-  const internalVideoId = video?.data?.getVideo?.data?.id || null;
-  let scenes = {};
-
-  if (internalVideoId) {
-    scenes = await API.graphql({
-      query: `
-      query listScenes($listSceneParams: SceneListWhereInput) {
-        listScenes(where: $listSceneParams, sort: [startTime_ASC]) {
-          data {
-            id
-            startTime
-            endTime
-            thumbnailUrl
-          }
-        }
-      }`,
-      variables: {
-        listSceneParams: {
-          video: {
-            id: internalVideoId,
-          },
-        },
-      },
-    });
-  }
-
-  return {
-    ...video?.data?.getVideo?.data,
-    scenes: scenes.data?.listScenes?.data || [],
-  };
-}
 
 function VideoLoading() {
   return (
@@ -96,10 +45,7 @@ export default function Video() {
   const router = useRouter();
   const { videoId } = router.query;
 
-  const { data: video, error } = useSWR(`/video/${videoId}`, () => {
-    return fetchVideo(videoId as string);
-  });
-  const isLoading = !video && !error;
+  const { video, isLoading } = useVideoDetails(videoId as string);
 
   const sceneRefs = React.useRef<HTMLButtonElement[]>([]);
 

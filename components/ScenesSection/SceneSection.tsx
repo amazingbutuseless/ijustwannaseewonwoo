@@ -18,6 +18,7 @@ export default function ScenesSection({ children }: React.PropsWithChildren<{}>)
       <FormControlLabel
         control={<Switch checked={playerPreference.autoplay} onChange={handleAutoPlayChange} />}
         label={t('autoplay')}
+        sx={{ fontSize: '1.2rem' }}
       />
       <Divider sx={{ marginBottom: 1 }} />
       {children}

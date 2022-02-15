@@ -145,7 +145,7 @@ html {
   --davys-grey: #545454ff;
   --sonic-silver: #757575ff;
 
-  --titleBarHeight: 38px;
+  --app-bar-height: 6.4rem;
   --borderRadius: 4px;
   --boxShadow: 0 0 24px 0 rgba(0, 0, 0, 0.5);
 

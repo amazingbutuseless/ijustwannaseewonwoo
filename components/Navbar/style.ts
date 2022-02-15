@@ -3,7 +3,7 @@ import { AppBar } from '@mui/material';
 
 export const Wrapper = styled(AppBar)`
   justify-content: center;
-  min-height: 6.4rem;
+  min-height: var(--app-bar-height);
   background-color: #fff;
 
   h1 {

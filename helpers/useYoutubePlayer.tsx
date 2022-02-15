@@ -4,8 +4,10 @@ import YouTube, { YouTubeProps } from 'react-youtube';
 import { PlayerPreferenceContext } from 'contexts/PlayerPreference';
 
 export default function useYoutubePlayer(
+  videoId: string,
   scenes: Video.Scene[],
-  sceneRefs: React.MutableRefObject<HTMLButtonElement[]>
+  sceneRefs: React.MutableRefObject<HTMLButtonElement[]>,
+  startTimeFromUrl?: string
 ) {
   const { autoplay } = useContext(PlayerPreferenceContext);
 
@@ -14,10 +16,6 @@ export default function useYoutubePlayer(
   const currentScene = useRef<number>();
 
   const [stopTo, setStopTo] = useState<number>();
-
-  const onReady: YouTubeProps['onReady'] = ({ target }) => {
-    playerInstance.current = target;
-  };
 
   const changeCurrentScene = useCallback((nextSceneIdx?: number) => {
     if (typeof currentScene.current !== 'undefined') {
@@ -29,6 +27,24 @@ export default function useYoutubePlayer(
       currentScene.current = nextSceneIdx;
     }
   }, []);
+
+  const onReady: YouTubeProps['onReady'] = ({ target }) => {
+    playerInstance.current = target;
+
+    if (startTimeFromUrl) {
+      const startTime = parseInt(startTimeFromUrl, 10);
+      const sceneIdx = scenes.findIndex((scene) => scene.startTime === startTime);
+      if (sceneIdx > -1) {
+        playerInstance.current.seekTo(startTime, true);
+        changeCurrentScene(sceneIdx);
+        setStopTo(scenes[sceneIdx].endTime);
+      }
+    } else if (scenes.length > 0) {
+      playerInstance.current.seekTo(scenes[0].startTime, true);
+      setStopTo(scenes[0].endTime);
+      changeCurrentScene(0);
+    }
+  };
 
   const onPlay = useCallback(() => {
     if (videoTimer.current) {
@@ -68,12 +84,10 @@ export default function useYoutubePlayer(
       const sceneIdx = scenes.findIndex((scene) => scene.startTime === startTime && scene.endTime === endTime);
       changeCurrentScene(sceneIdx);
 
-      playerInstance.current.seekTo(startTime, true);
-      window.setTimeout(() => {
-        if (playerInstance.current.getPlayerState() !== YouTube.PlayerState.PLAYING) {
-          playerInstance.current.playVideo();
-        }
-      }, 200);
+      playerInstance.current.loadVideoById({
+        videoId,
+        startSeconds: startTime,
+      });
     }
   };
 

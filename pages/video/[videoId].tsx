@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import YouTube from 'react-youtube';
@@ -43,11 +43,11 @@ function VideoLoading() {
 
 export default function Video() {
   const router = useRouter();
-  const { videoId } = router.query;
+  const { videoId, t } = router.query;
 
   const { video, isLoading } = useVideoDetails(videoId as string);
 
-  const sceneRefs = React.useRef<HTMLButtonElement[]>([]);
+  const sceneRefs = useRef<HTMLButtonElement[]>([]);
 
   useEffect(() => {
     return () => {
@@ -55,11 +55,16 @@ export default function Video() {
     };
   }, [videoId]);
 
-  const addSceneRef = React.useCallback((ref: HTMLButtonElement) => {
+  const addSceneRef = useCallback((ref: HTMLButtonElement) => {
     sceneRefs.current.push(ref);
   }, []);
 
-  const { onReady, onPlay, onSceneClick } = useYoutubePlayer(video?.scenes || [], sceneRefs);
+  const { onReady, onPlay, onSceneClick } = useYoutubePlayer(
+    videoId as string,
+    video?.scenes || [],
+    sceneRefs,
+    t as string
+  );
 
   if (isLoading) {
     return <VideoLoading />;
@@ -77,7 +82,7 @@ export default function Video() {
             <VideoPlayerWrapper>
               <YouTube
                 videoId={videoId as string}
-                opts={{ playerVars: { controls: 1 } }}
+                opts={{ playerVars: { controls: 1, autoplay: 1 } }}
                 onReady={onReady}
                 onPlay={onPlay}
               />

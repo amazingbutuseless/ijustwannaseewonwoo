@@ -30,11 +30,13 @@ export default function Video({ videoId, title, publishedAt, thumbnails, onClick
         </div>
 
         <CardContent>
-          <Typography variant="h3" gutterBottom={true}>
+          <Typography variant="body2" gutterBottom={true}>
             {title}
           </Typography>
-          <Typography variant="body2">{channel}</Typography>
-          <Typography variant="body1">{dayjs(publishedAt).format('YYYY.MM.DD')}</Typography>
+          <div>
+            <Typography variant="caption">{channel}</Typography> ・{' '}
+            <Typography variant="caption">{dayjs(publishedAt).format('YYYY.MM.DD')}</Typography>
+          </div>
         </CardContent>
       </CardActionArea>
     </Styled.Wrapper>

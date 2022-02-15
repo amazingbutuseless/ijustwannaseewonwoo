@@ -21,24 +21,25 @@ async function fetchVideos(resourceId: string) {
 const PlaylistCover = styled.header`
   display: flex;
   align-items: center;
+  margin-top: calc(-1 * var(--app-bar-height));
   min-height: 600px;
   background-image: url(attr(data-cover));
   background-size: cover;
 
   h2 {
     margin-bottom: 1rem;
-    font-weight: 500;
-  }
-
-  h2 + p {
-    font-size: 1.6rem;
+    font-size: 3.2rem;
+    font-weight: 700;
   }
 
   @media (min-width: 768px) {
+    h2 {
+      font-size: 4.8rem;
+    }
   }
 
   @media (min-width: 1024px) {
-    min-height: 400px;
+    min-height: 48rem;
   }
 `;
 
@@ -60,7 +61,9 @@ export default function Playlist({ playlist }: Props) {
       <main>
         <PlaylistCover data-cover={playlist.coverImg}>
           <Container>
-            <Typography variant="h2">{playlist.title}</Typography>
+            <Typography variant="h1" component="h2">
+              {playlist.title}
+            </Typography>
             {playlist.description && (
               <Typography variant="body1" component="p">
                 {playlist.description}

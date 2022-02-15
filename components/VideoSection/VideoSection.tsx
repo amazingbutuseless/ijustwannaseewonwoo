@@ -1,20 +1,18 @@
-import { Typography, Grid, Container } from '@mui/material';
+import { Grid, Container } from '@mui/material';
 
 import Video from 'components/Video';
 
 interface Props {
-  title?: string;
+  heading?: React.ReactElement;
   isLoading: boolean;
   videos: Video[];
   onClick: (videoId: string) => void;
 }
 
-export default function VideoSection({ title, isLoading, videos, onClick }: Props) {
+export default function VideoSection({ heading, isLoading, videos, onClick }: Props) {
   return (
     <Container component="section">
-      <Typography variant="h3" style={{ display: title ? 'block' : 'none' }}>
-        {title || 'Videos'}
-      </Typography>
+      {heading}
 
       <Grid container spacing={3} wrap="wrap">
         {isLoading && <>Loading...</>}

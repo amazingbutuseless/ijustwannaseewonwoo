@@ -26,7 +26,7 @@ export default function Home({ recentlyAddedVideos = [] }) {
         </section>
 
         <VideoSection
-          title={t('section.videos')}
+          heading={<Typography variant="h2">{t('section.videos')}</Typography>}
           videos={recentlyAddedVideos}
           onClick={handleVideoClick}
           isLoading={false}

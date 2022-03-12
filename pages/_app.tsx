@@ -4,9 +4,10 @@ import { ThemeProvider } from '@mui/material';
 import { SWRConfig } from 'swr';
 
 import i18n from 'config/i18n';
-import theme from './theme';
+import theme from 'config/theme';
 import Layout from 'components/Layout';
 import PlayerPreference from 'contexts/PlayerPreference';
+import SnackbarProvider from 'contexts/SnackbarContext';
 
 import 'styles/globals.css';
 
@@ -20,7 +21,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <SWRConfig value={{ errorRetryCount: 0 }}>
         <Layout>
           <PlayerPreference>
-            <Component {...pageProps} />
+            <SnackbarProvider>
+              <Component {...pageProps} />
+            </SnackbarProvider>
           </PlayerPreference>
         </Layout>
       </SWRConfig>

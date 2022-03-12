@@ -9,6 +9,7 @@ import ScenesSection from 'components/ScenesSection/SceneSection';
 import Scene from 'components/Scene';
 import useYoutubePlayer from 'helpers/useYoutubePlayer';
 import useVideoDetails from 'helpers/useVideoDetails';
+import useShareDialog from 'helpers/useShareDialog';
 
 const VideoPlayerWrapper = styled.div`
   position: relative;
@@ -66,6 +67,8 @@ export default function Video() {
     t as string
   );
 
+  const { show: showShareDialog } = useShareDialog(`/video/${videoId}`);
+
   if (isLoading) {
     return <VideoLoading />;
   }
@@ -99,6 +102,7 @@ export default function Video() {
                     startTime={scene.startTime}
                     endTime={scene.endTime}
                     onClick={onSceneClick}
+                    onShareButtonClick={showShareDialog}
                     ref={addSceneRef}
                   />
                 ))}

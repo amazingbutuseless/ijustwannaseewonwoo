@@ -2,6 +2,8 @@ import { Card, CardActionArea } from '@mui/material';
 import styled from '@emotion/styled';
 
 export const SceneWrapper = styled(Card)`
+  position: relative;
+
   & + & {
     margin-top: 1rem;
   }

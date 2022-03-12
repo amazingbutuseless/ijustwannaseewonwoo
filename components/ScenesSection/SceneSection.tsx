@@ -1,8 +1,9 @@
 import React, { useCallback, useContext } from 'react';
-import { Divider, FormControlLabel, Switch } from '@mui/material';
+import { Divider, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 import { PlayerPreferenceContext } from 'contexts/PlayerPreference';
+import { SwitchWrapper } from './style';
 
 export default function ScenesSection({ children }: React.PropsWithChildren<{}>) {
   const playerPreference = useContext(PlayerPreferenceContext);
@@ -15,10 +16,9 @@ export default function ScenesSection({ children }: React.PropsWithChildren<{}>)
 
   return (
     <>
-      <FormControlLabel
+      <SwitchWrapper
         control={<Switch checked={playerPreference.autoplay} onChange={handleAutoPlayChange} />}
         label={t('autoplay')}
-        sx={{ fontSize: '1.2rem' }}
       />
       <Divider sx={{ marginBottom: 1 }} />
       {children}

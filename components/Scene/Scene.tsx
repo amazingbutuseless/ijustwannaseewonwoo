@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { CardActions, CardContent, CardMedia, Typography, Box, IconButton } from '@mui/material';
-import { Favorite, FavoriteBorder, Link } from '@mui/icons-material';
+import { FavoriteBorder, Link } from '@mui/icons-material';
 
 import { formatSecondsToMmss, formatSecondsToDuration } from 'helpers/time';
 

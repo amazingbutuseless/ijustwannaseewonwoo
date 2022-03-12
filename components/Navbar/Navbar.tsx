@@ -1,9 +1,9 @@
+import React from 'react';
 import Link from 'next/link';
 
 import { Container, Typography } from '@mui/material';
 
 import * as Styled from './style';
-import React from 'react';
 
 export default function Navbar(props: unknown) {
   return (

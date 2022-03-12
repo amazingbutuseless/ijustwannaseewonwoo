@@ -1,8 +1,7 @@
 import API, { ENDPOINT } from 'config/amplify';
 
-export async function fetchVideos(resourceId: string) {
-  const playlistVideos = await API.get(ENDPOINT.YOUTUBE, resourceId, {});
-  return playlistVideos?.items || [];
+export function fetchVideos(reqPath: string) {
+  return API.get(ENDPOINT.YOUTUBE, reqPath, {});
 }
 
 export async function fetchList() {
@@ -46,5 +45,5 @@ export async function getByAlias(alias: string) {
     },
   });
 
-  return data;
+  return data.getPlaylists.data;
 }

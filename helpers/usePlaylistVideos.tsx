@@ -19,7 +19,28 @@ export default function usePlaylistVideos(playlistId: string) {
     setSize(size + 1);
   }, []);
 
-  const videos = useMemo(() => data?.map((response) => response.items).flat() || [], [data]);
+  const videos = useMemo(
+    () =>
+      data
+        ?.map((response) =>
+          response.items.map((video) => {
+            const thumbnails: { [k in Video.ThumbnailResolutions]?: string } = {};
+            Object.entries(video.snippet.thumbnails).forEach(([key, value]) => {
+              thumbnails[key] = value.url;
+            });
+
+            return {
+              videoId: video.snippet.resourceId.videoId,
+              title: video.snippet.title,
+              publishedAt: video.snippet.publishedAt,
+              thumbnails,
+              channel: video.snippet.videoOwnerChannelTitle,
+            };
+          })
+        )
+        .flat() || [],
+    [data]
+  );
 
   return {
     isLoading,

@@ -6,10 +6,10 @@ interface Props {
   heading?: React.ReactElement;
   isLoading: boolean;
   videos: Video[];
-  onClick: (videoId: string) => void;
+  onVideoClick: (videoId: string, title: string) => void;
 }
 
-export default function VideoSection({ heading, isLoading, videos, onClick }: Props) {
+export default function VideoSection({ heading, isLoading, videos, onVideoClick }: Props) {
   return (
     <Container component="section">
       {heading}
@@ -21,14 +21,12 @@ export default function VideoSection({ heading, isLoading, videos, onClick }: Pr
             return (
               <Grid item xs={6} sm={6} md={4} lg={3} xl={3} key={video.id}>
                 <Video
-                  videoId={video.id}
-                  title={video.snippet.title}
-                  publishedAt={new Date(video.snippet.publishedAt).toISOString()}
-                  thumbnails={video.snippet.thumbnails}
-                  channel={video.snippet.videoOwnerChannelTitle}
-                  onClick={() => {
-                    onClick(video.snippet.resourceId.videoId);
-                  }}
+                  videoId={video.videoId}
+                  title={video.title}
+                  publishedAt={new Date(video.publishedAt).toISOString()}
+                  thumbnails={video.thumbnails}
+                  channel={video.channel}
+                  onClick={onVideoClick}
                 />
               </Grid>
             );

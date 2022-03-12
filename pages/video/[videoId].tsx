@@ -26,7 +26,7 @@ function VideoLoading() {
 
 export default function Video() {
   const router = useRouter();
-  const { videoId, t } = router.query;
+  const { videoId, t, title } = router.query;
 
   const { video, isLoading } = useVideoDetails(videoId as string);
 
@@ -37,7 +37,7 @@ export default function Video() {
   return (
     <>
       <Head>
-        <title>{video.title} - ijustwannasee</title>
+        <title>{video?.title || title} - ijustwannasee</title>
       </Head>
 
       <VideoDetails videoId={videoId as string} t={t as string} video={video} />

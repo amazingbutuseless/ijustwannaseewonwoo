@@ -8,6 +8,7 @@ import { Typography } from '@mui/material';
 import VideoSection from 'components/VideoSection';
 import { fetchList } from 'api/playlist';
 import PlaylistSection, { PlaylistSectionProps } from 'components/PlaylistSection';
+import { fetchRecentlyAddedVideos } from 'api/video';
 
 interface Props extends PlaylistSectionProps {
   recentlyAddedVideos: Video.Entities[];
@@ -17,8 +18,8 @@ export default function Home({ playlist = [], recentlyAddedVideos = [] }: Props)
   const { t } = useTranslation('home');
   const router = useRouter();
 
-  const handleVideoClick = useCallback((videoId: string) => {
-    router.push(`/video/${videoId}`);
+  const handleVideoClick = useCallback((videoId: string, title: string) => {
+    router.push({ pathname: `/video/${videoId}`, query: { title } }, `/video/${videoId}`);
   }, []);
 
   return (
@@ -33,7 +34,7 @@ export default function Home({ playlist = [], recentlyAddedVideos = [] }: Props)
         <VideoSection
           heading={<Typography variant="h2">{t('section.videos')}</Typography>}
           videos={recentlyAddedVideos}
-          onClick={handleVideoClick}
+          onVideoClick={handleVideoClick}
           isLoading={false}
         />
       </main>
@@ -43,11 +44,12 @@ export default function Home({ playlist = [], recentlyAddedVideos = [] }: Props)
 
 export const getStaticProps: GetStaticProps = async () => {
   const playlist = await fetchList();
+  const videos = await fetchRecentlyAddedVideos();
 
   return {
     props: {
       playlist: playlist?.listPlaylists?.data,
-      recentlyAddedVideos: [],
+      recentlyAddedVideos: videos || [],
     },
   };
 };

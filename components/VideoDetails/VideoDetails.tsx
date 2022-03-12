@@ -53,7 +53,7 @@ export default function VideoDetails({ videoId, t, video }: Props) {
 
         <Grid item xs={12} sm={12} md={3} sx={{ p: 1 }}>
           <ScenesSection>
-            {video.scenes &&
+            {video?.scenes &&
               video.scenes.map((scene: Video.Scene) => (
                 <Scene
                   key={scene.id}

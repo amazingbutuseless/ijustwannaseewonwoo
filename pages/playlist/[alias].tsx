@@ -18,8 +18,8 @@ function Playlist({ playlist }: Props) {
 
   const { isLoading, videos, showMoreButton, onShowMoreButtonClick } = usePlaylistVideos(playlist.playlistId);
 
-  const handleVideoClick = useCallback((videoId: string) => {
-    router.push(`/video/${videoId}`);
+  const handleVideoClick = useCallback((videoId: string, title: string) => {
+    router.push({ pathname: `/video/${videoId}`, query: { title } }, `/video/${videoId}`);
   }, []);
 
   return (
@@ -30,7 +30,7 @@ function Playlist({ playlist }: Props) {
 
       <main>
         <PlaylistDetails {...playlist}>
-          <VideoSection isLoading={isLoading} videos={videos} onClick={handleVideoClick} />
+          <VideoSection isLoading={isLoading} videos={videos} onVideoClick={handleVideoClick} />
           {showMoreButton && (
             <button type="button" onClick={onShowMoreButtonClick}>
               Show More

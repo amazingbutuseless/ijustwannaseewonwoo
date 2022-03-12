@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { ThemeProvider } from '@mui/material';
 import { SWRConfig } from 'swr';
 
@@ -17,17 +18,22 @@ function MyApp({ Component, pageProps }: AppProps) {
   i18n.changeLanguage(locale);
 
   return (
-    <ThemeProvider theme={theme}>
-      <SWRConfig value={{ errorRetryCount: 0 }}>
-        <Layout>
-          <PlayerPreference>
-            <SnackbarProvider>
-              <Component {...pageProps} />
-            </SnackbarProvider>
-          </PlayerPreference>
-        </Layout>
-      </SWRConfig>
-    </ThemeProvider>
+    <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <ThemeProvider theme={theme}>
+        <SWRConfig value={{ errorRetryCount: 0 }}>
+          <Layout>
+            <PlayerPreference>
+              <SnackbarProvider>
+                <Component {...pageProps} />
+              </SnackbarProvider>
+            </PlayerPreference>
+          </Layout>
+        </SWRConfig>
+      </ThemeProvider>
+    </>
   );
 }
 

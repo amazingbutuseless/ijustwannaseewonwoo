@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import type { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import Head from 'next/head';
 import { ThemeProvider } from '@mui/material';
 import { SWRConfig } from 'swr';
@@ -9,6 +10,7 @@ import theme from 'config/theme';
 import Layout from 'components/Layout';
 import PlayerPreference from 'contexts/PlayerPreference';
 import SnackbarProvider from 'contexts/SnackbarContext';
+import Loading from 'components/Loading';
 
 import 'styles/globals.css';
 
@@ -16,6 +18,14 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { locale } = useRouter();
 
   i18n.changeLanguage(locale);
+
+  const [loading, setLoading] = useState(false);
+  Router.events.on('routeChangeStart', () => {
+    setLoading(true);
+  });
+  Router.events.on('routeChangeComplete', () => {
+    setLoading(false);
+  });
 
   return (
     <>
@@ -28,6 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <PlayerPreference>
               <SnackbarProvider>
                 <Component {...pageProps} />
+                {loading && <Loading />}
               </SnackbarProvider>
             </PlayerPreference>
           </Layout>

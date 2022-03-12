@@ -4,17 +4,12 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 
-import API, { ENDPOINT } from 'config/amplify';
 import PlaylistDetails from 'components/PlaylistDetails';
 import VideoSection from 'components/VideoSection';
+import { fetchList, fetchVideos, getByAlias } from 'api/playlist';
 
 interface Props {
   playlist: Playlist.Entities;
-}
-
-async function fetchVideos(resourceId: string) {
-  const playlistVideos = await API.get(ENDPOINT.YOUTUBE, resourceId, {});
-  return playlistVideos?.items || [];
 }
 
 export default function Playlist({ playlist }: Props) {
@@ -41,17 +36,7 @@ export default function Playlist({ playlist }: Props) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const { data } = await API.graphql({
-    query: `{listPlaylists{
-      data {
-        playlistId
-        alias
-        title
-        description
-        coverImg
-      }
-    }}`,
-  });
+  const data = await fetchList();
 
   const paths =
     data?.listPlaylists?.data?.map((playlist: Playlist.Entities) => ({ params: { alias: playlist.alias } })) || [];
@@ -63,23 +48,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { data } = await API.graphql({
-    query: `query getPlaylists($getPlaylistsParams: PlaylistsGetWhereInput!) {
-      getPlaylists(where: $getPlaylistsParams) {
-        data {
-          playlistId
-          title
-          description
-          coverImg
-        }
-      }
-    }`,
-    variables: {
-      getPlaylistsParams: {
-        alias: params?.playlistId,
-      },
-    },
-  });
+  const data = await getByAlias(params?.playlistId as string);
 
   return {
     props: {

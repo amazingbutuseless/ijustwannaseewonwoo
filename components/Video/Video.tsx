@@ -23,7 +23,8 @@ export default function Video({ videoId, title, publishedAt, thumbnails, onClick
           {forWonwoo && <Styled.ForWonwoo />}
           <CardMedia
             component="img"
-            srcSet={`${thumbnails.high.url} 1x, ${thumbnails.standard.url} 2x, ${thumbnails.maxres.url} 3x`}
+            src={thumbnails.high.url}
+            srcSet={`${thumbnails.high?.url}, ${thumbnails.standard?.url} 2x, ${thumbnails.maxres?.url} 3x`}
             alt={title}
             loading="lazy"
           />

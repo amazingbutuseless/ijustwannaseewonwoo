@@ -28,9 +28,11 @@ export default function Playlist({ playlist }: Props) {
         <title>{playlist.title} - ijustwannasee</title>
       </Head>
 
-      <PlaylistDetails {...playlist}>
-        <VideoSection isLoading={isLoading} videos={data} onClick={handleVideoClick} />
-      </PlaylistDetails>
+      <main>
+        <PlaylistDetails {...playlist}>
+          <VideoSection isLoading={isLoading} videos={data} onClick={handleVideoClick} />
+        </PlaylistDetails>
+      </main>
     </>
   );
 }

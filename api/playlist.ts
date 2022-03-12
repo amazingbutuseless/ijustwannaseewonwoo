@@ -14,6 +14,9 @@ export async function fetchList() {
         title
         description
         coverImg
+        portraitCoverImg
+        titleColor
+        descriptionColor
       }
     }}`,
   });
@@ -30,6 +33,9 @@ export async function getByAlias(alias: string) {
           title
           description
           coverImg
+          portraitCoverImg
+          titleColor
+          descriptionColor
         }
       }
     }`,

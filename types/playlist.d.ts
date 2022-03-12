@@ -5,6 +5,9 @@ declare namespace Playlist {
     title: string;
     description?: string;
     coverImg: string;
+    portraitCoverImg: string;
+    titleColor?: string;
+    descriptionColor?: string;
   }
 }
 

@@ -1,12 +1,19 @@
 import { useCallback } from 'react';
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import { Container, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
 import VideoSection from 'components/VideoSection';
+import { fetchList } from 'api/playlist';
+import PlaylistSection, { PlaylistSectionProps } from 'components/PlaylistSection';
 
-export default function Home({ recentlyAddedVideos = [] }) {
+interface Props extends PlaylistSectionProps {
+  recentlyAddedVideos: Video.Entities[];
+}
+
+export default function Home({ playlist = [], recentlyAddedVideos = [] }: Props) {
   const { t } = useTranslation('home');
   const router = useRouter();
 
@@ -20,10 +27,8 @@ export default function Home({ recentlyAddedVideos = [] }) {
         <title>{t('title')} - ijustwannasee</title>
       </Head>
 
-      <Container component="main">
-        <section>
-          <Typography variant="h2">{t('section.playlists')}</Typography>
-        </section>
+      <main>
+        <PlaylistSection playlist={playlist} />
 
         <VideoSection
           heading={<Typography variant="h2">{t('section.videos')}</Typography>}
@@ -31,15 +36,18 @@ export default function Home({ recentlyAddedVideos = [] }) {
           onClick={handleVideoClick}
           isLoading={false}
         />
-      </Container>
+      </main>
     </>
   );
 }
 
-export async function getServerSideProps(context) {
+export const getStaticProps: GetStaticProps = async () => {
+  const playlist = await fetchList();
+
   return {
     props: {
+      playlist: playlist?.listPlaylists?.data,
       recentlyAddedVideos: [],
     },
   };
-}
+};

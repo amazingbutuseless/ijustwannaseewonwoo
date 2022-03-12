@@ -149,5 +149,8 @@ html {
   --borderRadius: 4px;
   --boxShadow: 0 0 24px 0 rgba(0, 0, 0, 0.5);
 
+  --playlist-title-color: var(--jet);
+  --playlist-description-color: var(--silver-chalice);
+
   font-size: 10px;
 }

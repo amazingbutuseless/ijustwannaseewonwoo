@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { CSSProperties, ReactElement } from 'react';
 import { Container, Typography } from '@mui/material';
 import { LinkProps } from 'next/link';
 
@@ -22,21 +22,22 @@ export default function PlaylistDetails({
 }: React.PropsWithChildren<Props>) {
   return (
     <>
-      <Styled.PlaylistCover landscape={coverImg} portrait={portraitCoverImg}>
+      <Styled.PlaylistCover
+        landscape={coverImg}
+        portrait={portraitCoverImg}
+        style={
+          {
+            '--title-color': titleColor || 'var(--playlist-title-color)',
+            '--description-color': descriptionColor || 'var(--playlist-description-color)',
+          } as CSSProperties
+        }
+      >
         <Container>
-          <Typography
-            variant="h1"
-            component={`h${headingLevel}`}
-            style={{ color: titleColor || 'var(--playlist-title-color)' }}
-          >
+          <Typography variant="h1" component={`h${headingLevel}`}>
             {title}
           </Typography>
           {description && (
-            <Typography
-              variant="body1"
-              component="p"
-              style={{ color: descriptionColor || 'var(--playlist-description-color)' }}
-            >
+            <Typography variant="body1" component="p">
               {description}
             </Typography>
           )}

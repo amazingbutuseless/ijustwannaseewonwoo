@@ -18,17 +18,11 @@ export const PlaylistCover = styled.header<PlaylistCoverProps>`
     margin-bottom: 1rem;
     font-size: 3.2rem;
     font-weight: 700;
+    color: var(--title-color, --playlist-title-color);
   }
-
-  a {
-    display: inline-block;
-    margin-top: 1.6rem;
-    padding: 1.6rem 2.4rem;
-    border-radius: 2px;
-    background-color: #000;
-    font-size: 1.4rem;
-    color: #fff;
-    text-decoration: none;
+  
+  p {
+    color: var(--description-color, --playlist-description-color);
   }
 
   @media (orientation: portrait) {
@@ -36,12 +30,10 @@ export const PlaylistCover = styled.header<PlaylistCoverProps>`
   }
 
   @media (min-width: 768px) {
-    h2 {
+    min-height: 48rem;
+
+    h2, h3 {
       font-size: 4.8rem;
     }
-  }
-
-  @media (min-width: 1024px) {
-    min-height: 48rem;
   }
 `;

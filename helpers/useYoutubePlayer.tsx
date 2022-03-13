@@ -75,7 +75,7 @@ export default function useYoutubePlayer(
     };
 
     videoTimer.current = window.setInterval(stopCurrentScene, 200);
-  }, [stopTo]);
+  }, [stopTo, autoplay]);
 
   const onSceneClick = (startTime: number, endTime: number) => {
     if (playerInstance.current) {

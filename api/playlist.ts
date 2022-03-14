@@ -1,31 +1,36 @@
 import API, { ENDPOINT } from 'config/amplify';
+import { gql } from 'graphql-request';
+
+import graphqlFetcher from 'helpers/graphqlFetcher';
 
 export function fetchVideos(reqPath: string) {
   return API.get(ENDPOINT.YOUTUBE, reqPath, {});
 }
 
-export async function fetchList() {
-  const { data } = await API.graphql({
-    query: `{listPlaylists{
-      data {
-        playlistId
-        alias
-        title
-        description
-        coverImg
-        portraitCoverImg
-        titleColor
-        descriptionColor
+export function fetchList() {
+  const query = gql`
+    {
+      listPlaylists {
+        data {
+          playlistId
+          alias
+          title
+          description
+          coverImg
+          portraitCoverImg
+          titleColor
+          descriptionColor
+        }
       }
-    }}`,
-  });
+    }
+  `;
 
-  return data;
+  return graphqlFetcher('read', query);
 }
 
-export async function getByAlias(alias: string) {
-  const { data } = await API.graphql({
-    query: `query getPlaylists($getPlaylistsParams: PlaylistsGetWhereInput!) {
+export function getByAlias(alias: string) {
+  const query = gql`
+    query getPlaylists($getPlaylistsParams: PlaylistsGetWhereInput!) {
       getPlaylists(where: $getPlaylistsParams) {
         data {
           playlistId
@@ -37,13 +42,14 @@ export async function getByAlias(alias: string) {
           descriptionColor
         }
       }
-    }`,
-    variables: {
-      getPlaylistsParams: {
-        alias,
-      },
-    },
-  });
+    }
+  `;
 
-  return data.getPlaylists.data;
+  const variables = {
+    getPlaylistsParams: {
+      alias,
+    },
+  };
+
+  return graphqlFetcher('read', query, variables);
 }

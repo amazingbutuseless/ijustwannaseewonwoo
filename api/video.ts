@@ -1,44 +1,43 @@
-import API from 'config/amplify';
+import { gql } from 'graphql-request';
 
-export async function fetchRecentlyAddedVideos() {
-  const { data } = await API.graphql({
-    query: `
-  query listVideos {
-    listVideos(where: {}, sort: [publishedAt_DESC], limit: 12) {
-      data {
-        videoId
-        title
-        publishedAt
-        thumbnails {
-          standard
-          high
-          maxres
+import graphqlFetcher from 'helpers/graphqlFetcher';
+
+export function fetchRecentlyAddedVideos() {
+  const query = gql`
+    query listVideos {
+      listVideos(where: {}, sort: [publishedAt_DESC], limit: 12) {
+        data {
+          videoId
+          title
+          publishedAt
+          thumbnails {
+            standard
+            high
+            maxres
+          }
+          channel
         }
-        channel
       }
     }
-  }`,
-  });
+  `;
 
-  return data?.listVideos?.data;
+  return graphqlFetcher('read', query);
 }
 
-export async function getById(videoId: string) {
-  const { data } = await API.graphql({
-    query: `
-    query getVideo($videoId: String) {
-      getVideo(where: { videoId: $videoId }) {
-        data {
-          id
-          title
-          forWonwoo
-        }
+export function getById(videoId: string) {
+  const query = `
+  query getVideo($videoId: String) {
+    getVideo(where: { videoId: $videoId }) {
+      data {
+        id
+        title
+        forWonwoo
       }
-    }`,
-    variables: {
-      videoId,
-    },
-  });
+    }
+  }`;
+  const variables = {
+    videoId,
+  };
 
-  return data?.getVideo?.data || {};
+  return graphqlFetcher('read', query, variables);
 }

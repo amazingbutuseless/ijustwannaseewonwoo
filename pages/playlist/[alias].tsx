@@ -51,10 +51,10 @@ export default function Page({ playlist, fallback }: Props & { fallback: never }
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const data = await fetchList();
+  const { listPlaylists } = await fetchList()();
 
   const paths =
-    data?.listPlaylists?.data?.map((playlist: Playlist.Entities) => ({ params: { alias: playlist.alias } })) || [];
+    (listPlaylists?.data || []).map((playlist: Playlist.Entities) => ({ params: { alias: playlist.alias } })) || [];
 
   return {
     paths,
@@ -63,9 +63,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const playlist = await getByAlias(params?.alias as string);
+  const { getPlaylists } = await getByAlias(params?.alias as string)();
+  const playlist = getPlaylists?.data || {};
 
-  const videos = await fetchVideos(`/playlist/${playlist?.playlistId}`);
+  let videos = [];
+  if (playlist) {
+    videos = await fetchVideos(`/playlist/${playlist?.playlistId}`);
+  }
 
   return {
     props: {

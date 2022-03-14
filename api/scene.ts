@@ -1,8 +1,9 @@
-import API from 'config/amplify';
+import { gql } from 'graphql-request';
 
-export async function fetchScenesByVideoId(videoId: string) {
-  const { data } = await API.graphql({
-    query: `
+import graphqlFetcher from 'helpers/graphqlFetcher';
+
+export function fetchScenesByVideoId(videoId: string) {
+  const query = gql`
     query listScenes($listSceneParams: SceneListWhereInput) {
       listScenes(where: $listSceneParams, sort: [startTime_ASC]) {
         data {
@@ -12,13 +13,14 @@ export async function fetchScenesByVideoId(videoId: string) {
           thumbnailUrl
         }
       }
-    }`,
-    variables: {
-      listSceneParams: {
-        videoId,
-      },
-    },
-  });
+    }
+  `;
 
-  return data?.listScenes?.data || [];
+  const variables = {
+    listSceneParams: {
+      videoId,
+    },
+  };
+
+  return graphqlFetcher('read', query, variables);
 }

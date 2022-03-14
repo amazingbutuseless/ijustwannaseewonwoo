@@ -43,13 +43,13 @@ export default function Home({ playlist = [], recentlyAddedVideos = [] }: Props)
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const playlist = await fetchList();
-  const videos = await fetchRecentlyAddedVideos();
+  const { listPlaylists } = await fetchList()();
+  const { listVideos } = await fetchRecentlyAddedVideos()();
 
   return {
     props: {
-      playlist: playlist?.listPlaylists?.data,
-      recentlyAddedVideos: videos || [],
+      playlist: listPlaylists?.data || [],
+      recentlyAddedVideos: listVideos?.data || [],
     },
   };
 };

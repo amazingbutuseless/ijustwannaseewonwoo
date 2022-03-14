@@ -14,19 +14,10 @@ Amplify.configure({
     userPoolWebClientId: 'q4kvqaec8ltuqt20fu7ca7qb4',
   },
   API: {
-    graphql_endpoint: 'https://d1dvaqberyhra5.cloudfront.net/cms/read/ko-KR',
-    graphql_headers: async () => ({
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_CMS_API_KEY}`,
-    }),
     endpoints: [
       {
         name: ENDPOINT.YOUTUBE,
         endpoint: 'https://pd6nn2y548.execute-api.ap-northeast-2.amazonaws.com/dev',
-        region: 'ap-northeast-2',
-      },
-      {
-        name: ENDPOINT.GRAPHQL,
-        endpoint: 'https://hsf59l9h66.execute-api.ap-northeast-2.amazonaws.com/dev',
         region: 'ap-northeast-2',
       },
     ],

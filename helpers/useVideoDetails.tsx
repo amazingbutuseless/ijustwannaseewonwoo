@@ -4,14 +4,15 @@ import { fetchScenesByVideoId } from 'api/scene';
 import { getById } from 'api/video';
 
 export default function useVideoDetails(videoId: string) {
-  const { data: video, error } = useSWR(`/video/${videoId}`, () => getById(videoId));
+  const { data: videoData, error } = useSWR(`/video/${videoId}`, () => getById(videoId)());
+  const video = videoData?.getVideo?.data || {};
 
-  const { data: scenes } = useSWR(`/video/${videoId}/scenes`, () => fetchScenesByVideoId(videoId));
+  const { data: scenesData } = useSWR(`/video/${videoId}/scenes`, () => fetchScenesByVideoId(videoId)());
 
   return {
     video: {
       ...video,
-      scenes: scenes || [],
+      scenes: scenesData?.listScenes?.data || [],
     },
     isLoading: !video && !error,
   };

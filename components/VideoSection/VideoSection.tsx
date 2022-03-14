@@ -19,7 +19,7 @@ export default function VideoSection({ heading, isLoading, videos, onVideoClick 
         {!isLoading &&
           videos.map((video) => {
             return (
-              <Grid item xs={6} sm={6} md={4} lg={3} xl={3} key={video.id}>
+              <Grid item xs={6} sm={6} md={4} lg={3} xl={3} key={video.videoId}>
                 <Video
                   videoId={video.videoId}
                   title={video.title}

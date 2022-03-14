@@ -5,7 +5,7 @@ import { Box, Container, Grid, useMediaQuery } from '@mui/material';
 import ScenesSection from 'components/ScenesSection/SceneSection';
 import Scene from 'components/Scene';
 import useYoutubePlayer from 'helpers/useYoutubePlayer';
-import useShareDialog from 'helpers/useShareDialog';
+import useSceneShareSnackbar from 'helpers/useShareDialog';
 import theme from 'config/theme';
 
 import * as Styled from './style';
@@ -36,7 +36,7 @@ export default function VideoDetails({ videoId, t, video }: Props) {
     t as string
   );
 
-  const { show: showShareDialog } = useShareDialog(`/video/${videoId}`);
+  const { show: showShareDialog } = useSceneShareSnackbar(`/video/${videoId}`);
 
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
 

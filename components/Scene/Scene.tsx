@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import { CardActions, CardContent, CardMedia, Typography, Box, IconButton } from '@mui/material';
+import { CardActions, CardContent, CardMedia, Typography, Box, IconButton, Tooltip } from '@mui/material';
 import { FavoriteBorder, Link } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 import { formatSecondsToMmss, formatSecondsToDuration } from 'helpers/time';
 
@@ -16,6 +17,8 @@ const Scene = React.forwardRef(
     { thumbnailUrl, startTime, endTime, onClick, onShareButtonClick }: Props,
     ref: React.ForwardedRef<HTMLButtonElement>
   ) => {
+    const { t } = useTranslation('video');
+
     const handleClick = useCallback(() => {
       onClick(startTime, endTime);
     }, []);
@@ -38,9 +41,11 @@ const Scene = React.forwardRef(
             <IconButton>
               <FavoriteBorder />
             </IconButton>
-            <IconButton onClick={handleShareButtonClick}>
-              <Link />
-            </IconButton>
+            <Tooltip title={t('scene.share')}>
+              <IconButton onClick={handleShareButtonClick}>
+                <Link />
+              </IconButton>
+            </Tooltip>
           </CardActions>
         </Box>
       </SceneWrapper>

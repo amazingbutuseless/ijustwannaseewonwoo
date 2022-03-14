@@ -9,16 +9,16 @@ function getHost() {
   return `${protocol}//${host}`;
 }
 
-export default function useShareDialog(basePath: string) {
+export default function useSceneShareSnackbar(basePath: string) {
   const snackback = useContext(SnackbarContext);
   const { t } = useTranslation('video');
 
   const show = useCallback(
     (startTime: number) => {
-      navigator.clipboard.writeText(`${getHost()}/${basePath}?startTime=${startTime}`);
+      navigator.clipboard.writeText(`${getHost()}${basePath}?t=${startTime}`);
       snackback.setSnackbarProps({
         open: true,
-        message: t('scene.share'),
+        message: t('scene.shareSuccess'),
       });
     },
     [basePath]

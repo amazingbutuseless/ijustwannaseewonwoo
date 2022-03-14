@@ -1,4 +1,5 @@
 {
-  "login": "로그인",
+  "signInWithGoogle": "구글 계정으로 로그인",
+  "signOut": "로그아웃",
   "autoplay": "장면 연속 재생"
 }

@@ -16,3 +16,20 @@ export const Wrapper = styled(AppBar)`
     }
   }
 `;
+
+export const AuthButton = styled.a`
+display: inline-flex;
+align-items: center;
+height: 4rem;
+padding: 1.8rem .8rem;
+box-sizing: border-box;
+border: 1px solid #efefef;
+border-radius: 2px;
+font-size: 1.4rem;
+color: #000;
+text-decoration: none;
+
+img {
+  margin-right: 2.4rem;
+}
+`;

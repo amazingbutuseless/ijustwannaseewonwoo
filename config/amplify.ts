@@ -8,10 +8,15 @@ export enum ENDPOINT {
 
 Amplify.configure({
   Auth: {
-    identityPoolId: 'ap-northeast-2:e8e9316e-e50d-4dbb-b9c7-ae68e1926b63',
     region: 'ap-northeast-2',
-    userPoolId: 'ap-northeast-2_okJm9SO9F',
-    userPoolWebClientId: 'q4kvqaec8ltuqt20fu7ca7qb4',
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
+    userPoolWebClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
+    cookieStorage: {
+      domain: (process.env.NEXT_PUBLIC_APP_HOSTNAME || '').split(':')[0],
+      path: '/',
+      expires: 30,
+      secure: false,
+    },
   },
   API: {
     endpoints: [
@@ -23,6 +28,13 @@ Amplify.configure({
     ],
   },
   ssr: true,
+  oauth: {
+    domain: 'wonwoo-video.auth.ap-northeast-2.amazoncognito.com',
+    scope: ['email', 'profile', 'openid', 'aws.cognito.signin.user.admin'],
+    redirectSignIn: `http://${process.env.NEXT_PUBLIC_APP_HOSTNAME}/auth-complete`,
+    redirectSignOut: `http://${process.env.NEXT_PUBLIC_APP_HOSTNAME}/auth-complete`,
+    responseType: 'code',
+  },
 });
 
-export { API as default, withSSRContext, Auth } from 'aws-amplify';
+export { API as default, withSSRContext, Auth, Hub } from 'aws-amplify';

@@ -13,6 +13,7 @@ import SnackbarProvider from 'contexts/SnackbarContext';
 import Loading from 'components/Loading';
 
 import 'styles/globals.css';
+import AuthProvider from 'contexts/AuthContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { locale } = useRouter();
@@ -34,14 +35,16 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         <SWRConfig value={{ errorRetryCount: 0 }}>
-          <Layout>
-            <PlayerPreference>
-              <SnackbarProvider>
-                <Component {...pageProps} />
-                {loading && <Loading />}
-              </SnackbarProvider>
-            </PlayerPreference>
-          </Layout>
+          <AuthProvider>
+            <Layout>
+              <PlayerPreference>
+                <SnackbarProvider>
+                  <Component {...pageProps} />
+                  {loading && <Loading />}
+                </SnackbarProvider>
+              </PlayerPreference>
+            </Layout>
+          </AuthProvider>
         </SWRConfig>
       </ThemeProvider>
     </>

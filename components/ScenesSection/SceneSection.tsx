@@ -2,11 +2,11 @@ import React, { useCallback, useContext } from 'react';
 import { Divider, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-import { PlayerPreferenceContext } from 'contexts/PlayerPreference';
+import { PreferenceContext } from 'contexts/PreferenceContext';
 import { SwitchWrapper } from './style';
 
 export default function ScenesSection({ children }: React.PropsWithChildren<{}>) {
-  const playerPreference = useContext(PlayerPreferenceContext);
+  const playerPreference = useContext(PreferenceContext);
 
   const { t } = useTranslation('common');
 

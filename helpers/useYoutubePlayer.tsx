@@ -1,7 +1,7 @@
 import { useCallback, useContext, useRef, useState } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
 
-import { PlayerPreferenceContext } from 'contexts/PlayerPreference';
+import { PreferenceContext } from 'contexts/PreferenceContext';
 
 export default function useYoutubePlayer(
   videoId: string,
@@ -9,7 +9,7 @@ export default function useYoutubePlayer(
   sceneRefs: React.MutableRefObject<HTMLButtonElement[]>,
   startTimeFromUrl?: string
 ) {
-  const { autoplay } = useContext(PlayerPreferenceContext);
+  const { autoplay } = useContext(PreferenceContext);
 
   const playerInstance = useRef<ReturnType<YouTube['getInternalPlayer']>>();
   const videoTimer = useRef<number>();
@@ -17,16 +17,19 @@ export default function useYoutubePlayer(
 
   const [stopTo, setStopTo] = useState<number>();
 
-  const changeCurrentScene = useCallback((nextSceneIdx?: number) => {
-    if (typeof currentScene.current !== 'undefined') {
-      sceneRefs.current[currentScene.current].classList.remove('active');
-    }
+  const changeCurrentScene = useCallback(
+    (nextSceneIdx?: number) => {
+      if (typeof currentScene.current !== 'undefined') {
+        sceneRefs.current[currentScene.current]?.classList.remove('active');
+      }
 
-    if (typeof nextSceneIdx !== 'undefined') {
-      sceneRefs.current[nextSceneIdx].classList.add('active');
-      currentScene.current = nextSceneIdx;
-    }
-  }, []);
+      if (typeof nextSceneIdx !== 'undefined' && nextSceneIdx >= 0) {
+        sceneRefs.current[nextSceneIdx].classList.add('active');
+        currentScene.current = nextSceneIdx;
+      }
+    },
+    [currentScene]
+  );
 
   const onReady: YouTubeProps['onReady'] = ({ target }) => {
     playerInstance.current = target;
@@ -77,7 +80,7 @@ export default function useYoutubePlayer(
     videoTimer.current = window.setInterval(stopCurrentScene, 200);
   }, [stopTo, autoplay]);
 
-  const onSceneClick = (startTime: number, endTime: number) => {
+  const playBetween = (startTime: number, endTime: number) => {
     if (playerInstance.current) {
       setStopTo(endTime);
 
@@ -91,9 +94,17 @@ export default function useYoutubePlayer(
     }
   };
 
+  const getCurrentTime = useCallback(() => {
+    if (playerInstance.current) {
+      return playerInstance.current.getCurrentTime();
+    }
+    return null;
+  }, [playerInstance]);
+
   return {
     onReady,
     onPlay,
-    onSceneClick,
+    playBetween,
+    getCurrentTime,
   };
 }

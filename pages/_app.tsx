@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import type { AppProps } from 'next/app';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import Head from 'next/head';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { SWRConfig } from 'swr';
+import { I18nextProvider } from 'react-i18next';
 
 import i18n from 'config/i18n';
 import theme from 'config/theme';
@@ -17,10 +18,6 @@ import AuthProvider from 'contexts/AuthContext';
 import 'styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { locale } = useRouter();
-
-  i18n.changeLanguage(locale);
-
   const [loading, setLoading] = useState(false);
   Router.events.on('routeChangeStart', () => {
     setLoading(true);
@@ -36,18 +33,20 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <MuiThemeProvider theme={theme}>
         <ThemeProvider theme={theme}>
-          <SWRConfig value={{ errorRetryCount: 0 }}>
-            <AuthProvider>
-              <Layout>
-                <PreferenceProvider>
-                  <SnackbarProvider>
-                    <Component {...pageProps} />
-                    {loading && <Loading />}
-                  </SnackbarProvider>
-                </PreferenceProvider>
-              </Layout>
-            </AuthProvider>
-          </SWRConfig>
+          <I18nextProvider i18n={i18n}>
+            <SWRConfig value={{ errorRetryCount: 0 }}>
+              <AuthProvider>
+                <Layout>
+                  <PreferenceProvider>
+                    <SnackbarProvider>
+                      <Component {...pageProps} />
+                      {loading && <Loading />}
+                    </SnackbarProvider>
+                  </PreferenceProvider>
+                </Layout>
+              </AuthProvider>
+            </SWRConfig>
+          </I18nextProvider>
         </ThemeProvider>
       </MuiThemeProvider>
     </>

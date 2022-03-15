@@ -44,12 +44,24 @@ export default function VideoDetails({ videoId, t, video }: Props) {
 
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
+  const onAddSceneButtonClick = useCallback(
+    (startTime: number, endTime: number, reset: VoidFunction) => {
+      console.log({ videoId, startTime, endTime });
+      reset();
+    },
+    [videoId]
+  );
+
   return (
     <Container component="main">
       <Grid container spacing={2} alignItems="stretch">
         <Grid item xs={12} sm={12} md={3} sx={{ p: 1 }} order={2}>
           {auth.user && (
-            <AddSceneController onPlayButtonClick={playBetween} getCurrentTimeFromPlayer={getCurrentTime} />
+            <AddSceneController
+              onPlayButtonClick={playBetween}
+              getCurrentTimeFromPlayer={getCurrentTime}
+              onAddSceneButtonClick={onAddSceneButtonClick}
+            />
           )}
           <ScenesSection>
             {video?.scenes &&

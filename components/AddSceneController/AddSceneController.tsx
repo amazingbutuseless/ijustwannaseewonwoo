@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -22,9 +22,21 @@ import * as Styled from './style';
 interface Props {
   onPlayButtonClick: (startTime: number, endTime: number) => void;
   getCurrentTimeFromPlayer: () => number | null;
+  onAddSceneButtonClick: (startTime: number, endTime: number, callback: VoidFunction) => void;
 }
 
-export default function AddSceneController({ onPlayButtonClick, getCurrentTimeFromPlayer }: Props) {
+function checkIfValidScene(start: unknown, end: unknown) {
+  if (typeof start !== 'number' || typeof end !== 'number') {
+    return false;
+  }
+  return start > 0 && end > start;
+}
+
+export default function AddSceneController({
+  onPlayButtonClick,
+  getCurrentTimeFromPlayer,
+  onAddSceneButtonClick,
+}: Props) {
   const preference = useContext(PreferenceContext);
 
   const { t } = useTranslation('video');
@@ -98,6 +110,22 @@ export default function AddSceneController({ onPlayButtonClick, getCurrentTimeFr
     preference.setAddScenePanelToBeExpanded(expanded);
   }, []);
 
+  const reset = useCallback(() => {
+    if (startMinutes.current) startMinutes.current.value = '';
+    if (startSeconds.current) startSeconds.current.value = '';
+    if (endMinutes.current) endMinutes.current.value = '';
+    if (endSeconds.current) endSeconds.current.value = '';
+    setStart(undefined);
+    setEnd(undefined);
+  }, []);
+
+  const handleAddSceneButtonClick = useCallback(() => {
+    if (typeof start !== 'number' || typeof end !== 'number') return;
+    onAddSceneButtonClick(start, end, reset);
+  }, [start, end]);
+
+  const isValidScene = useMemo(() => checkIfValidScene(start, end), [start, end]);
+
   return (
     <Accordion expanded={preference.expandAddScenePanel} onChange={handleShowAddScenePanelChange} elevation={0}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -167,10 +195,16 @@ export default function AddSceneController({ onPlayButtonClick, getCurrentTimeFr
             variant="outlined"
             startIcon={<PlayCircleOutlineIcon fontSize="large" />}
             onClick={handlePlayButtonClick}
+            disabled={!isValidScene}
           >
             Preview
           </Button>
-          <Button variant="outlined" startIcon={<PlaylistAddIcon fontSize="large" />} onClick={handlePlayButtonClick}>
+          <Button
+            variant="outlined"
+            startIcon={<PlaylistAddIcon fontSize="large" />}
+            onClick={handleAddSceneButtonClick}
+            disabled={!isValidScene}
+          >
             Add Scene
           </Button>
         </Styled.ButtonContainer>

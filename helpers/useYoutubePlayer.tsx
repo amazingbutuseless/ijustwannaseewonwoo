@@ -3,6 +3,15 @@ import YouTube, { YouTubeProps } from 'react-youtube';
 
 import { PreferenceContext } from 'contexts/PreferenceContext';
 
+const VIDEO_STATE = {
+  notStarted: -1,
+  ended: 0,
+  playing: 1,
+  paused: 2,
+  buffering: 3,
+  cued: 5,
+};
+
 export default function useYoutubePlayer(
   videoId: string,
   scenes: Video.Scene[],
@@ -13,22 +22,22 @@ export default function useYoutubePlayer(
 
   const playerInstance = useRef<ReturnType<YouTube['getInternalPlayer']>>();
   const videoTimer = useRef<number>();
-  const currentScene = useRef<number>();
+  const currentScene = useRef<number>(-1);
 
   const [stopTo, setStopTo] = useState<number>();
 
   const changeCurrentScene = useCallback(
-    (nextSceneIdx?: number) => {
-      if (typeof currentScene.current !== 'undefined') {
+    (nextSceneIdx: number) => {
+      if (currentScene.current >= 0) {
         sceneRefs.current[currentScene.current]?.classList.remove('active');
       }
 
-      if (typeof nextSceneIdx !== 'undefined' && nextSceneIdx >= 0) {
+      if (nextSceneIdx >= 0) {
         sceneRefs.current[nextSceneIdx].classList.add('active');
-        currentScene.current = nextSceneIdx;
       }
+      currentScene.current = nextSceneIdx;
     },
-    [currentScene]
+    [currentScene, sceneRefs]
   );
 
   const onReady: YouTubeProps['onReady'] = ({ target }) => {
@@ -38,14 +47,10 @@ export default function useYoutubePlayer(
       const startTime = parseInt(startTimeFromUrl, 10);
       const sceneIdx = scenes.findIndex((scene) => scene.startTime === startTime);
       if (sceneIdx > -1) {
-        playerInstance.current.seekTo(startTime, true);
-        changeCurrentScene(sceneIdx);
-        setStopTo(scenes[sceneIdx].endTime);
+        playBetween(scenes[sceneIdx].startTime, scenes[sceneIdx].endTime);
       }
     } else if (scenes.length > 0) {
-      playerInstance.current.seekTo(scenes[0].startTime, true);
-      setStopTo(scenes[0].endTime);
-      changeCurrentScene(0);
+      playBetween(scenes[0].startTime, scenes[0].endTime);
     }
   };
 
@@ -55,19 +60,18 @@ export default function useYoutubePlayer(
     }
 
     if (!stopTo) {
-      changeCurrentScene();
+      changeCurrentScene(-1);
       return;
     }
 
-    const stopCurrentScene = async () => {
-      const currentTime = await playerInstance.current.getCurrentTime();
+    const stopCurrentScene = () => {
+      const currentTime = playerInstance.current.getCurrentTime();
 
       if (stopTo && currentTime >= stopTo) {
         window.clearInterval(videoTimer.current);
         setStopTo(undefined);
 
-        const hasNextScene = typeof currentScene.current !== 'undefined' && currentScene.current < scenes.length - 1;
-
+        const hasNextScene = currentScene.current >= 0 && currentScene.current < scenes.length - 1;
         if (autoplay && hasNextScene) {
           sceneRefs.current[(currentScene.current as number) + 1].click();
           return;
@@ -87,10 +91,10 @@ export default function useYoutubePlayer(
       const sceneIdx = scenes.findIndex((scene) => scene.startTime === startTime && scene.endTime === endTime);
       changeCurrentScene(sceneIdx);
 
-      playerInstance.current.loadVideoById({
-        videoId,
-        startSeconds: startTime,
-      });
+      playerInstance.current.seekTo(startTime, true);
+      if (playerInstance.current.getPlayerState() !== VIDEO_STATE.playing) {
+        playerInstance.current.playVideo();
+      }
     }
   };
 

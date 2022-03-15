@@ -65,6 +65,7 @@ export default function VideoDetails({ videoId, t, video }: Props) {
         <Grid item xs={12} sm={12} md={3} sx={{ p: 1 }} order={2}>
           {auth.user && (
             <AddSceneController
+              hasRegisteredScene={video?.scenes?.length > 0}
               onPlayButtonClick={playBetween}
               getCurrentTimeFromPlayer={getCurrentTime}
               onAddSceneButtonClick={onAddSceneButtonClick}

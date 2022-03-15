@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Accordion,
   AccordionDetails,
   AccordionSummary,
   Button,
@@ -20,6 +19,7 @@ import { PreferenceContext } from 'contexts/PreferenceContext';
 import * as Styled from './style';
 
 interface Props {
+  hasRegisteredScene: boolean;
   onPlayButtonClick: (startTime: number, endTime: number) => void;
   getCurrentTimeFromPlayer: () => number | null;
   onAddSceneButtonClick: (startTime: number, endTime: number, callback: VoidFunction) => void;
@@ -33,6 +33,7 @@ function checkIfValidScene(start: unknown, end: unknown) {
 }
 
 export default function AddSceneController({
+  hasRegisteredScene,
   onPlayButtonClick,
   getCurrentTimeFromPlayer,
   onAddSceneButtonClick,
@@ -127,7 +128,11 @@ export default function AddSceneController({
   const isValidScene = useMemo(() => checkIfValidScene(start, end), [start, end]);
 
   return (
-    <Styled.Wrapper expanded={preference.expandAddScenePanel} onChange={handleShowAddScenePanelChange} elevation={0}>
+    <Styled.Wrapper
+      expanded={!hasRegisteredScene || preference.expandAddScenePanel}
+      onChange={handleShowAddScenePanelChange}
+      elevation={0}
+    >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <HelpOutlineIcon />{' '}
         <Typography variant="body2" sx={{ marginLeft: '0.8rem' }}>

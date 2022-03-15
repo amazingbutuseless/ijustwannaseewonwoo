@@ -22,6 +22,7 @@ export default function VideoDetails({ videoId, t, video }: Props) {
   const auth = useContext(AuthContext);
 
   const sceneRefs = useRef<HTMLButtonElement[]>([]);
+  const videoPlayerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return () => {
@@ -52,6 +53,12 @@ export default function VideoDetails({ videoId, t, video }: Props) {
     [videoId]
   );
 
+  useEffect(() => {
+    if (videoPlayerRef.current) {
+      document.documentElement.style.setProperty('--player-height', `${videoPlayerRef.current.clientHeight}px`);
+    }
+  }, [videoPlayerRef]);
+
   return (
     <Container component="main">
       <Grid container spacing={2} alignItems="stretch">
@@ -79,9 +86,9 @@ export default function VideoDetails({ videoId, t, video }: Props) {
           </ScenesSection>
         </Grid>
 
-        <Grid item xs={12} sm={12} md={9} position="sticky" top="var(--app-bar-height)" order={1}>
+        <Grid item xs={12} sm={12} md={9} position="sticky" top="var(--app-bar-height)" order={1} sx={{ zIndex: 2 }}>
           <Box sx={{ margin: matches ? '0' : '-1.6rem', marginBottom: '0' }}>
-            <Styled.VideoPlayerWrapper>
+            <Styled.VideoPlayerWrapper ref={videoPlayerRef}>
               <YouTube
                 videoId={videoId as string}
                 opts={{ playerVars: { controls: 1, autoplay: 1 } }}

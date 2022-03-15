@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Accordion } from '@mui/material';
 
 export const Fieldset = styled.fieldset`
   &:focus-within legend {
@@ -41,4 +42,15 @@ export const ButtonContainer = styled.div`
     flex-grow: 1;
     margin: 0 .4rem;
   }
+`;
+
+export const Wrapper = styled(Accordion)`
+  position: sticky;
+  top: calc(var(--app-bar-height) + var(--player-height));
+  z-index: 1;
+  
+  ${({theme}) => `${theme.breakpoints.up('md')} {
+    position: relative;
+    top: 0;
+  }`}
 `;

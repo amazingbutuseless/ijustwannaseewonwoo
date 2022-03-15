@@ -127,7 +127,7 @@ export default function AddSceneController({
   const isValidScene = useMemo(() => checkIfValidScene(start, end), [start, end]);
 
   return (
-    <Accordion expanded={preference.expandAddScenePanel} onChange={handleShowAddScenePanelChange} elevation={0}>
+    <Styled.Wrapper expanded={preference.expandAddScenePanel} onChange={handleShowAddScenePanelChange} elevation={0}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <HelpOutlineIcon />{' '}
         <Typography variant="body2" sx={{ marginLeft: '0.8rem' }}>
@@ -209,6 +209,6 @@ export default function AddSceneController({
           </Button>
         </Styled.ButtonContainer>
       </AccordionDetails>
-    </Accordion>
+    </Styled.Wrapper>
   );
 }

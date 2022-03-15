@@ -1,8 +1,7 @@
 import { useCallback, useContext } from 'react';
-import { SnackbarContext } from 'contexts/SnackbarContext';
 import { useTranslation } from 'react-i18next';
 
-import theme from 'config/theme';
+import { SnackbarContext } from 'contexts/SnackbarContext';
 
 function getHost() {
   const { protocol, host } = window.location;
@@ -18,7 +17,7 @@ export default function useSceneShareSnackbar(basePath: string) {
       navigator.clipboard.writeText(`${getHost()}${basePath}?t=${startTime}`);
       snackback.setSnackbarProps({
         open: true,
-        message: t('scene.shareSuccess'),
+        message: t('scene.share.success'),
       });
     },
     [basePath]

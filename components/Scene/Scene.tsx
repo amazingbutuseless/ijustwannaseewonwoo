@@ -41,7 +41,7 @@ const Scene = React.forwardRef(
             <IconButton>
               <FavoriteBorder />
             </IconButton>
-            <Tooltip title={t('scene.share')}>
+            <Tooltip title={t('scene.share.buttonLabel')}>
               <IconButton onClick={handleShareButtonClick}>
                 <Link />
               </IconButton>

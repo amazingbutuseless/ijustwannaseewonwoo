@@ -1,12 +1,12 @@
-import { CSSProperties, ReactElement } from 'react';
+import React, { CSSProperties } from 'react';
 import { Container, Typography } from '@mui/material';
-import { LinkProps } from 'next/link';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import Link from 'next/link';
 
 import * as Styled from './style';
-
 interface Props extends Playlist.Entities {
   headingLevel?: 2 | 3;
-  button?: ReactElement<LinkProps>;
+  button?: boolean;
 }
 
 export default function PlaylistDetails({
@@ -16,9 +16,10 @@ export default function PlaylistDetails({
   description,
   titleColor,
   descriptionColor,
+  alias,
   children,
   headingLevel = 2,
-  button,
+  button = false,
 }: React.PropsWithChildren<Props>) {
   return (
     <>
@@ -41,7 +42,13 @@ export default function PlaylistDetails({
               {description}
             </Typography>
           )}
-          {button}
+          {button && (
+            <Link href={`/playlist/${alias}`} passHref>
+              <Styled.GoButtonFace>
+                Go <ArrowForwardIcon />
+              </Styled.GoButtonFace>
+            </Link>
+          )}
         </Container>
       </Styled.PlaylistCover>
 

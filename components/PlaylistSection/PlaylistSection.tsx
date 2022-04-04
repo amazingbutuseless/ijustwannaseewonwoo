@@ -1,8 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Slider from 'react-slick';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import Link from 'next/link';
 
 import PlaylistDetails from 'components/PlaylistDetails';
 
@@ -12,18 +10,6 @@ export interface Props {
   playlist: Playlist.Entities[];
 }
 
-const GoButton = React.forwardRef(
-  ({ onClick, href }: React.HTMLProps<HTMLAnchorElement>, ref: React.LegacyRef<HTMLAnchorElement>) => {
-    return (
-      <Styled.GoButtonFace href={href} onClick={onClick} ref={ref}>
-        Go
-        <ArrowForwardIcon />
-      </Styled.GoButtonFace>
-    );
-  }
-);
-GoButton.displayName = 'GoButton';
-
 export default function PlaylistSection({ playlist }: Props) {
   const { t } = useTranslation('home');
 
@@ -31,20 +17,9 @@ export default function PlaylistSection({ playlist }: Props) {
     <Styled.Wrapper>
       <h2>{t('section.playlists')}</h2>
 
-      <Slider dots={true} infinite={true} speed={3000}>
+      <Slider dots={true} arrows={false} fade={true} speed={500} autoplay={true} autoplaySpeed={3000}>
         {playlist.map((item) => {
-          return (
-            <PlaylistDetails
-              key={item.playlistId}
-              {...item}
-              headingLevel={3}
-              button={
-                <Link href={`/playlist/${item.alias}`} passHref>
-                  <GoButton />
-                </Link>
-              }
-            />
-          );
+          return <PlaylistDetails key={item.playlistId} {...item} headingLevel={3} button={true} />;
         })}
       </Slider>
     </Styled.Wrapper>

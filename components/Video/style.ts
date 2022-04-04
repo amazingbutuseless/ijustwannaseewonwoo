@@ -19,4 +19,9 @@ export const Wrapper = styled(Card)`
   h3 {
     font-size: 1.6rem;
   }
+
+  .MuiCardMedia-img	img {
+    width: 100%;
+    height: auto;
+  }
 `;

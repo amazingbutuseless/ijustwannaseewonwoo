@@ -21,13 +21,11 @@ export default function Video({ videoId, title, publishedAt, thumbnails, onClick
       <CardActionArea onClick={handleClick}>
         <div style={{ position: 'relative' }}>
           {forWonwoo && <Styled.ForWonwoo />}
-          <CardMedia
-            component="img"
-            src={thumbnails.high}
-            srcSet={`${thumbnails.high}, ${thumbnails.standard} 2x, ${thumbnails.maxres} 3x`}
-            alt={title}
-            loading="lazy"
-          />
+          <CardMedia component="picture">
+            <source media="(min-resolution: 3dppx)" srcSet={thumbnails.maxres} />
+            <source media="(min-resolution: 2dppx)" srcSet={thumbnails.standard} />
+            <img src={thumbnails.high} alt={title} loading="lazy" />
+          </CardMedia>
         </div>
 
         <CardContent>

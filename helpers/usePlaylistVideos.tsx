@@ -1,7 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 
-import { fetchVideos } from 'api/playlist';
+import { fetchListByPlaylistId, FetchListByPlaylistIdResponse } from 'api/video';
+
+type Entries<T> = {
+  [K in keyof T]: [K, T[K]];
+}[keyof T][];
 
 export default function usePlaylistVideos(playlistId: string) {
   const getFetchVideoKey = useCallback((pageIndex, previousPageData) => {
@@ -9,10 +13,19 @@ export default function usePlaylistVideos(playlistId: string) {
 
     if (pageIndex === 0) return `/playlist/${playlistId}`;
 
-    return `/playlist/${playlistId}?pageToken=${previousPageData.nextPageToken}`;
+    return `/playlist/${playlistId}/${previousPageData.nextPageToken}`;
   }, []);
 
-  const { data, error, size, setSize } = useSWRInfinite(getFetchVideoKey, fetchVideos);
+  const { data, error, size, setSize } = useSWRInfinite<FetchListByPlaylistIdResponse>(
+    getFetchVideoKey,
+    async (reqPath) => {
+      const [, , playlistId, pageToken] = reqPath.split('/');
+      return fetchListByPlaylistId({
+        playlistId,
+        pageToken,
+      });
+    }
+  );
   const isLoading = !data && !error;
 
   const onShowMoreButtonClick = useCallback(() => {
@@ -25,9 +38,11 @@ export default function usePlaylistVideos(playlistId: string) {
         ?.map((response) =>
           response.items.map((video) => {
             const thumbnails: { [k in Video.ThumbnailResolutions]?: string } = {};
-            Object.entries(video.snippet.thumbnails).forEach(([key, value]) => {
-              thumbnails[key] = value.url;
-            });
+            (Object.entries(video.snippet.thumbnails) as Entries<Video.ItemOfYtApi['snippet']['thumbnails']>).forEach(
+              ([key, value]) => {
+                thumbnails[key] = value.url;
+              }
+            );
 
             return {
               videoId: video.snippet.resourceId.videoId,

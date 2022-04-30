@@ -6,9 +6,10 @@ import { useTranslation } from 'react-i18next';
 import { Typography } from '@mui/material';
 
 import VideoSection from 'components/VideoSection';
-import { fetchList } from 'api/playlist';
+import { Queries as PlaylistQueries, FetchListResponse } from 'api/playlist';
+import { Queries as VideoQueries, FetchRecentlyAddedResponse } from 'api/video';
 import PlaylistSection, { PlaylistSectionProps } from 'components/PlaylistSection';
-import { fetchRecentlyAddedVideos } from 'api/video';
+import { request } from 'helpers/request';
 
 interface Props extends PlaylistSectionProps {
   recentlyAddedVideos: Video.Entities[];
@@ -54,8 +55,15 @@ export default function Home({ playlist = [], recentlyAddedVideos = [] }: Props)
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { listPlaylists } = await fetchList()();
-  const { listVideos } = await fetchRecentlyAddedVideos()();
+  const payload = `{
+    ${PlaylistQueries.fetchList}
+    ${VideoQueries.fetchRecentlyAddedVideos}
+  }`;
+
+  const { listPlaylists, listVideos } = await request<FetchListResponse & FetchRecentlyAddedResponse>('/api/cms/read', {
+    method: 'POST',
+    body: { query: payload },
+  });
 
   return {
     props: {

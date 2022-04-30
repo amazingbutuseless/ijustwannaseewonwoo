@@ -1,11 +1,5 @@
 import Amplify from 'aws-amplify';
 
-export enum ENDPOINT {
-  YOUTUBE = 'YoutubeApi',
-  GRAPHQL = 'GraphQL',
-  CMS = 'CMS',
-}
-
 Amplify.configure({
   Auth: {
     region: 'ap-northeast-2',
@@ -17,15 +11,6 @@ Amplify.configure({
       expires: 30,
       secure: false,
     },
-  },
-  API: {
-    endpoints: [
-      {
-        name: ENDPOINT.YOUTUBE,
-        endpoint: 'https://pd6nn2y548.execute-api.ap-northeast-2.amazonaws.com/dev',
-        region: 'ap-northeast-2',
-      },
-    ],
   },
   ssr: true,
   oauth: {

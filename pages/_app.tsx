@@ -34,8 +34,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       <MuiThemeProvider theme={theme}>
         <ThemeProvider theme={theme}>
           <I18nextProvider i18n={i18n}>
-            <SWRConfig value={{ errorRetryCount: 0 }}>
-              <AuthProvider>
+            <AuthProvider>
+              <SWRConfig value={{ errorRetryCount: 0 }}>
                 <Layout>
                   <PreferenceProvider>
                     <SnackbarProvider>
@@ -44,8 +44,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                     </SnackbarProvider>
                   </PreferenceProvider>
                 </Layout>
-              </AuthProvider>
-            </SWRConfig>
+              </SWRConfig>
+            </AuthProvider>
           </I18nextProvider>
         </ThemeProvider>
       </MuiThemeProvider>

@@ -15,7 +15,7 @@ import * as Styled from './style';
 interface Props {
   videoId: string;
   t?: string;
-  video: { scenes: Video.Scene[] };
+  video: Video.Entities;
 }
 
 export default function VideoDetails({ videoId, t, video }: Props) {

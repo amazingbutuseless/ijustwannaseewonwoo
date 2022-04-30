@@ -8,6 +8,7 @@ import VideoSection from 'components/VideoSection';
 import usePlaylistVideos from 'helpers/usePlaylistVideos';
 import { FetchListResponse, GetByAliasResponse, Queries } from 'api/playlist';
 import { request } from 'helpers/request';
+import Loading from 'components/Loading';
 
 interface Props {
   playlist: Playlist.Entities;
@@ -16,7 +17,7 @@ interface Props {
 export default function Playlist({ playlist }: Props) {
   const router = useRouter();
 
-  const { isLoading, videos, showMoreButton, onShowMoreButtonClick } = usePlaylistVideos(playlist.playlistId);
+  const { isLoading, videos, ShowMoreButton } = usePlaylistVideos(playlist.playlistId);
 
   const handleVideoClick = useCallback((videoId: string, title: string) => {
     router.push({ pathname: `/video/${videoId}`, query: { title } }, `/video/${videoId}`);
@@ -30,12 +31,9 @@ export default function Playlist({ playlist }: Props) {
 
       <main>
         <PlaylistDetails {...playlist}>
-          <VideoSection isLoading={isLoading} videos={videos} onVideoClick={handleVideoClick} />
-          {showMoreButton && (
-            <button type="button" onClick={onShowMoreButtonClick}>
-              Show More
-            </button>
-          )}
+          {isLoading && <Loading />}
+          <VideoSection videos={videos} onVideoClick={handleVideoClick} />
+          <ShowMoreButton />
         </PlaylistDetails>
       </main>
     </>

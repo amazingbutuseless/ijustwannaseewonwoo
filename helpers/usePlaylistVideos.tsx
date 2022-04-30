@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 
 import { fetchListByPlaylistId, FetchListByPlaylistIdResponse } from 'api/video';
+import { ShowMoreButtonContainer } from 'components/VideoSection';
 
 type Entries<T> = {
   [K in keyof T]: [K, T[K]];
@@ -30,7 +31,7 @@ export default function usePlaylistVideos(playlistId: string) {
 
   const onShowMoreButtonClick = useCallback(() => {
     setSize(size + 1);
-  }, []);
+  }, [size]);
 
   const videos = useMemo(
     () =>
@@ -57,10 +58,22 @@ export default function usePlaylistVideos(playlistId: string) {
     [data]
   );
 
+  const ShowMoreButton = () => {
+    if (data?.[data.length - 1]?.nextPageToken) {
+      return (
+        <ShowMoreButtonContainer>
+          <button type="button" onClick={onShowMoreButtonClick}>
+            Show More
+          </button>
+        </ShowMoreButtonContainer>
+      );
+    }
+    return null;
+  };
+
   return {
     isLoading,
     videos,
-    showMoreButton: data?.[data.length - 1]?.nextPageToken,
-    onShowMoreButtonClick,
+    ShowMoreButton,
   };
 }

@@ -47,7 +47,6 @@ export default function Home({ playlist = [], recentlyAddedVideos = [] }: Props)
           heading={<Typography variant="h2">{t('section.videos')}</Typography>}
           videos={recentlyAddedVideos}
           onVideoClick={handleVideoClick}
-          isLoading={false}
         />
       </main>
     </>

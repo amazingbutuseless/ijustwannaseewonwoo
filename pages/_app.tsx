@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import Router from 'next/router';
 import Head from 'next/head';
@@ -19,12 +19,16 @@ import 'styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false);
-  Router.events.on('routeChangeStart', () => {
-    setLoading(true);
-  });
-  Router.events.on('routeChangeComplete', () => {
-    setLoading(false);
-  });
+
+  useEffect(() => {
+    Router.events.on('routeChangeStart', () => {
+      setLoading(true);
+    });
+
+    Router.events.on('routeChangeComplete', () => {
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <>

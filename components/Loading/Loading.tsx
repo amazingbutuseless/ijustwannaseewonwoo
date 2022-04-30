@@ -1,7 +1,18 @@
+import dynamic from 'next/dynamic';
+import { useEffect } from 'react';
+
 import * as Styled from './style';
 
-export default function Loading() {
+function Loading() {
   const start = Math.floor(Math.random() * 28);
+
+  useEffect(() => {
+    document.body.style.setProperty('overflow', 'hidden');
+
+    return () => {
+      document.body.style.removeProperty('overflow');
+    };
+  }, []);
 
   return (
     <>
@@ -12,3 +23,5 @@ export default function Loading() {
     </>
   );
 }
+
+export default dynamic(() => Promise.resolve(Loading), { ssr: false });

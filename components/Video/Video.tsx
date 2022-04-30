@@ -4,10 +4,7 @@ import dayjs from 'dayjs';
 
 import * as Styled from './style';
 
-interface Props extends Video.Video, Video.WithPublishedAt, Video.WithThumbnails {
-  title: string;
-  channel?: string;
-  forWonwoo?: boolean;
+interface Props extends Video.Entities {
   onClick: (videoId: string, title: string) => void;
 }
 

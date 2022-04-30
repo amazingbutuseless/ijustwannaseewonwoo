@@ -50,7 +50,7 @@ export default function usePlaylistVideos(playlistId: string) {
               publishedAt: video.snippet.publishedAt,
               thumbnails,
               channel: video.snippet.videoOwnerChannelTitle,
-            };
+            } as Video.Entities;
           })
         )
         .flat() || [],

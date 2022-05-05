@@ -12,12 +12,23 @@ import theme from 'config/theme';
 import Layout from 'components/Layout';
 import Loading from 'components/Loading';
 import PreferenceProvider from 'contexts/PreferenceContext';
-import SnackbarProvider from 'contexts/SnackbarContext';
 import AuthProvider from 'contexts/AuthContext';
 
 import 'styles/globals.css';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function DefaultConfigProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <MuiThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
+        <I18nextProvider i18n={i18n}>
+          <SWRConfig value={{ errorRetryCount: 0 }}>{children}</SWRConfig>
+        </I18nextProvider>
+      </ThemeProvider>
+    </MuiThemeProvider>
+  );
+}
+
+function App({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,26 +46,18 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <MuiThemeProvider theme={theme}>
-        <ThemeProvider theme={theme}>
-          <I18nextProvider i18n={i18n}>
-            <AuthProvider>
-              <SWRConfig value={{ errorRetryCount: 0 }}>
-                <Layout>
-                  <PreferenceProvider>
-                    <SnackbarProvider>
-                      <Component {...pageProps} />
-                      {loading && <Loading />}
-                    </SnackbarProvider>
-                  </PreferenceProvider>
-                </Layout>
-              </SWRConfig>
-            </AuthProvider>
-          </I18nextProvider>
-        </ThemeProvider>
-      </MuiThemeProvider>
+      <DefaultConfigProvider>
+        <AuthProvider>
+          <PreferenceProvider>
+            <Layout>
+              <Component {...pageProps} />
+              {loading && <Loading />}
+            </Layout>
+          </PreferenceProvider>
+        </AuthProvider>
+      </DefaultConfigProvider>
     </>
   );
 }
 
-export default MyApp;
+export default App;

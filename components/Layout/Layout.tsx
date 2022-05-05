@@ -1,8 +1,9 @@
 import React from 'react';
-import { useScrollTrigger, Container } from '@mui/material';
+import { useScrollTrigger } from '@mui/material';
 
 import Navbar from 'components/Navbar';
 import Footer from 'components/Footer';
+import SnackbarProvider from 'contexts/SnackbarContext';
 
 interface ElevationScrollProps {
   window?: () => Window;
@@ -23,13 +24,13 @@ function ElevationScroll(props: ElevationScrollProps) {
   });
 }
 
-export default function Layout({ children }: { children: React.ReactElement }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ElevationScroll>
         <Navbar />
       </ElevationScroll>
-      {children}
+      <SnackbarProvider>{children}</SnackbarProvider>
       <Footer />
     </>
   );

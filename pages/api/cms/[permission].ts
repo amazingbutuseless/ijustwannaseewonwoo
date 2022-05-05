@@ -1,15 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
+import Cookie from 'cookie';
 
-import { getCookie } from 'helpers/request';
-
-async function hasAuthenticated(cookies: string) {
+async function hasAuthenticated(cookies: Record<string, string>) {
   const authBaseKey = `CognitoIdentityServiceProvider.${process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID}`;
 
-  const lastAuthUser = getCookie(cookies, `${authBaseKey}.LastAuthUser`);
+  const lastAuthUser = cookies[`${authBaseKey}.LastAuthUser`];
   if (!lastAuthUser) return false;
 
-  const idToken = getCookie(cookies, `${authBaseKey}.${lastAuthUser}.idToken`);
+  const idToken = cookies[`${authBaseKey}.${lastAuthUser}.idToken`];
   if (!idToken) return false;
 
   const verifier = CognitoJwtVerifier.create({
@@ -35,7 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return process.env.CMS_PUBLIC_API_KEY;
     }
 
-    if (!(await hasAuthenticated(req.headers.cookie || ''))) {
+    const cookies = Cookie.parse(req.headers.cookie || '');
+
+    if (!(await hasAuthenticated(cookies))) {
       res.status(401).json({ message: 'Unauthorized' });
       return;
     }

@@ -14,12 +14,3 @@ export async function request<ResponseType = {}, RequestType = {}>(
   const response = await fetch(`${HOST}${apiPath}`, requestInit as RequestInit);
   return response.json();
 }
-
-export function getCookie(cookies: string, key: string) {
-  const found = cookies.split(';').find((c) => {
-    const [k, v] = c.split('=');
-    return k.trim() === key;
-  });
-
-  return !found ? null : found.split('=')[1];
-}

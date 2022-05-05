@@ -38,7 +38,7 @@ export default function AddSceneController({
   getCurrentTimeFromPlayer,
   onAddSceneButtonClick,
 }: Props) {
-  const preference = useContext(PreferenceContext);
+  const { expandAddScenePanel, onExpandAddScenePanelChange } = useContext(PreferenceContext);
 
   const { t } = useTranslation('video');
 
@@ -108,7 +108,7 @@ export default function AddSceneController({
   }, []);
 
   const handleShowAddScenePanelChange = useCallback((_, expanded: boolean) => {
-    preference.setAddScenePanelToBeExpanded(expanded);
+    onExpandAddScenePanelChange(expanded);
   }, []);
 
   const reset = useCallback(() => {
@@ -129,7 +129,7 @@ export default function AddSceneController({
 
   return (
     <Styled.Wrapper
-      expanded={!hasRegisteredScene || preference.expandAddScenePanel}
+      expanded={!hasRegisteredScene || expandAddScenePanel}
       onChange={handleShowAddScenePanelChange}
       elevation={0}
     >

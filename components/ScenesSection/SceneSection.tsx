@@ -6,20 +6,17 @@ import { PreferenceContext } from 'contexts/PreferenceContext';
 import { SwitchWrapper } from './style';
 
 export default function ScenesSection({ children }: React.PropsWithChildren<{}>) {
-  const playerPreference = useContext(PreferenceContext);
+  const { autoplay, onAutoplayChange } = useContext(PreferenceContext);
 
   const { t } = useTranslation('common');
 
   const handleAutoPlayChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    playerPreference.setAutoplay(e.target.checked);
+    onAutoplayChange(e.target.checked);
   }, []);
 
   return (
     <>
-      <SwitchWrapper
-        control={<Switch checked={playerPreference.autoplay} onChange={handleAutoPlayChange} />}
-        label={t('autoplay')}
-      />
+      <SwitchWrapper control={<Switch checked={autoplay} onChange={handleAutoPlayChange} />} label={t('autoplay')} />
       <Divider sx={{ marginBottom: 1 }} />
       {children}
     </>
